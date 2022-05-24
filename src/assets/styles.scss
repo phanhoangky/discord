@@ -1,0 +1,51 @@
+button {
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  overflow: hidden;
+  border: 0;
+  margin: 0 5px;
+  transition: all 0.2s linear;
+  &.primary {
+    background-color: var(--vt-c-blue-light-1);
+    color: var(--vt-c-white-soft);
+  }
+  &.cancel {
+    background-color: var(--button-danger-bg-light);
+    color: var(--button-danger-text-light);
+  }
+  &:hover {
+    box-shadow: 0 0 10px 5px var(--vt-c-blue-light-2);
+    outline: var(--vt-c-blue-light-2) solid 2px;
+    // transform: translateY(-5px);
+  }
+  &:active {
+    transform: translateY(5px);
+  }
+}
+
+.click-ani {
+  transition: transform 0.2s ease;
+  &:hover {
+    box-shadow: 0 0 10px 5px var(--vt-c-blue-light-2);
+    outline: var(--vt-c-blue-light-2) solid 2px;
+  }
+  &:active {
+    transform: translateY(5px);
+  }
+}
+
+.error {
+  color: var(--vt-c-text-error);
+  text-shadow: 2px 2px 5px var(--vt-c-white-soft), -2px -2px 5px var(--vt-c-blue-light-2);
+  font-weight: bold;
+  text-transform: capitalize;
+  padding-inline-start: 1em;
+}
+
+input {
+  transition: box-shadow 0.3s ease;
+  &:focus {
+    box-shadow: 0px 0px 10px 5px var(--vt-c-blue-light-2);
+  }
+}
