@@ -48,7 +48,9 @@ export default defineComponent({
 .header {
   grid-area: header;
   height: 50px;
-  padding: 1em;
+  // padding: 1em;
+  background-color: var(--vt-c-header-bg-color);
+  color: var(--vt-c-header-text-color);
 }
 .main {
   grid-area: main;
@@ -56,6 +58,7 @@ export default defineComponent({
 }
 .footer {
   grid-area: footer;
+  background-color: var(--vt-c-divider-light-1);
 }
 .sidenav {
   grid-area: sidenav;
@@ -63,6 +66,8 @@ export default defineComponent({
   width: 0;
   height: 0;
   overflow: hidden;
+  background-color: var(--vt-c-navbar-bg-color);
+  color: var(--vt-c-navbar-text-color);
 }
 
 @media only screen and (min-width: 46.785em) {
@@ -71,11 +76,11 @@ export default defineComponent({
     grid-template-areas:
       "sidenav header"
       "sidenav main";
-    grid-template-columns: 100px 1fr;
+    grid-template-columns: 150px 1fr;
   }
   .sidenav {
     position: relative;
-    width: 100px;
+    width: 150px;
     padding: 0.5em;
     height: auto;
     border-left: 1px solid var(--vt-c-black);

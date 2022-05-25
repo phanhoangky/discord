@@ -4,7 +4,7 @@ button {
   text-align: center;
   overflow: hidden;
   border: 0;
-  margin: 0 5px;
+  // margin: 0 5px;
   transition: all 0.2s linear;
   &.primary {
     background-color: var(--vt-c-blue-light-1);
@@ -35,7 +35,7 @@ button {
   }
 }
 
-.error {
+.error-message {
   color: var(--vt-c-text-error);
   text-shadow: 2px 2px 5px var(--vt-c-white-soft), -2px -2px 5px var(--vt-c-blue-light-2);
   font-weight: bold;

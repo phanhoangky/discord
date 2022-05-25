@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Form class="form" @submit.prevent="" :validation-schema="schema">
+    <Form class="form" @submit="login" :validation-schema="schema">
       <div class="form__field">
         <label for="email">
           <font-awesome-icon icon="user" />
@@ -8,7 +8,7 @@
         </label>
         <Field name="email" id="email" placeholder="Email"></Field>
       </div>
-      <ErrorMessage name="email" class="error"></ErrorMessage>
+      <ErrorMessage name="email" class="error-message"></ErrorMessage>
       <div class="form__field">
         <label for="password"
           ><font-awesome-icon icon="lock" />
@@ -21,7 +21,7 @@
           placeholder="Password"
         ></Field>
       </div>
-      <ErrorMessage name="password" class="error"></ErrorMessage>
+      <ErrorMessage name="password" class="error-message"></ErrorMessage>
       <button class="primary">Login</button>
       <button
         type="button"
@@ -44,6 +44,9 @@
 import { defineComponent } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { object, string } from "yup";
+import { mapActions } from "pinia";
+import { useLoadingScreenStore } from "@/stores/LoadingScreen";
+import { useUserStore } from "@/stores/UserStore";
 export default defineComponent({
   components: {
     Form,
@@ -58,7 +61,21 @@ export default defineComponent({
     return { schema };
   },
   computed: {},
-  methods: {},
+  methods: {
+    ...mapActions(useLoadingScreenStore, {
+      setIsLoading: "setIsLoading",
+    }),
+    ...mapActions(useUserStore, {
+      signIn: "SignIn",
+    }),
+    login(values: any) {
+      this.setIsLoading(true);
+      this.signIn(values.email, values.password).then(() => {
+        this.setIsLoading(false);
+      });
+      console.log(values);
+    },
+  },
 });
 </script>
 

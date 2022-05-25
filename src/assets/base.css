@@ -27,7 +27,7 @@
   --vt-c-blue-light-2: #0dd5e3;
 
   /* Button */
-  --vt-c-button-hover-bg: #0581e7;
+  --vt-c-button-hover-bg: #454545;
   --vt-c-button-hover-text: #ffffff;
 
   /*Title*/
@@ -36,6 +36,14 @@
   /*Text*/
   --vt-c-text-error: #ee1c1c;
   --vt-c-text-success: #0fdb89;
+
+  /* Sidebar */
+  --vt-c-navbar-bg-color: #0cb3fa;
+  --vt-c-navbar-text-color: #ffffff;
+
+  /*Header*/
+  --vt-c-header-bg-color: #0c78ec;
+  --vt-c-header-text-color: #f6f6f6;
 }
 
 /* semantic color variables for this project */

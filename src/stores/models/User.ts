@@ -1,7 +1,13 @@
 export interface User {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  email: string;
   photoUrl: string;
+  phoneNumber: string;
+  createdTime: string;
+  updatedTime: string;
+  isActive: boolean;
 }
 
 export interface SignUpModel {

@@ -1,14 +1,13 @@
 <template>
   <section v-for="user in listUsers" :key="user.id">
     <img src="@/assets/logo.svg" />
-    <div class="username">{{ user.name }}</div>
+    <div class="username">{{ user.email }}</div>
   </section>
 </template>
 
 <script lang="ts">
 import type { User } from "@/stores/models/User";
 import { defineComponent } from "vue";
-import { v4 as uuidv4 } from "uuid";
 
 export default defineComponent({
   setup() {
@@ -16,10 +15,7 @@ export default defineComponent({
   },
   computed: {
     listUsers(): User[] {
-      return [
-        { id: uuidv4(), name: "Hash Tag 1", photoUrl: "" },
-        { id: uuidv4(), name: "Hash Tag 2", photoUrl: "" },
-      ];
+      return [];
     },
   },
 });

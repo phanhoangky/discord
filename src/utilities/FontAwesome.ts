@@ -9,6 +9,8 @@ import {
   faRectangleXmark,
   faCircleXmark,
   faCircleCheck,
+  faPlusSquare,
+  faDungeon,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* import font awesome icon component */
@@ -18,5 +20,7 @@ library.add(faUserSecret, faLock, faUser);
 library.add(faRectangleXmark);
 library.add(faCircleCheck);
 library.add(faCircleXmark);
+library.add(faPlusSquare);
+library.add(faDungeon);
 
 export default FontAwesomeIcon;

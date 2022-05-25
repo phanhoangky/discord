@@ -20,8 +20,8 @@
           style="border-top-left-radius: 10px; border-bottom-left-radius: 10px"
         ></Field>
       </div>
-      <ErrorMessage name="firstname" class="error"></ErrorMessage>
-      <ErrorMessage name="lastname" class="error"></ErrorMessage>
+      <ErrorMessage name="firstname" class="error-message"></ErrorMessage>
+      <ErrorMessage name="lastname" class="error-message"></ErrorMessage>
 
       <div class="form__field">
         <label for="email">
@@ -29,7 +29,7 @@
         </label>
         <Field name="email" id="email" placeholder="Email"></Field>
       </div>
-      <ErrorMessage name="email" class="error"></ErrorMessage>
+      <ErrorMessage name="email" class="error-message"></ErrorMessage>
 
       <div class="form__field">
         <label for="password">
@@ -42,7 +42,7 @@
           placeholder="Password"
         ></Field>
       </div>
-      <ErrorMessage name="password" class="error"></ErrorMessage>
+      <ErrorMessage name="password" class="error-message"></ErrorMessage>
 
       <div class="form__field">
         <label for="confirm-password">
@@ -55,7 +55,7 @@
           placeholder="Confirm Password"
         ></Field>
       </div>
-      <ErrorMessage name="confirmPw" class="error"></ErrorMessage>
+      <ErrorMessage name="confirmPw" class="error-message"></ErrorMessage>
       <button class="primary">Create</button>
       <hr />
       <router-link to="/sign-in">Already have an account ?</router-link>
@@ -67,9 +67,9 @@
 import { defineComponent } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { mapActions } from "pinia";
-import { useUserStore } from "@/stores/userStore";
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 import * as yup from "yup";
+import { useUserStore } from "@/stores/UserStore";
 
 export default defineComponent({
   components: {

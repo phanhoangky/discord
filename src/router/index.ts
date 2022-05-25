@@ -1,5 +1,6 @@
-import { useUserStore } from "./../stores/userStore";
+import { useUserStore } from "@/stores/UserStore";
 import { createRouter, createWebHistory } from "vue-router";
+import JWT from "jwt-decode";
 const routes = [
   {
     path: "/",
@@ -33,14 +34,14 @@ const routes = [
       layout: "AuthLayout",
     },
   },
-  {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (About.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import("../views/AboutView.vue"),
-  },
+  // {
+  //   path: "/about",
+  //   name: "about",
+  //   // route level code-splitting
+  //   // this generates a separate chunk (About.[hash].js) for this route
+  //   // which is lazy-loaded when the route is visited.
+  //   component: () => import("../views/AboutView.vue"),
+  // },
 ];
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,15 +49,23 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const store = useUserStore();
-  const anonymous: string[] = ["SignUp", "SignIn"];
-  if (
-    store.getUser.email == "" &&
-    to.name &&
-    !anonymous.includes(to.name.toString())
-  ) {
-    console.log(store.$state.User, to);
-    router.push("sign-in");
-  }
+  // if (!document.cookie) {
+  //   router.push("sign-in");
+  // }
+  // if (!store.user) {
+  //   const jwt: any = JWT(document.cookie);
+  //   if (jwt && jwt.actort) {
+  //     const actor = JSON.parse(jwt?.actort);
+  //     console.log(actor, store.user);
+  //     store.setUser(actor);
+  //     const anonymous: string[] = ["SignUp", "SignIn"];
+  //     if (!actor && to.name && anonymous.includes(to.name.toString())) {
+  //       router.push("sign-in");
+  //       return;
+  //     }
+  //   }
+  // }
+
   next();
 });
 export default router;

@@ -2,13 +2,19 @@
   <Teleport to="#modal">
     <Transition name="scale">
       <div class="modal-backdrop" v-if="show">
-        <div class="modal">
+        <div
+          class="modal"
+          :style="{
+            width: width,
+          }"
+        >
           <header>
             <slot name="header">
               <span>{{ modalName }}</span>
               <font-awesome-icon
                 icon="rectangle-xmark"
                 class="close-icon click-ani"
+                @click="$emit('close')"
               />
             </slot>
           </header>
@@ -17,19 +23,10 @@
           </main>
           <footer>
             <slot name="footer">
-              <button class="cancel-btn cancel">
-                <slot
-                  name="cancel-button"
-                  @click="
-                    () => {
-                      close();
-                    }
-                  "
-                >
-                  Cancel
-                </slot>
+              <button class="cancel-btn cancel" @click="$emit('close')">
+                <slot name="cancel-button"> Cancel </slot>
               </button>
-              <button class="submit-btn primary">
+              <button class="submit-btn primary" @click="$emit('submit')">
                 <slot name="submit-button"> Submit </slot>
               </button>
             </slot>
@@ -49,15 +46,19 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    close: {
-      type: Function,
-      required: true,
+    width: {
+      type: String,
+      required: false,
     },
     show: {
       type: Boolean,
       required: true,
     },
   },
+  data: (props) => ({
+    modalWidth: props.width,
+  }),
+  emits: ["close", "submit"],
   setup() {
     return {};
   },
@@ -86,7 +87,8 @@ export default defineComponent({
     width: 60%;
     position: relative;
     z-index: 100;
-    box-shadow: 5px 5px 20px 5px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px 5px var(--vt-c-white-soft);
     background-color: var(--vt-c-divider-dark-1);
     header {
       border-bottom: 1px solid rgb(25, 25, 25);
@@ -108,6 +110,7 @@ export default defineComponent({
       }
     }
     main {
+      display: flex;
     }
     footer {
       display: flex;

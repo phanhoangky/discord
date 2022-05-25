@@ -1,7 +1,6 @@
-import type { User } from "./User";
+import type { BaseModel } from "./BaseModel";
 
-export interface Room {
+export interface Room extends BaseModel {
   id: string;
   name: string;
-  users: User[];
 }
