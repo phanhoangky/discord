@@ -45,7 +45,29 @@ button {
 
 input {
   transition: box-shadow 0.3s ease;
+  border-radius: 10px;
+  outline: none;
+  border: 0;
+  padding: 1em;
   &:focus {
     box-shadow: 0px 0px 10px 5px var(--vt-c-blue-light-2);
+  }
+}
+
+form {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  .field-group {
+    color: var(--vt-c-white);
+    width: 100%;
+    display: flex;
+    label {
+      padding: 1em;
+      width: auto;
+    }
+    input {
+      width: 100%;
+    }
   }
 }

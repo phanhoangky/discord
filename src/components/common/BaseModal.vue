@@ -55,9 +55,6 @@ export default defineComponent({
       required: true,
     },
   },
-  data: (props) => ({
-    modalWidth: props.width,
-  }),
   emits: ["close", "submit"],
   setup() {
     return {};
@@ -79,19 +76,19 @@ export default defineComponent({
   align-items: center;
   overflow-y: auto;
   z-index: 99;
-  background-color: rgba(25, 24, 25, 0);
+  background-color: rgba(25, 24, 25, 0.5);
   border-radius: 1em;
   .modal {
     display: flex;
     flex-direction: column;
-    width: 60%;
+    width: 100%;
     position: relative;
     z-index: 100;
     border-radius: 10px;
     box-shadow: 0px 0px 20px 5px var(--vt-c-white-soft);
     background-color: var(--vt-c-divider-dark-1);
     header {
-      border-bottom: 1px solid rgb(25, 25, 25);
+      border-bottom: 2px solid rgb(25, 25, 25);
       align-items: center;
       position: relative;
       padding: 1em;
@@ -111,12 +108,15 @@ export default defineComponent({
     }
     main {
       display: flex;
+      padding: 1em;
     }
     footer {
       display: flex;
       justify-content: flex-end;
       padding: 10px;
+      gap: 10px;
       align-items: center;
+      border-top: 2px solid rgb(25, 25, 25);
     }
   }
 }
@@ -131,5 +131,10 @@ export default defineComponent({
   transform: scale(1.1);
 }
 @media only screen and (min-width: 40em) {
+  .modal-backdrop {
+    .modal {
+      width: 60%;
+    }
+  }
 }
 </style>

@@ -67,9 +67,12 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 110;
   .message {
     width: 100%;
-    background-color: var(--vt-c-divider-dark-2);
+    position: relative;
+    z-index: 110;
+    background-color: var(--vt-c-black-soft);
     color: var(--vt-c-white-soft);
     display: flex;
     min-height: 100px;

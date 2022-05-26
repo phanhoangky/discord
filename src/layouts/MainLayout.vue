@@ -5,7 +5,11 @@
     </header>
     <main class="main">
       <slot>
-        <router-view></router-view>
+        <router-view v-slot="{ Component }">
+          <Transition name="slide" mode="out-in">
+            <component :is="Component"></component>
+          </Transition>
+        </router-view>
       </slot>
     </main>
     <footer class="footer">
@@ -21,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import SideNavigation from "../components/SideNavigation.vue";
+import SideNavigation from "../components/SideNavigation/SideNavigation.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
 
 export default defineComponent({
@@ -68,6 +72,16 @@ export default defineComponent({
   overflow: hidden;
   background-color: var(--vt-c-navbar-bg-color);
   color: var(--vt-c-navbar-text-color);
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
+}
+.slide-enter-from,
+.slide-leave-to {
+  opacity: 0;
+  transform: translateX(100px);
 }
 
 @media only screen and (min-width: 46.785em) {

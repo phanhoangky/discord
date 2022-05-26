@@ -3,51 +3,60 @@
     <img src="@/assets/logo.svg" />
   </div>
   <ul class="menu-container">
-    <button
-      class="add-room-btn"
+    <button class="add-room-btn" @click="setShowCreateModal(true)">
+      <font-awesome-icon icon="plus-square"></font-awesome-icon>
+    </button>
+
+    <!-- <router-link class="menu-item" to="/">Home</router-link>
+    <router-link class="menu-item" to="/Device">Device</router-link> -->
+    <li
+      class="menu-item"
+      v-for="item in rooms"
+      :key="item.id"
+      :class="item.id == selectedRoom?.id ? 'active' : ''"
       @click="
         () => {
-          isShow = true;
+          setSelectedRoom(item);
         }
       "
     >
-      <font-awesome-icon icon="plus-square"></font-awesome-icon>
-    </button>
-    <!-- <router-link class="menu-item" to="/">Home</router-link>
-    <router-link class="menu-item" to="/Device">Device</router-link> -->
-    <li class="menu-item" v-for="item in rooms" :key="item.id">
-      {{ item.name }}
+      <span>{{ item.name }}</span>
+      <!-- <button
+        class="cancel edit-btn"
+        @click="
+          () => {
+            setSelectedRoom(item);
+            setShowEditModal(true);
+          }
+        "
+      >
+      </button> -->
+      <font-awesome-icon
+        icon="gear"
+        class="edit-btn"
+        @click="
+          () => {
+            setSelectedRoom(item);
+            setShowEditModal(true);
+          }
+        "
+      ></font-awesome-icon>
     </li>
   </ul>
-  <BaseModal
-    modal-name="CREATE NEW ROOM"
-    @close="
-      () => {
-        isShow = false;
-      }
-    "
-    :width="`30%`"
-    :show="isShow"
-    @submit="createRoom"
-  >
-    <form @submit="createRoom" :validation-schema="schema">
-      <label for="name">Name</label>
-      <Field name="name" id="name"></Field>
-      <ErrorMessage name="name" class="error-message"></ErrorMessage>
-    </form>
-  </BaseModal>
+  <CreateRoomModal></CreateRoomModal>
+  <EditRoomModal></EditRoomModal>
 </template>
 
 <script lang="ts">
 import { useRoomStore } from "@/stores/RoomStore";
 import { mapActions, mapState } from "pinia";
 import { defineComponent, ref } from "vue";
-import { Field, ErrorMessage } from "vee-validate";
 // import LoadingScreen from "./common/LoadingScreen.vue";
-import BaseModal from "./common/BaseModal.vue";
 import { object, string } from "yup";
 import { useForm } from "vee-validate";
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
+import EditRoomModal from "./Modal/EditRoomModal.vue";
+import CreateRoomModal from "./Modal/CreateRoomModal.vue";
 export default defineComponent({
   setup() {
     const { handleSubmit } = useForm();
@@ -74,11 +83,17 @@ export default defineComponent({
   computed: {
     ...mapState(useRoomStore, {
       rooms: "rooms",
+      selectedRoom: "selectedRoom",
+      showCreateModal: "showCreateModal",
+      showEditModal: "showEditModal",
     }),
   },
   methods: {
     ...mapActions(useRoomStore, {
       fetchRooms: "fetchRooms",
+      setSelectedRoom: "setSelectedRoom",
+      setShowCreateModal: "setShowCreateModal",
+      setShowEditModal: "setShowEditModal",
     }),
   },
   async created() {
@@ -86,9 +101,11 @@ export default defineComponent({
   },
   components: {
     // LoadingScreen,
-    BaseModal,
-    Field,
-    ErrorMessage,
+    // BaseModal,
+    // Field,
+    // ErrorMessage,
+    EditRoomModal,
+    CreateRoomModal,
   },
 });
 </script>
@@ -124,6 +141,7 @@ export default defineComponent({
   }
   .menu-item {
     display: flex;
+    position: relative;
     justify-content: center;
     align-items: center;
     padding: 1em;
@@ -133,10 +151,28 @@ export default defineComponent({
     border-bottom: 1px solid var(--vt-c-white-soft);
     text-decoration: none;
     color: inherit;
+    .edit-btn {
+      position: absolute;
+      width: 0;
+      right: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    &.active {
+      background-color: var(--vt-c-black-soft);
+      .edit-btn {
+        width: auto;
+        padding: 1em;
+      }
+    }
     &:hover {
       background-color: var(--vt-c-black-mute);
       color: var(--vt-c-button-hover-text);
       border-top: 1px solid var(--vt-c-white-soft);
+      .edit-btn {
+        width: auto;
+        padding: 1em;
+      }
     }
   }
 }

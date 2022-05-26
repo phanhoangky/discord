@@ -27,12 +27,14 @@
   --vt-c-blue-light-2: #0dd5e3;
 
   /* Button */
+  --vt-c-button-bg: #ffffff;
+  --vt-c-button-text: #ffffff;
   --vt-c-button-hover-bg: #454545;
   --vt-c-button-hover-text: #ffffff;
 
   /*Title*/
   --vt-c-title-color: #ffffff;
-
+  
   /*Text*/
   --vt-c-text-error: #ee1c1c;
   --vt-c-text-success: #0fdb89;
@@ -44,6 +46,14 @@
   /*Header*/
   --vt-c-header-bg-color: #0c78ec;
   --vt-c-header-text-color: #f6f6f6;
+
+  /*Confirm popup*/
+  --vt-c-confirm-popup-bg: #ffffff;
+  --vt-c-confirm-popup-text: #242424;
+
+  /*Modal*/
+  --vt-c-modal-bg: #ffffff;
+  --vt-c-modal-text: #1c1c1c;
 }
 
 /* semantic color variables for this project */

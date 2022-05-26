@@ -19,6 +19,8 @@ ApiHelper.interceptors.request.use((config) => {
   // if (config.method === "post") {
   //   config.data = JSON.stringify(config.data);
   // }
+  const loadingScreenStore = useLoadingScreenStore();
+  loadingScreenStore.setIsLoading(true);
   return config;
 });
 
@@ -37,13 +39,31 @@ ApiHelper.interceptors.response.use(
     const loadingScreenStore = useLoadingScreenStore();
     console.log(error);
 
-    if (error.response) {
-      toastStore.setToast(
-        MESSAGE_TYPE.ERROR,
-        error.response.data.StatusCode,
-        error.response.data.Message
-      );
+    if (error.code == "ERR_NETWORK") {
+      toastStore.setToast(MESSAGE_TYPE.ERROR, error.code, error.message);
     }
+
+    if (error.response) {
+      if (error.response.data) {
+        const { data } = error.response;
+        console.log(data.errors.Name);
+
+        let message: string = data.Message || "";
+        if (data.errors.Name.length > 0) {
+          data.errors.Name.forEach((e: string) => {
+            console.log(e);
+            message = `${message} \n ${e}`;
+          });
+        }
+
+        toastStore.setToast(
+          MESSAGE_TYPE.ERROR,
+          data.StatusCode || data.status,
+          message
+        );
+      }
+    }
+
     loadingScreenStore.setIsLoading(false);
     return Promise.reject(error);
   }
