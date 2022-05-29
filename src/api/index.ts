@@ -2,7 +2,7 @@ import { MESSAGE_TYPE, useToastMessageStore } from "./../stores/ToastMessage";
 import axios from "axios";
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 const ApiHelper = axios.create({
-  baseURL: "https://localhost:44390/api",
+  baseURL: "https://localhost:44335/api",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -41,21 +41,21 @@ ApiHelper.interceptors.response.use(
 
     if (error.code == "ERR_NETWORK") {
       toastStore.setToast(MESSAGE_TYPE.ERROR, error.code, error.message);
+      loadingScreenStore.setIsLoading(false);
+      return Promise.reject(error);
     }
 
     if (error.response) {
       if (error.response.data) {
         const { data } = error.response;
-        console.log(data.errors.Name);
 
         let message: string = data.Message || "";
-        if (data.errors.Name.length > 0) {
+        if (data.errors && data.errors.Name && data.errors.Name.length > 0) {
           data.errors.Name.forEach((e: string) => {
             console.log(e);
             message = `${message} \n ${e}`;
           });
         }
-
         toastStore.setToast(
           MESSAGE_TYPE.ERROR,
           data.StatusCode || data.status,

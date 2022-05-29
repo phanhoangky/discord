@@ -1,4 +1,11 @@
 export const enum API_URL {
-  AUTHENTICATE = "Auth",
-  ROOM = "Room",
+  BASE_URL = "https://localhost:44335",
+  AUTHENTICATE = "auth",
+  ROOM = "room",
+  USER = "user",
+  MESSAGE = "message",
+}
+
+export const enum CHAT_HUB_METHOD {
+  RECEIVE_MESSAGE = "ReceiveMessage",
 }

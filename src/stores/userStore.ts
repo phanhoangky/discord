@@ -6,50 +6,53 @@ import router from "@/router";
 
 export type UserState = {
   user?: User;
+  usersInRoom: User[];
 };
 
-export const useUserStore = defineStore({
+const useUserStore = defineStore({
   id: "user",
   state: () =>
     ({
       user: undefined,
+      usersInRoom: [],
+      selectedUser: undefined,
     } as UserState),
   getters: {
     getUser: (state) => state.user,
   },
   actions: {
     async SignIn(email: string, password: string) {
-      console.log(email, password);
       const { data } = await ApiHelper.post(`${API_URL.AUTHENTICATE}/login`, {
         email,
         password,
       });
-      console.log("[SignIn] >>>", data);
       document.cookie = data.token;
       this.user = data.user;
-      console.log("[Cookie] >>>>", document.cookie);
 
       router.push({ name: "home" });
     },
     async SignUp(model: SignUpModel) {
-      console.log(model);
-      // const { data } = await ApiHelper.post(
-      //   `${API_URL.AUTHENTICATE}/register`,
-      //   { ...model }
-      // );
       await ApiHelper.post(`${API_URL.AUTHENTICATE}/register`, model).then(
         (res) => {
-          console.log(res);
-          console.log("[Created]", res);
-
           if (res.data.id) {
             router.push({ name: "SignIn" });
           }
         }
       );
     },
+    async fetchUsersInRoom(roomId: string) {
+      const { data } = await ApiHelper.get(`${API_URL.USER}`);
+      this.usersInRoom = data;
+    },
     setUser(value: User) {
       this.user = value;
     },
+    setUsersInRoom(values: User[]) {
+      this.usersInRoom = values;
+    },
   },
 });
+
+// ChatHub.start();
+
+export default useUserStore;

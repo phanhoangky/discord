@@ -69,7 +69,7 @@ import { Form, Field, ErrorMessage } from "vee-validate";
 import { mapActions } from "pinia";
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 import * as yup from "yup";
-import { useUserStore } from "@/stores/UserStore";
+import useUserStore from "@/stores/UserStore";
 
 export default defineComponent({
   components: {

@@ -1,7 +1,10 @@
 <template>
   <div class="grid-layout">
     <main class="main">
-      <ListMessagesComponent></ListMessagesComponent>
+      <Transition>
+        <ListMessagesComponent v-if="isShowChatWindow"></ListMessagesComponent>
+        <img src="@/assets/defaultbackground.jpg" v-else />
+      </Transition>
     </main>
     <aside class="sidebar">
       <UsersInRoomComponent></UsersInRoomComponent>
@@ -17,6 +20,8 @@ import { defineComponent } from "vue";
 import ListMessagesComponent from "./components/ListMessagesComponent.vue";
 import UsersInRoomComponent from "./components/UsersInRoomComponent.vue";
 import ChatInputComponent from "./components/ChatInputComponent.vue";
+import { mapActions, mapState } from "pinia";
+import useMessageStore from "@/stores/MessageStore";
 export default defineComponent({
   setup() {
     return {};
@@ -25,6 +30,33 @@ export default defineComponent({
     ListMessagesComponent,
     UsersInRoomComponent,
     ChatInputComponent,
+  },
+  computed: {
+    ...mapState(useMessageStore, {
+      selectedRoom: "selectedRoom",
+      selectedUser: "selectedUser",
+    }),
+    isShowChatWindow() {
+      if (this.selectedRoom == undefined && this.selectedUser == undefined) {
+        return false;
+      }
+      return true;
+    },
+  },
+  methods: {
+    ...mapActions(useMessageStore, {
+      fetchMessage: "fetchMessage",
+    }),
+  },
+  watch: {
+    async selectedRoom(newValue, oldValue) {
+      console.log(newValue);
+
+      await this.fetchMessage();
+    },
+  },
+  mounted() {
+    console.log("[Dashboard] >>> start", this.$chatHub);
   },
 });
 </script>
@@ -38,19 +70,28 @@ export default defineComponent({
     "footer";
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 50px;
-  padding: 1em;
   transition: all 0.5s ease;
   main {
     grid-area: main;
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
   aside {
     grid-area: sidebar;
-    overflow: hidden;
     width: 0;
     height: 0;
+    &.sidebar {
+      background-color: var(--vt-c-navbar-bg-color);
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
   }
   footer {
     grid-area: footer;
+    display: flex;
+    padding: 5px;
   }
 }
 .message {
@@ -66,7 +107,7 @@ export default defineComponent({
     aside {
       width: 200px;
       height: auto;
-      padding: 1em 0 1em 1em;
+      padding-left: 10px;
     }
   }
 }

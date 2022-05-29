@@ -12,9 +12,9 @@
         </router-view>
       </slot>
     </main>
-    <footer class="footer">
+    <!-- <footer class="footer">
       <slot name="footer"></slot>
-    </footer>
+    </footer> -->
     <aside class="sidenav">
       <slot name="sidenav">
         <SideNavigation></SideNavigation>
@@ -27,13 +27,22 @@
 import { defineComponent } from "vue";
 import SideNavigation from "../components/SideNavigation/SideNavigation.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
+import { mapActions } from "pinia";
+import useMessageStore from "@/stores/MessageStore";
 
 export default defineComponent({
   setup() {
     return {};
   },
+  methods: {
+    ...mapActions(useMessageStore, {
+      receiveMessage: "receiveMessage",
+    }),
+  },
   created() {
     console.log("Main Layout [Created]");
+    this.$chatHub.start();
+    this.$chatHub.client.on("ReceiveMessage", this.receiveMessage);
   },
   components: { SideNavigation, HeaderComponent },
 });
@@ -58,7 +67,8 @@ export default defineComponent({
 }
 .main {
   grid-area: main;
-  height: calc(100% - 50px);
+  max-height: calc(100%);
+  overflow-y: hidden;
 }
 .footer {
   grid-area: footer;
@@ -84,7 +94,7 @@ export default defineComponent({
   transform: translateX(100px);
 }
 
-@media only screen and (min-width: 46.785em) {
+@media only screen and (min-width: 40em) {
   .grid-template {
     display: grid;
     grid-template-areas:

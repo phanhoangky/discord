@@ -1,3 +1,4 @@
+import type { User } from "./models/User";
 import type { CreateRoomModel, Room } from "./models/Room";
 import { defineStore } from "pinia";
 import ApiHelper from "@/api";
@@ -7,7 +8,6 @@ export interface RoomStoreState {
   rooms: Room[];
   showEditModal: boolean;
   showCreateModal: boolean;
-  selectedRoom?: Room;
   createRoomModel?: CreateRoomModel;
 }
 
@@ -22,9 +22,6 @@ export const useRoomStore = defineStore({
       createRoomModel: undefined,
     } as RoomStoreState),
   actions: {
-    setRooms(values: Room[]) {
-      this.rooms = values;
-    },
     setShowEditModal(value: boolean) {
       this.showEditModal = value;
     },
@@ -37,9 +34,9 @@ export const useRoomStore = defineStore({
     async fetchRooms() {
       const { data } = await ApiHelper.get(`${API_URL.ROOM}`);
       this.rooms = data;
-      if (data.length > 0) {
-        this.selectedRoom = data[0];
-      }
+      // if (data.length > 0) {
+      //   this.selectedRoom = data[0];
+      // }
     },
     async createRoom(values: any) {
       await ApiHelper.post(`${API_URL.ROOM}`, { ...values });
@@ -52,9 +49,6 @@ export const useRoomStore = defineStore({
     async deleteRoom(id: string) {
       await ApiHelper.delete(`${API_URL.ROOM}/${id}`);
       await this.fetchRooms();
-    },
-    setSelectedRoom(value: Room) {
-      this.selectedRoom = value;
     },
   },
 });

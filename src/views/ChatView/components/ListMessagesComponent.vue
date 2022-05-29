@@ -1,49 +1,36 @@
 <template>
-  <section class="message" v-for="item in listUser" :key="item.id">
-    <header class="header">
-      <span class="username">{{ item.name }}</span> |
-      <span>{{ item.date }}</span>
-    </header>
-    <aside class="avatar">
-      <img src="@/assets/logo.svg" />
-    </aside>
-    <main class="message-content">
-      {{ item.content }}
-    </main>
-  </section>
+  <TransitionGroup name="list">
+    <section class="message" v-for="item in messages" :key="item.id">
+      <header class="header">
+        <span class="username">{{ item.senderId }}</span> |
+        <span>{{ item.id }}</span>
+      </header>
+      <aside class="avatar">
+        <img src="@/assets/logo.svg" />
+      </aside>
+      <main class="message-content">
+        {{ item.messageContent }}
+      </main>
+    </section>
+  </TransitionGroup>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import type { Message } from "@/stores/models/Message";
-import { v4 as uuidv4 } from "uuid";
-
+import { mapState } from "pinia";
+import useMessageStore from "@/stores/MessageStore";
 export default defineComponent({
+  setup() {
+    return {};
+  },
+  components: {},
   data: () => ({
     users: [],
   }),
   computed: {
-    listUser(): Message[] {
-      return [
-        {
-          id: uuidv4(),
-          photoURL: "",
-          content: "Hi there i'm PHK",
-          date: new Date().getDate(),
-          name: "PHK",
-        },
-        {
-          id: uuidv4(),
-          photoURL: "",
-          content: "Hello i'm FBK",
-          date: new Date().getDate(),
-          name: "FBK",
-        },
-      ];
-    },
-  },
-  setup() {
-    return {};
+    ...mapState(useMessageStore, {
+      messages: "messages",
+    }),
   },
 });
 </script>
@@ -90,6 +77,22 @@ section {
       font-size: 1.2em;
     }
   }
+}
+
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-leave-active {
+  position: absolute;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(-30px);
 }
 
 @media only screen and (min-width: 40em) {

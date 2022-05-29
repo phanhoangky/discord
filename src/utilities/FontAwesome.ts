@@ -10,9 +10,12 @@ import {
   faCircleXmark,
   faCircleCheck,
   faPlusSquare,
+  faPlusCircle,
   faDungeon,
   faTrashCan,
   faGear,
+  faFaceKissBeam,
+  faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* import font awesome icon component */
@@ -26,4 +29,7 @@ library.add(faPlusSquare);
 library.add(faTrashCan);
 library.add(faDungeon);
 library.add(faGear);
+library.add(faPlusCircle);
+library.add(faFaceKissBeam);
+library.add(faUserPlus);
 export default FontAwesomeIcon;

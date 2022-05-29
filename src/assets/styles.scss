@@ -35,6 +35,20 @@ button {
   }
 }
 
+.icon {
+  color: var(--vt-c-white);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  &.button {
+    &:hover {
+      box-shadow: 0 0 10px 5px var(--vt-c-blue-light-2);
+      // outline: var(--vt-c-blue-light-2) solid 2px;
+      // transform: translateY(-5px);
+    }
+  }
+}
+
 .error-message {
   color: var(--vt-c-text-error);
   text-shadow: 2px 2px 5px var(--vt-c-white-soft), -2px -2px 5px var(--vt-c-blue-light-2);
@@ -45,7 +59,8 @@ button {
 
 input {
   transition: box-shadow 0.3s ease;
-  border-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
   outline: none;
   border: 0;
   padding: 1em;

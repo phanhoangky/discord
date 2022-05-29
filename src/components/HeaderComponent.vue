@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { useUserStore } from "@/stores/UserStore";
+import useUserStore from "@/stores/UserStore";
 import { mapState } from "pinia";
 import { defineComponent } from "vue";
 

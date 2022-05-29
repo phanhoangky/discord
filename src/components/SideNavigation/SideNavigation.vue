@@ -1,14 +1,16 @@
 <template>
-  <div class="logo">
+  <div class="logo" @click="reset">
     <img src="@/assets/logo.svg" />
   </div>
   <ul class="menu-container">
-    <button class="add-room-btn" @click="setShowCreateModal(true)">
-      <font-awesome-icon icon="plus-square"></font-awesome-icon>
+    <button class="add-room-btn click-ani" @click="() => {}">
+      <font-awesome-icon icon="user-plus"></font-awesome-icon>
     </button>
 
-    <!-- <router-link class="menu-item" to="/">Home</router-link>
-    <router-link class="menu-item" to="/Device">Device</router-link> -->
+    <button class="add-room-btn click-ani" @click="setShowCreateModal(true)">
+      <font-awesome-icon icon="plus-square"></font-awesome-icon>
+    </button>
+    <router-link to="/user-profile" class="menu-item">User Profile</router-link>
     <li
       class="menu-item"
       v-for="item in rooms"
@@ -21,16 +23,7 @@
       "
     >
       <span>{{ item.name }}</span>
-      <!-- <button
-        class="cancel edit-btn"
-        @click="
-          () => {
-            setSelectedRoom(item);
-            setShowEditModal(true);
-          }
-        "
-      >
-      </button> -->
+
       <font-awesome-icon
         icon="gear"
         class="edit-btn"
@@ -50,54 +43,19 @@
 <script lang="ts">
 import { useRoomStore } from "@/stores/RoomStore";
 import { mapActions, mapState } from "pinia";
-import { defineComponent, ref } from "vue";
-// import LoadingScreen from "./common/LoadingScreen.vue";
+import { defineComponent } from "vue";
 import { object, string } from "yup";
-import { useForm } from "vee-validate";
-import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 import EditRoomModal from "./Modal/EditRoomModal.vue";
 import CreateRoomModal from "./Modal/CreateRoomModal.vue";
+import useMessageStore from "@/stores/MessageStore";
 export default defineComponent({
   setup() {
-    const { handleSubmit } = useForm();
     const schema = object({
       name: string().required().max(50),
     });
-    let isShow = ref(false);
-    const roomStore = useRoomStore();
-    const loadingSreenStore = useLoadingScreenStore();
-    const createRoom = handleSubmit(async (values) => {
-      loadingSreenStore.setIsLoading(true);
-      await roomStore.createRoom(values).then(() => {
-        loadingSreenStore.setIsLoading(false);
-        isShow.value = false;
-      });
-    });
     return {
       schema,
-      createRoom,
-      isShow,
     };
-  },
-
-  computed: {
-    ...mapState(useRoomStore, {
-      rooms: "rooms",
-      selectedRoom: "selectedRoom",
-      showCreateModal: "showCreateModal",
-      showEditModal: "showEditModal",
-    }),
-  },
-  methods: {
-    ...mapActions(useRoomStore, {
-      fetchRooms: "fetchRooms",
-      setSelectedRoom: "setSelectedRoom",
-      setShowCreateModal: "setShowCreateModal",
-      setShowEditModal: "setShowEditModal",
-    }),
-  },
-  async created() {
-    await this.fetchRooms();
   },
   components: {
     // LoadingScreen,
@@ -106,6 +64,33 @@ export default defineComponent({
     // ErrorMessage,
     EditRoomModal,
     CreateRoomModal,
+  },
+  computed: {
+    ...mapState(useRoomStore, {
+      rooms: "rooms",
+    }),
+    ...mapState(useMessageStore, {
+      selectedRoom: "selectedRoom",
+    }),
+  },
+  methods: {
+    ...mapActions(useRoomStore, {
+      fetchRooms: "fetchRooms",
+      setShowCreateModal: "setShowCreateModal",
+      setShowEditModal: "setShowEditModal",
+    }),
+    ...mapActions(useMessageStore, {
+      setSelectedRoom: "setSelectedRoom",
+      setSelectedUser: "setSelectedUser",
+    }),
+    reset() {
+      this.setSelectedRoom(undefined);
+      this.setSelectedUser(undefined);
+    },
+  },
+
+  async created() {
+    await this.fetchRooms();
   },
 });
 </script>

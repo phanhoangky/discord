@@ -1,4 +1,4 @@
-import { useUserStore } from "@/stores/UserStore";
+import useUserStore from "@/stores/UserStore";
 import { createRouter, createWebHistory } from "vue-router";
 import JWT from "jwt-decode";
 const routes = [
@@ -14,6 +14,14 @@ const routes = [
     path: "/Device",
     name: "Device",
     component: () => import("@/views/DeviceView.vue"),
+    meta: {
+      layout: "MainLayout",
+    },
+  },
+  {
+    path: "/user-profile",
+    name: "UserProfile",
+    component: () => import("@/views/UserProfile/UserProfileView.vue"),
     meta: {
       layout: "MainLayout",
     },
@@ -49,23 +57,31 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const store = useUserStore();
-  // if (!document.cookie) {
-  //   router.push("sign-in");
-  // }
-  // if (!store.user) {
-  //   const jwt: any = JWT(document.cookie);
-  //   if (jwt && jwt.actort) {
-  //     const actor = JSON.parse(jwt?.actort);
-  //     console.log(actor, store.user);
-  //     store.setUser(actor);
-  //     const anonymous: string[] = ["SignUp", "SignIn"];
-  //     if (!actor && to.name && anonymous.includes(to.name.toString())) {
-  //       router.push("sign-in");
-  //       return;
-  //     }
-  //   }
-  // }
+  console.log(store.user);
 
+  if (!store.user) {
+    // console.log("[Cookie]", document.cookie);
+    // if (document.cookie) {
+    //   const jwt: any = JWT(document.cookie);
+    //   if (jwt && jwt.actort) {
+    //     const actor = JSON.parse(jwt?.actort);
+    //     console.log(actor, store.user);
+    //     store.setUser(actor);
+    //     next();
+    //   }
+    // } else {
+    //   const anonymous: string[] = ["SignUp", "SignIn"];
+    //   if (to.name && !anonymous.includes(to.name.toString())) {
+    //     console.log("[Push Login]");
+    //     router.push("sign-in");
+    //   }
+    // }
+    const anonymous: string[] = ["SignUp", "SignIn"];
+    if (to.name && !anonymous.includes(to.name.toString())) {
+      console.log("[Push Login]");
+      router.push("sign-in");
+    }
+  }
   next();
 });
 export default router;
