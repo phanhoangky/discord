@@ -7,7 +7,7 @@ const ApiHelper = axios.create({
     Accept: "application/json",
     "Content-Type": "application/json",
   },
-  timeout: 10 * 1000,
+  timeout: 60 * 1000,
 });
 ApiHelper.interceptors.request.use((config) => {
   const jwtToken = document.cookie;

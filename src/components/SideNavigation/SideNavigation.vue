@@ -29,7 +29,6 @@
         class="edit-btn"
         @click="
           () => {
-            setSelectedRoom(item);
             setShowEditModal(true);
           }
         "

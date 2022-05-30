@@ -24,6 +24,20 @@ import { mapActions, mapState } from "pinia";
 import useMessageStore from "@/stores/MessageStore";
 export default defineComponent({
   setup() {
+    const messageStore = useMessageStore();
+    messageStore.$subscribe((mutation, state) => {
+      console.log(mutation, state);
+      console.log(
+        mutation.events.key === "selectedUser",
+        mutation.events.key === "selectedRoom"
+      );
+      if (
+        mutation.events.key === "selectedUser" ||
+        mutation.events.key === "selectedRoom"
+      ) {
+        messageStore.fetchMessage();
+      }
+    });
     return {};
   },
   components: {
@@ -48,13 +62,6 @@ export default defineComponent({
       fetchMessage: "fetchMessage",
     }),
   },
-  watch: {
-    async selectedRoom(newValue, oldValue) {
-      console.log(newValue);
-
-      await this.fetchMessage();
-    },
-  },
   mounted() {
     console.log("[Dashboard] >>> start", this.$chatHub);
   },
@@ -73,6 +80,7 @@ export default defineComponent({
   transition: all 0.5s ease;
   main {
     grid-area: main;
+    overflow-y: scroll;
     img {
       width: 100%;
       height: 100%;

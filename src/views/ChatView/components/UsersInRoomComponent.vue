@@ -1,9 +1,7 @@
 <template>
-  <section v-for="user in usersInRoom" :key="user.id">
+  <section v-for="user in usersInRoom" :key="user.id" @click="selectUser(user)">
     <img src="@/assets/logo.svg" />
-    <div class="username" @click="selectUser(user)">
-      {{ user.firstName }} {{ user.lastName }}
-    </div>
+    <div class="username">{{ user.firstName }} {{ user.lastName }}</div>
   </section>
 </template>
 

@@ -63,8 +63,8 @@ const useMessageStore = defineStore({
       this.selectedRoom = undefined;
     },
     receiveMessage(values: any) {
-      console.log("[Store Receive]");
-      this.messages = [...this.messages, ...values];
+      console.log("[Store Receive]>>>", values);
+      this.messages = [...this.messages, values];
     },
   },
 });

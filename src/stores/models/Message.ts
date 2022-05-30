@@ -1,7 +1,9 @@
 import type { BaseModel } from "./BaseModel";
+import type { User } from "./User";
 
 export interface Message extends BaseModel {
   senderId: string;
+  sender: User;
   messageContent: string;
   recepientId?: string;
   roomId?: string;

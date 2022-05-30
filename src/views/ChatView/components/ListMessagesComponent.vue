@@ -1,9 +1,12 @@
 <template>
-  <TransitionGroup name="list">
+  <TransitionGroup name="list" v-if="messages.length > 0">
     <section class="message" v-for="item in messages" :key="item.id">
       <header class="header">
-        <span class="username">{{ item.senderId }}</span> |
-        <span>{{ item.id }}</span>
+        <span class="username"
+          >{{ item.sender.firstName }} {{ item.sender.lastName }}</span
+        >
+        |
+        <span>{{ new Date(item.createdTime) }} </span>
       </header>
       <aside class="avatar">
         <img src="@/assets/logo.svg" />
