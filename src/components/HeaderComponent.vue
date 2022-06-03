@@ -1,5 +1,9 @@
 <template>
   <div class="container">
+    <!-- <div class="header__item icon">
+      <font-awesome-icon icon="bell"></font-awesome-icon>
+    </div> -->
+    <InvitationDrawer class="header__item icon"></InvitationDrawer>
     <div class="user__profile header__item">
       <img src="@/assets/logo.svg" />
       <span>{{ user?.firstName }} {{ user?.lastName }}</span>
@@ -14,6 +18,7 @@
 import useUserStore from "@/stores/UserStore";
 import { mapState } from "pinia";
 import { defineComponent } from "vue";
+import InvitationDrawer from "./Header/Modals/InvitationDrawer.vue";
 
 export default defineComponent({
   setup() {
@@ -24,6 +29,7 @@ export default defineComponent({
       user: "user",
     }),
   },
+  components: { InvitationDrawer },
 });
 </script>
 

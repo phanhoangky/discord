@@ -1,12 +1,13 @@
 <template>
   <Teleport to="#modal">
     <Transition name="scale">
-      <div class="modal-backdrop" v-if="show">
+      <div class="modal-backdrop" v-if="show" @click.stop="$emit('close')">
         <div
           class="modal"
           :style="{
-            width: width,
+            // width: width,
           }"
+          @click.stop="() => {}"
         >
           <header>
             <slot name="header">
@@ -23,7 +24,7 @@
           </main>
           <footer>
             <slot name="footer">
-              <button class="cancel-btn cancel" @click="$emit('close')">
+              <button class="cancel-btn cancel" @click.stop="$emit('close')">
                 <slot name="cancel-button"> Cancel </slot>
               </button>
               <button class="submit-btn primary" @click="$emit('submit')">
@@ -59,6 +60,11 @@ export default defineComponent({
   setup() {
     return {};
   },
+  computed: {
+    modalClassStyle() {
+      return ``;
+    },
+  },
   methods: {},
 });
 </script>
@@ -86,7 +92,8 @@ export default defineComponent({
     z-index: 100;
     border-radius: 10px;
     box-shadow: 0px 0px 20px 5px var(--vt-c-white-soft);
-    background-color: var(--vt-c-divider-dark-1);
+    background-color: var(--vt-c-modal-bg);
+    color: var(--vt-c-modal-text);
     header {
       border-bottom: 2px solid rgb(25, 25, 25);
       align-items: center;
@@ -94,10 +101,9 @@ export default defineComponent({
       padding: 1em;
       font-size: 1.2em;
       font-weight: bolder;
-      color: var(--vt-c-title-color);
+
       .close-icon {
         position: absolute;
-        color: var(--vt-c-white-soft);
         top: 5px;
         right: 5px;
         font-size: 1.5em;

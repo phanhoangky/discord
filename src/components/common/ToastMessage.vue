@@ -114,12 +114,7 @@ export default defineComponent({
   opacity: 0;
   transform: scale(1.1);
 }
-.circle-xmark {
-  color: var(--vt-c-text-error);
-}
-.circle-check {
-  color: var(--vt-c-text-success);
-}
+
 .toast-warning {
 }
 .toast-success {

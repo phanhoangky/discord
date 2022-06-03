@@ -2,15 +2,15 @@
   <div class="logo" @click="reset">
     <img src="@/assets/logo.svg" />
   </div>
-  <ul class="menu-container">
-    <button class="add-room-btn click-ani" @click="() => {}">
-      <font-awesome-icon icon="user-plus"></font-awesome-icon>
-    </button>
+  <button class="add-room-btn click-ani" @click="() => {}">
+    <font-awesome-icon icon="user-plus"></font-awesome-icon>
+  </button>
 
-    <button class="add-room-btn click-ani" @click="setShowCreateModal(true)">
-      <font-awesome-icon icon="plus-square"></font-awesome-icon>
-    </button>
-    <router-link to="/user-profile" class="menu-item">User Profile</router-link>
+  <button class="add-room-btn click-ani" @click="setShowCreateModal(true)">
+    <font-awesome-icon icon="plus-square"></font-awesome-icon>
+  </button>
+
+  <ul class="menu-container">
     <li
       class="menu-item"
       v-for="item in rooms"
@@ -19,6 +19,7 @@
       @click="
         () => {
           setSelectedRoom(item);
+          setRoom(item);
         }
       "
     >
@@ -47,6 +48,7 @@ import { object, string } from "yup";
 import EditRoomModal from "./Modal/EditRoomModal.vue";
 import CreateRoomModal from "./Modal/CreateRoomModal.vue";
 import useMessageStore from "@/stores/MessageStore";
+import InviteUsersModal from "./Modal/InviteUsersModal.vue";
 export default defineComponent({
   setup() {
     const schema = object({
@@ -77,6 +79,7 @@ export default defineComponent({
       fetchRooms: "fetchRooms",
       setShowCreateModal: "setShowCreateModal",
       setShowEditModal: "setShowEditModal",
+      setRoom: "setSelectedRoom",
     }),
     ...mapActions(useMessageStore, {
       setSelectedRoom: "setSelectedRoom",
@@ -96,10 +99,10 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .logo {
-  width: 100%;
+  width: 50%;
   background-color: var(--vt-c-divider-dark-1);
   border-radius: 100%;
-  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
   overflow: hidden;
   transition: all 0.5s ease;
   padding: 1em;
@@ -107,18 +110,28 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   img {
-    width: 60%;
+    width: 100%;
+    aspect-ratio: 1 / 1;
   }
   &:hover {
     background-color: var(--vt-c-blue-light-2);
     border-radius: 25%;
   }
 }
+button {
+  width: 100%;
+  margin-bottom: 5px;
+  flex-shrink: 0;
+}
 .menu-container {
   display: flex;
   flex-direction: column;
   width: 100%;
   padding: 5px;
+  flex: 1;
+  flex-shrink: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
   .add-room-btn {
     margin-bottom: 10px;
     font-size: 1.2em;
@@ -159,5 +172,8 @@ export default defineComponent({
       }
     }
   }
+}
+
+@media only screen and (min-width: 40em) {
 }
 </style>

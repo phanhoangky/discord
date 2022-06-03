@@ -1,4 +1,3 @@
-import type { User } from "./models/User";
 import type { CreateRoomModel, Room } from "./models/Room";
 import { defineStore } from "pinia";
 import ApiHelper from "@/api";
@@ -8,6 +7,7 @@ export interface RoomStoreState {
   rooms: Room[];
   showEditModal: boolean;
   showCreateModal: boolean;
+  selectedRoom?: Room;
   createRoomModel?: CreateRoomModel;
 }
 
@@ -30,6 +30,9 @@ export const useRoomStore = defineStore({
     },
     setCreateRoomModel(values: any) {
       this.createRoomModel = { ...this.createRoomModel, ...values };
+    },
+    setSelectedRoom(values: any) {
+      this.selectedRoom = values;
     },
     async fetchRooms() {
       const { data } = await ApiHelper.get(`${API_URL.ROOM}`);

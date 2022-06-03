@@ -9,7 +9,13 @@ export class ChatHub {
   public client: HubConnection;
   constructor() {
     this.client = new HubConnectionBuilder()
-      .withUrl(`${API_URL.BASE_URL}/hubs`)
+      .withUrl(`${API_URL.BASE_URL}/hubs`, {
+        accessTokenFactory: () => {
+          // console.log("[ChatHub >>>>]", document.cookie);
+
+          return `${document.cookie}`;
+        },
+      })
       .withAutomaticReconnect()
       .build();
   }
@@ -19,6 +25,7 @@ export class ChatHub {
     // this.client.on("ReceiveMessage", (values) => {
     // messageStore.receiveMessage(values);
     // });
+
     await this.client.start();
     console.log("[Client] start listening >>>>", this.client.connectionId);
   }

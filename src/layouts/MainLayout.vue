@@ -56,32 +56,39 @@ export default defineComponent({
   grid-template-columns: 1fr;
   grid-template-rows: 50px 1fr;
   height: 100vh;
-}
+  transition: all 0.4s ease;
 
-.header {
-  grid-area: header;
-  height: 50px;
-  // padding: 1em;
-  background-color: var(--vt-c-header-bg-color);
-  color: var(--vt-c-header-text-color);
-}
-.main {
-  grid-area: main;
-  max-height: calc(100%);
-  overflow-y: hidden;
-}
-.footer {
-  grid-area: footer;
-  background-color: var(--vt-c-divider-light-1);
-}
-.sidenav {
-  grid-area: sidenav;
-  padding: 0;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-  background-color: var(--vt-c-navbar-bg-color);
-  color: var(--vt-c-navbar-text-color);
+  .header {
+    grid-area: header;
+    height: 50px;
+    // padding: 1em;
+    background-color: var(--vt-c-header-bg-color);
+    color: var(--vt-c-header-text-color);
+  }
+  .main {
+    grid-area: main;
+    height: calc(100% - 50px);
+    overflow-y: hidden;
+    transition: all 0.4s ease;
+  }
+  .footer {
+    grid-area: footer;
+    background-color: var(--vt-c-divider-light-1);
+    transition: all 0.4s ease;
+  }
+  .sidenav {
+    grid-area: sidenav;
+    padding: 0;
+    width: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--vt-c-navbar-bg-color);
+    color: var(--vt-c-navbar-text-color);
+    transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 .slide-enter-active,
@@ -101,13 +108,16 @@ export default defineComponent({
       "sidenav header"
       "sidenav main";
     grid-template-columns: 150px 1fr;
-  }
-  .sidenav {
-    position: relative;
-    width: 150px;
-    padding: 0.5em;
-    height: auto;
-    border-left: 1px solid var(--vt-c-black);
+    .sidenav {
+      position: relative;
+      width: 150px;
+      padding: 0.5em;
+      // height: auto;
+      border-left: 1px solid var(--vt-c-black);
+    }
+    .main {
+      height: calc(100%);
+    }
   }
 }
 </style>

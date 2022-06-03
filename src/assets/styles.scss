@@ -40,6 +40,12 @@ button {
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   transition: all 0.3s ease;
+  &.circle-xmark {
+    color: var(--vt-c-text-error);
+  }
+  &.circle-check {
+    color: var(--vt-c-text-success);
+  }
   &.button {
     &:hover {
       box-shadow: 0 0 10px 5px var(--vt-c-blue-light-2);
@@ -64,6 +70,7 @@ input {
   outline: none;
   border: 0;
   padding: 1em;
+  background-color: var(--vt-c-input-bg);
   &:focus {
     box-shadow: 0px 0px 10px 5px var(--vt-c-blue-light-2);
   }
@@ -74,7 +81,7 @@ form {
   width: 100%;
   flex-direction: column;
   .field-group {
-    color: var(--vt-c-white);
+    // color: var(--vt-c-white);
     width: 100%;
     display: flex;
     label {
@@ -85,4 +92,40 @@ form {
       width: 100%;
     }
   }
+}
+
+.list-enter-active,
+.list-leave-active,
+.list-move {
+  transition: all 0.3s ease;
+}
+.list-leave-active {
+  position: absolute;
+}
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+/* Scrollbar width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Scrollbar Track */
+::-webkit-scrollbar-track {
+  background: var(--vt-c-divider-dark-1);
+  border-radius: 10px;
+}
+
+/* Scrollbar Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--vt-c-black-mute);
+  border-radius: 10px;
+}
+
+/* Scrollbar Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

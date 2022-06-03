@@ -1,17 +1,22 @@
 <template>
   <BaseModal
     modal-name="CREATE NEW ROOM"
-    @close="setIsShow(false)"
+    @close="
+      () => {
+        setIsShow(false);
+        resetForm();
+      }
+    "
     :width="`30%`"
     :show="roomStore.showCreateModal"
     @submit="onSubmit"
   >
-    <form ref="form" @submit="onSubmit" :validation-schema="schema">
+    <form ref="form" @submit="onSubmit">
       <div class="field-group">
         <label for="name">Name</label>
-        <Field name="name" id="name"></Field>
+        <input name="name" id="name" v-model="name" />
       </div>
-      <ErrorMessage name="name" class="error-message"></ErrorMessage>
+      <span class="error-message">{{ nameError }}</span>
     </form>
   </BaseModal>
 </template>
@@ -21,65 +26,45 @@ import BaseModal from "@/components/common/BaseModal.vue";
 import { useRoomStore } from "@/stores/RoomStore";
 import { mapActions } from "pinia";
 import { defineComponent } from "vue";
-import { Field, ErrorMessage, useForm } from "vee-validate";
-// import LoadingScreen from "./common/LoadingScreen.vue";
+import { useForm, useField } from "vee-validate";
 import { object, string } from "yup";
 export default defineComponent({
   setup() {
     const schema = object({
-      name: string().required().max(50),
+      name: string().required().max(50).min(5),
     });
 
     const roomStore = useRoomStore();
     const setIsShow = (isShow: boolean) => roomStore.setShowCreateModal(isShow);
 
-    const { handleSubmit } = useForm();
+    const { handleSubmit, resetForm } = useForm({
+      validationSchema: schema,
+    });
+    const { value: name, errorMessage: nameError } = useField("name");
     const onSubmit = handleSubmit(async (values) => {
-      await roomStore.createRoom(values);
+      // await roomStore.createRoom(values);
+      console.log("asd");
+
       setIsShow(false);
     });
     return {
       schema,
-      onSubmit,
       roomStore,
+      name,
+      nameError,
+      onSubmit,
+      resetForm,
       setIsShow,
     };
   },
   components: {
-    // LoadingScreen,
     BaseModal,
-    // Form,
-    Field,
-    ErrorMessage,
   },
-  // computed: {
-  //   ...mapState(useRoomStore, {
-  //     rooms: "rooms",
-  //     isShow: "showCreateModal",
-  //     model: "createRoomModel",
-  //   }),
-  // },
+
   methods: {
-    // ...mapActions(useLoadingScreenStore, {
-    //   setLoadingScreen: "setIsLoading",
-    // }),
     ...mapActions(useRoomStore, {
       fetchRooms: "fetchRooms",
-      // setIsShow: "setShowCreateModal",
-      // setCreateRoomModel: "setCreateRoomModel",
-      // createRoom: "createRoom",
     }),
-    //   async onSubmit(values: any) {
-    //     const form = this.$refs.form;
-    //     console.log("[Create Room]", form, values);
-    //     this.setLoadingScreen(true);
-    //     this.createRoom(values).then(() => {
-    //       this.setLoadingScreen(false);
-    //     });
-    //   },
-  },
-  async created() {
-    await this.fetchRooms();
   },
 });
 </script>

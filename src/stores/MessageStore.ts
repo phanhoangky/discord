@@ -12,6 +12,7 @@ import type { User } from "./models/User";
 
 export interface MessageStoreState {
   messages: Message[];
+  totalItem: number;
   selectedRoom?: Room;
   selectedUser?: User;
 }
@@ -21,25 +22,34 @@ const useMessageStore = defineStore({
   state: () =>
     ({
       messages: [],
+      totalItem: 0,
       selectedRoom: undefined,
       selectedUser: undefined,
     } as MessageStoreState),
   actions: {
-    async fetchMessage() {
+    async fetchMessage(): Promise<any> {
       const userStore = useUserStore();
       if (userStore.user) {
         const request: FetchMessageRequest = {
           senderId: userStore.user?.id,
           repepientId: this.selectedUser?.id,
           roomId: this.selectedRoom?.id,
+          currentItemsCount: this.messages.length,
+          currentPage: 0,
+          isInfiniteScroll: true,
+          isPaging: true,
+          itemsPerPage: 10,
         };
         const { data } = await ApiHelper.get(`${API_URL.MESSAGE}`, {
           params: request,
         });
-        console.log("[Fetch Message] >>>>", data);
-
-        this.messages = data;
+        const temp = [...data.results, ...this.messages];
+        console.log("[Fetch Message] >>>>", temp, data);
+        this.totalItem = data.totalCount;
+        this.messages = temp;
+        return data;
       }
+      return null;
     },
 
     async sendMessage(content: string) {

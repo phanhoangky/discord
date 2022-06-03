@@ -1,3 +1,5 @@
+import type { BaseGetRequest } from "./BaseModel";
+
 export interface User {
   id: string;
   firstName: string;
@@ -8,6 +10,7 @@ export interface User {
   createdTime: string;
   updatedTime: string;
   isActive: boolean;
+  isSelected?: boolean;
 }
 
 export interface SignUpModel {
@@ -15,4 +18,8 @@ export interface SignUpModel {
   lastname?: string;
   firstname?: string;
   password: string;
+}
+
+export interface GetUserRequest extends BaseGetRequest {
+  searchName?: string;
 }

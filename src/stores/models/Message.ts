@@ -1,4 +1,4 @@
-import type { BaseModel } from "./BaseModel";
+import type { BaseGetRequest, BaseModel } from "./BaseModel";
 import type { User } from "./User";
 
 export interface Message extends BaseModel {
@@ -17,7 +17,7 @@ export interface SendMessageRequest {
   roomId?: string;
 }
 
-export interface FetchMessageRequest {
+export interface FetchMessageRequest extends BaseGetRequest {
   senderId: string;
   repepientId?: string;
   roomId?: string;

@@ -1,5 +1,5 @@
 <template>
-  <TransitionGroup name="list" v-if="messages.length > 0">
+  <TransitionGroup name="list" tag="div">
     <section class="message" v-for="item in messages" :key="item.id">
       <header class="header">
         <span class="username"
@@ -20,10 +20,13 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { mapState } from "pinia";
+import { mapActions, mapState } from "pinia";
 import useMessageStore from "@/stores/MessageStore";
 export default defineComponent({
   setup() {
+    const messageStore = useMessageStore();
+    // await messageStore.fetchMessage();
+
     return {};
   },
   components: {},
@@ -33,6 +36,11 @@ export default defineComponent({
   computed: {
     ...mapState(useMessageStore, {
       messages: "messages",
+    }),
+  },
+  methods: {
+    ...mapActions(useMessageStore, {
+      fetchMessage: "fetchMessage",
     }),
   },
 });

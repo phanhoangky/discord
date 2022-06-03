@@ -4,6 +4,7 @@ export const enum API_URL {
   ROOM = "room",
   USER = "user",
   MESSAGE = "message",
+  INVITATION = "invitation",
 }
 
 export const enum CHAT_HUB_METHOD {

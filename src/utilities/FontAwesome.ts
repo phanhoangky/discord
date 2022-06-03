@@ -16,6 +16,7 @@ import {
   faGear,
   faFaceKissBeam,
   faUserPlus,
+  faBell,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* import font awesome icon component */
@@ -32,4 +33,5 @@ library.add(faGear);
 library.add(faPlusCircle);
 library.add(faFaceKissBeam);
 library.add(faUserPlus);
+library.add(faBell);
 export default FontAwesomeIcon;

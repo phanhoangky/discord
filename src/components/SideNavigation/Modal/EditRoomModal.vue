@@ -2,15 +2,18 @@
   <BaseModal
     :modal-name="`Edit Room`"
     :show="roomStore.showEditModal"
+    width="30%"
     @close="roomStore.setShowEditModal(false)"
     @submit="onSubmit"
   >
     <form @submit="onSubmit">
       <div class="field-group">
         <label for="name"><span>Name</span></label>
-        <Field name="name" id="name" va></Field>
+        <!-- <Field name="name"></Field> -->
+        <input id="name" name="name" v-model="name" />
       </div>
-      <ErrorMessage name="name" class="error-message"></ErrorMessage>
+      <span class="error-message">{{ nameError }}</span>
+      <!-- <ErrorMessage name="name" class="error-message"></ErrorMessage> -->
     </form>
     <template #footer>
       <ConfirmPopup
@@ -33,18 +36,36 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import BaseModal from "@/components/common/BaseModal.vue";
-import { Form, Field, ErrorMessage, useForm } from "vee-validate";
+import { Field, ErrorMessage, useForm, useField } from "vee-validate";
 import { mapActions, mapState } from "pinia";
 import { useRoomStore } from "@/stores/RoomStore";
+import * as yup from "yup";
 import ConfirmPopup from "../../common/ConfirmPopup.vue";
 export default defineComponent({
   setup() {
     const roomStore = useRoomStore();
-    const { setValues, handleSubmit } = useForm();
-    const selectedRoom = roomStore.selectedRoom;
-    setValues({
-      name: selectedRoom?.name,
+    const schema = yup.object({
+      name: yup.string().required().max(50).min(5),
     });
+
+    const { setValues, handleSubmit } = useForm({
+      validationSchema: schema,
+      // initialValues: {
+      //   name: roomStore.selectedRoom?.name,
+      // },
+    });
+
+    const { value: name, errorMessage: nameError } = useField("name");
+
+    roomStore.$subscribe((mutation, state) => {
+      if (state.showEditModal == true) {
+        setValues({
+          name: roomStore.selectedRoom?.name,
+        });
+      }
+    });
+
+    // Method
     const onSubmit = handleSubmit(async (values) => {
       roomStore
         .editRoom({ id: roomStore.selectedRoom?.id, ...values })
@@ -52,11 +73,12 @@ export default defineComponent({
           roomStore.setShowEditModal(false);
         });
     });
+
     const deleteRoom = async () => {
       console.log("Delete");
 
-      if (selectedRoom) {
-        await roomStore.deleteRoom(selectedRoom.id);
+      if (roomStore.selectedRoom) {
+        await roomStore.deleteRoom(roomStore.selectedRoom.id);
         roomStore.setShowEditModal(false);
       }
     };
@@ -64,12 +86,14 @@ export default defineComponent({
       roomStore,
       onSubmit,
       deleteRoom,
+      name,
+      nameError,
     };
   },
   components: {
     BaseModal,
-    Field,
-    ErrorMessage,
+    // Field,
+    // ErrorMessage,
     ConfirmPopup,
   },
   computed: {

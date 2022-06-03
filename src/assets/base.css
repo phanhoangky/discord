@@ -54,6 +54,22 @@
   /*Modal*/
   --vt-c-modal-bg: #ffffff;
   --vt-c-modal-text: #1c1c1c;
+
+  /* Drawer */
+  --vt-c-drawer-backdrop: #2e2e2e99;
+  --vt-c-drawer-bg: #ffffff;
+  --vt-c-drawer-text: #262626;
+
+  /* List item */
+  --vt-c-list-item-bg: #ffffff;
+  --vt-c-list-item-text: #ffffff;
+  --vt-c-list-item-bg-hover: rgba(84, 84, 84, 0.65);
+
+  /*Input */
+  --vt-c-input-bg: #ffffff;
+  --vt-c-input-text: #ffffff;
+  --vt-c-input-bg-hover: #ffffff;
+  --vt-c-input-text-hover: #ffffff;
 }
 
 /* semantic color variables for this project */
