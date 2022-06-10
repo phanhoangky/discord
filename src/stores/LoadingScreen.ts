@@ -3,6 +3,7 @@ export const useLoadingScreenStore = defineStore({
   id: "LoadingScreen",
   state: () => ({
     isLoading: false,
+    progress: 0,
   }),
   getters: {
     getIsLoading: (state) => {
@@ -11,7 +12,10 @@ export const useLoadingScreenStore = defineStore({
   },
   actions: {
     setIsLoading(value: boolean) {
-      this.isLoading = value;
+      this.$patch({
+        isLoading: value,
+        progress: 0,
+      });
     },
   },
 });

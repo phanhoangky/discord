@@ -4,8 +4,11 @@ button {
   text-align: center;
   overflow: hidden;
   border: 0;
+  // font-size: 1.4em;
   // margin: 0 5px;
-  transition: all 0.2s linear;
+  transition: all 0.2s ease;
+  color: var(--vt-c-button-text);
+  background-color: var(--vt-c-button-bg);
   &.primary {
     background-color: var(--vt-c-blue-light-1);
     color: var(--vt-c-white-soft);
@@ -22,10 +25,14 @@ button {
   &:active {
     transform: translateY(5px);
   }
+  &:disabled {
+    cursor: not-allowed;
+    background-color: rgba(161, 161, 161, 0.7);
+  }
 }
 
 .click-ani {
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
   &:hover {
     box-shadow: 0 0 10px 5px var(--vt-c-blue-light-2);
     outline: var(--vt-c-blue-light-2) solid 2px;
@@ -94,6 +101,7 @@ form {
   }
 }
 
+// Transition Group
 .list-enter-active,
 .list-leave-active,
 .list-move {
@@ -108,6 +116,29 @@ form {
   transform: translateX(-50px);
 }
 
+// Default Transition
+/* we will explain what these classes do next! */
+.v-enter-active,
+.v-leave-active {
+  transition: all 0.4s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(50px);
+}
 /* Scrollbar width */
 ::-webkit-scrollbar {
   width: 10px;

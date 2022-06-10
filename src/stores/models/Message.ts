@@ -5,6 +5,8 @@ export interface Message extends BaseModel {
   senderId: string;
   sender: User;
   messageContent: string;
+  filePath: string;
+  fileType?: string;
   recepientId?: string;
   roomId?: string;
   messageRecipients: MessageRecipient[];
@@ -12,9 +14,10 @@ export interface Message extends BaseModel {
 
 export interface SendMessageRequest {
   senderId: string;
-  messageContent: string;
+  messageContent?: string;
   recepientId?: string;
   roomId?: string;
+  filePath?: string;
 }
 
 export interface FetchMessageRequest extends BaseGetRequest {

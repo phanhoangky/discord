@@ -11,9 +11,11 @@ export class ChatHub {
     this.client = new HubConnectionBuilder()
       .withUrl(`${API_URL.BASE_URL}/hubs`, {
         accessTokenFactory: () => {
-          // console.log("[ChatHub >>>>]", document.cookie);
+          const jwtToken = document.cookie;
+          const jwt = jwtToken.split(";");
+          // console.log("[ChatHub >>>>]", jwt[jwt.length - 1], jwt);
 
-          return `${document.cookie}`;
+          return `${jwt[jwt.length - 1].trim()}`;
         },
       })
       .withAutomaticReconnect()
@@ -28,6 +30,9 @@ export class ChatHub {
 
     await this.client.start();
     console.log("[Client] start listening >>>>", this.client.connectionId);
+  }
+  async end() {
+    await this.client.stop();
   }
 }
 export const chatHub = new ChatHub();

@@ -23,3 +23,9 @@ export interface SignUpModel {
 export interface GetUserRequest extends BaseGetRequest {
   searchName?: string;
 }
+
+export interface UpdateUserProfileRequest {
+  fullname?: string;
+  photoUrl?: string;
+  phoneNumber?: string;
+}

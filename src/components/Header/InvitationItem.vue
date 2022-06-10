@@ -1,14 +1,14 @@
 <template>
   <section class="invitation">
     <header>
-      <h3>Test 1</h3>
+      <h3>{{ content }}</h3>
     </header>
     <aside>
       <img src="@/assets/logo.svg" />
     </aside>
     <main>
-      <button class="click-ani">Accept</button>
-      <button class="click-ani">Decline</button>
+      <button class="click-ani" @click.stop="$emit('agree')">Accept</button>
+      <button class="click-ani" @click.stop="$emit('decline')">Decline</button>
     </main>
   </section>
 </template>
@@ -17,6 +17,13 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
+  props: {
+    content: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: ["agree", "decline"],
   setup() {
     return {};
   },

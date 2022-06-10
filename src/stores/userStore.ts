@@ -1,4 +1,9 @@
-import type { GetUserRequest, SignUpModel, User } from "./models/User";
+import type {
+  GetUserRequest,
+  SignUpModel,
+  UpdateUserProfileRequest,
+  User,
+} from "./models/User";
 import { defineStore } from "pinia";
 import ApiHelper from "@/api";
 import { API_URL } from "./Constant";
@@ -47,13 +52,14 @@ const useUserStore = defineStore({
       );
     },
 
-    async fetchUsersInRoom() {
+    async fetchUsersInRoom(username?: string) {
       const request: GetUserRequest = {
         currentItemsCount: this.usersInRoom ? this.usersInRoom.length : 0,
         currentPage: 0,
         isInfiniteScroll: false,
         isPaging: false,
         itemsPerPage: 10,
+        searchName: username,
       };
       const messageStore = useMessageStore();
       const { data } = await ApiHelper.get(
@@ -62,13 +68,15 @@ const useUserStore = defineStore({
           params: request,
         }
       );
+      console.log("[Fetch UserInRoom] >>>>", data);
+
       this.usersInRoom = data.results;
       return data;
     },
 
     async fetchUsers(values?: any) {
       const request: GetUserRequest = {
-        currentItemsCount: this.users.length,
+        currentItemsCount: this.users ? this.users.length : 0,
         currentPage: 0,
         isInfiniteScroll: false,
         isPaging: false,
@@ -82,15 +90,29 @@ const useUserStore = defineStore({
       return data;
     },
 
-    async sendInvitation() {
-      console.log();
+    async updateUserProfile(request: UpdateUserProfileRequest) {
+      await ApiHelper.put(`${API_URL.USER}`, request).then(() => {
+        this.setUser({
+          photoUrl: request.photoUrl,
+          phoneNumber: request.phoneNumber,
+        });
+      });
     },
-    setUser(value: User) {
-      this.user = value;
+    setUser(value: any) {
+      // this.user = {
+      //   ...this.user,
+      //   ...value,
+      // };
+      this.$patch({
+        user: { ...this.user, ...value },
+      });
     },
 
     setUsersInRoom(values: User[]) {
-      this.usersInRoom = values;
+      // this.usersInRoom = values;
+      this.$patch({
+        usersInRoom: values,
+      });
     },
   },
 });

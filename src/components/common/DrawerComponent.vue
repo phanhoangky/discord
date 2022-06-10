@@ -7,6 +7,9 @@
     >
       <div class="drawer" :style="drawerStyle" @click.stop="() => {}">
         <header>
+          <div class="icon click-ani button" @click.stop="$emit('close')">
+            <font-awesome-icon icon="circle-xmark" class=""></font-awesome-icon>
+          </div>
           <slot name="header"></slot>
         </header>
         <main>
@@ -84,6 +87,18 @@ export default defineComponent({
     header {
       height: 50px;
       border-bottom: 1px solid black;
+      position: relative;
+      .icon {
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        color: var(--vt-c-text-light-2);
+        font-size: 1.5em;
+        aspect-ratio: 1 / 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
     main {
       padding: 5px;

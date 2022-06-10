@@ -1,11 +1,18 @@
 <template>
   <div class="grid-layout">
     <header>
-      <InviteUsersModal v-if="selectedRoom"></InviteUsersModal>
-      <span v-if="selectedRoom">{{ selectedRoom.name }}</span>
-      <span v-if="selectedUser">
-        {{ selectedUser.firstName }} {{ selectedUser.lastName }}
-      </span>
+      <div>
+        <InviteUsersModal v-if="selectedRoom"></InviteUsersModal>
+        <EditRoomModal></EditRoomModal>
+        <span>#</span>
+        <span v-if="selectedRoom">{{ selectedRoom.name }}</span>
+        <span v-if="selectedUser">
+          {{ selectedUser.firstName }} {{ selectedUser.lastName }}
+        </span>
+      </div>
+      <div>
+        <button>Leave</button>
+      </div>
     </header>
     <main class="main" id="main" ref="main" @scroll="mainScroll">
       <Transition name="message-slide">
@@ -23,33 +30,41 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import ListMessagesComponent from "./components/ListMessagesComponent.vue";
 import UsersInRoomComponent from "./components/UsersInRoomComponent.vue";
 import ChatInputComponent from "./components/ChatInputComponent.vue";
 import { mapActions, mapState } from "pinia";
 import useMessageStore from "@/stores/MessageStore";
 import InviteUsersModal from "../../components/SideNavigation/Modal/InviteUsersModal.vue";
+import useInvitationStore from "@/stores/InvitationStore";
+import useUserStore from "@/stores/UserStore";
+import EditRoomModal from "../../components/SideNavigation/Modal/EditRoomModal.vue";
 export default defineComponent({
   setup() {
     const messageStore = useMessageStore();
-    messageStore.$subscribe(async (mutation, state) => {
-      console.log("[Dashboard Subscribe]", mutation, state);
-      console.log(
-        mutation.events.key === "selectedUser",
-        mutation.events.key === "selectedRoom"
-      );
-      if (
-        mutation.events.key === "selectedUser" ||
-        mutation.events.key === "selectedRoom"
-      ) {
-        if (messageStore.selectedRoom || messageStore.selectedUser) {
-          messageStore.totalItem = 0;
-          messageStore.messages = [];
-          await messageStore.fetchMessage();
-        }
-      }
+    const invitationStore = useInvitationStore();
+    const userStore = useUserStore();
+    // messageStore.$subscribe(async (mutation, state) => {
+    //   console.log("[Dashboard Subscribe] >>>", mutation, state);
+    //   if (
+    //     mutation.events.key === "selectedUser" ||
+    //     mutation.events.key === "selectedRoom"
+    //   ) {
+    //     /////
+    //     if (messageStore.selectedRoom || messageStore.selectedUser) {
+    //       console.log("[Dashboard Subscribe]", mutation, state);
+    //       messageStore.totalItem = 0;
+    //       messageStore.messages = [];
+    //       await messageStore.fetchMessage();
+    //     }
+    //   }
+    // });
+
+    onMounted(async () => {
+      await invitationStore.fetchInvitationByUser();
     });
+
     return {};
   },
   components: {
@@ -57,6 +72,7 @@ export default defineComponent({
     UsersInRoomComponent,
     ChatInputComponent,
     InviteUsersModal,
+    EditRoomModal,
   },
   data: () => ({
     total: 0,
@@ -84,12 +100,6 @@ export default defineComponent({
       if (main) {
         const bottomOfWindow =
           Math.ceil(main.scrollTop) + main.clientHeight === main.scrollHeight;
-        // console.log(
-        //   main.scrollTop,
-        //   main.clientHeight,
-        //   main.scrollHeight,
-        //   bottomOfWindow
-        // );
         console.log("[>>>>]", this.totalItem, this.messages.length);
         if (bottomOfWindow && this.totalItem > this.messages.length) {
           if (this.selectedRoom || this.selectedUser) {
@@ -100,15 +110,6 @@ export default defineComponent({
         }
       }
     },
-  },
-  mounted() {
-    const main = this.$refs.main;
-    console.log("[ONSCROLL >>>]", main);
-  },
-  created() {
-    window.addEventListener("scroll", (e) => {
-      console.log("[List Message Component] >>>", e);
-    });
   },
 });
 </script>
@@ -124,27 +125,38 @@ export default defineComponent({
   grid-template-columns: 1fr;
   grid-template-rows: 50px 1fr 50px;
   transition: all 0.5s ease;
+
   header {
     grid-area: header;
-    border-bottom: 5px solid var(--vt-c-blue-light-2);
     padding: 0 5px;
     display: flex;
     align-items: center;
     gap: 10px;
+    border-bottom: 1px solid var(--vt-c-blue-light-2);
     transition: all 0.4s ease;
+    justify-content: space-between;
     .icon {
       font-size: 1.5em;
     }
   }
+
   main {
     grid-area: main;
     overflow-y: scroll;
     transition: all 0.4s ease;
+    position: relative;
+
     img {
       width: 100%;
       height: 100%;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
     }
   }
+
   aside {
     grid-area: sidebar;
     width: 0;
@@ -152,17 +164,20 @@ export default defineComponent({
     transition: all 0.4s ease;
     display: flex;
     flex-direction: column;
+    padding: 0 5px;
+
     &.sidebar {
       background-color: var(--vt-c-navbar-bg-color);
       // overflow-y: scroll;
       // overflow-x: hidden;
     }
   }
+
   footer {
     grid-area: footer;
-    padding: 5px;
   }
 }
+
 .message {
   padding: 10px;
 }
@@ -177,6 +192,7 @@ export default defineComponent({
   opacity: 0;
   transform: translateX(-50px);
 }
+
 @media only screen and (min-width: 40em) {
   .grid-layout {
     grid-template-areas:
@@ -185,6 +201,7 @@ export default defineComponent({
       "footer sidebar";
     grid-template-columns: 1fr 200px;
     grid-template-rows: 50px 1fr 50px;
+
     aside {
       width: 200px;
       height: auto;

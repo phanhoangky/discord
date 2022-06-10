@@ -14,7 +14,11 @@
       <form @submit.prevent="onSearchSubmit">
         <Field name="searchName"></Field>
       </form>
-      <TransitionGroup name="list" tag="ul">
+      <TransitionGroup
+        name="list"
+        tag="ul"
+        v-if="listUsers.length && listUsers.length > 0"
+      >
         <li
           v-for="user in listUsers"
           :key="user.id"
@@ -30,11 +34,12 @@
           ></font-awesome-icon>
         </li>
       </TransitionGroup>
+      <span v-else>Empty</span>
     </div>
     <!-- Invite User -->
   </BaseModal>
   <button class="click-ani" @click="isShow = true">
-    <slot> Open Modal </slot>
+    <slot> <font-awesome-icon icon="user-plus"></font-awesome-icon> </slot>
   </button>
 </template>
 
@@ -52,7 +57,6 @@ export default defineComponent({
   setup() {
     const userStore = useUserStore();
     const invitationStore = useInvitationStore();
-    const roomStore = useRoomStore();
     const messageStore = useMessageStore();
     const isShow = ref(false);
 
@@ -79,7 +83,7 @@ export default defineComponent({
       const listInvite = listUsers.value.filter((u) => u.isSelected);
       if (messageStore.selectedRoom) {
         await invitationStore.sendInvitations({
-          content: "",
+          content: `${userStore.user?.firstName} ${userStore.user?.lastName} want to invite you to ${messageStore.selectedRoom.name} room ?`,
           receiverIds: listInvite.map((item) => item.id),
           roomId: messageStore.selectedRoom.id,
         });
@@ -91,7 +95,7 @@ export default defineComponent({
         async (nValue, oValue) => {
           // console.log("[Invite Modal] >>>>", nValue, oValue);
           if (nValue == true) {
-            await userStore.fetchUsers();
+            // await userStore.fetchUsers();
           }
         }
       );

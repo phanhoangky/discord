@@ -24,24 +24,25 @@
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
 
   --vt-c-blue-light-1: #1a77da;
-  --vt-c-blue-light-2: #0dd5e3;
+  --vt-c-blue-light-2: #0de3c6;
 
   /* Button */
   --vt-c-button-bg: #ffffff;
-  --vt-c-button-text: #ffffff;
-  --vt-c-button-hover-bg: #454545;
-  --vt-c-button-hover-text: #ffffff;
+  --vt-c-button-text: #2c2c2c;
+  --vt-c-button-hover-bg: #303030;
+  --vt-c-button-hover-text: #f1f1f1;
 
   /*Title*/
-  --vt-c-title-color: #ffffff;
+  --vt-c-title-color: #656565;
   
   /*Text*/
+  --vt-c-text-primary: #101010;
   --vt-c-text-error: #ee1c1c;
   --vt-c-text-success: #0fdb89;
 
   /* Sidebar */
-  --vt-c-navbar-bg-color: #07e1ed84;
-  --vt-c-navbar-text-color: #ffffff;
+  --vt-c-navbar-bg-color: #ffffff;
+  --vt-c-navbar-text-color: #050505;
 
   /*Header*/
   --vt-c-header-bg-color: #0c78ec;
@@ -66,15 +67,15 @@
   --vt-c-list-item-bg-hover: rgba(84, 84, 84, 0.65);
 
   /*Input */
-  --vt-c-input-bg: #ffffff;
+  --vt-c-input-bg: #eaeaea;
   --vt-c-input-text: #ffffff;
-  --vt-c-input-bg-hover: #ffffff;
+  --vt-c-input-bg-hover: #565656;
   --vt-c-input-text-hover: #ffffff;
 }
 
 /* semantic color variables for this project */
 :root {
-  --color-background: var(--vt-c-white-grey);
+  --color-background: #f0f2f5;
   --color-background-soft: var(--vt-c-white-soft);
   --color-background-mute: var(--vt-c-white-mute);
 
@@ -162,6 +163,7 @@ body {
   background: var(--color-background);
   transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
+  font-weight: bold;
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
     Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   font-size: 14px;

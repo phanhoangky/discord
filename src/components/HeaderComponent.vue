@@ -4,7 +4,7 @@
       <font-awesome-icon icon="bell"></font-awesome-icon>
     </div> -->
     <InvitationDrawer class="header__item icon"></InvitationDrawer>
-    <div class="user__profile header__item">
+    <div class="user__profile header__item" @click="toUserProfileView">
       <img src="@/assets/logo.svg" />
       <span>{{ user?.firstName }} {{ user?.lastName }}</span>
     </div>
@@ -28,6 +28,11 @@ export default defineComponent({
     ...mapState(useUserStore, {
       user: "user",
     }),
+  },
+  methods: {
+    toUserProfileView() {
+      this.$router.push({ name: "UserProfile" });
+    },
   },
   components: { InvitationDrawer },
 });

@@ -31,12 +31,19 @@
       <button class="submit-btn primary" @click="onSubmit">Edit</button>
     </template>
   </BaseModal>
+  <button
+    class="click-ani"
+    v-if="selectedRoom"
+    @click="roomStore.setShowEditModal(true)"
+  >
+    <font-awesome-icon icon="gear"></font-awesome-icon>
+  </button>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import BaseModal from "@/components/common/BaseModal.vue";
-import { Field, ErrorMessage, useForm, useField } from "vee-validate";
+import { useForm, useField } from "vee-validate";
 import { mapActions, mapState } from "pinia";
 import { useRoomStore } from "@/stores/RoomStore";
 import * as yup from "yup";

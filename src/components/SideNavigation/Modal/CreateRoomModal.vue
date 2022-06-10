@@ -42,8 +42,8 @@ export default defineComponent({
     });
     const { value: name, errorMessage: nameError } = useField("name");
     const onSubmit = handleSubmit(async (values) => {
-      // await roomStore.createRoom(values);
-      console.log("asd");
+      await roomStore.createRoom(values);
+      // console.log("asd");
 
       setIsShow(false);
     });

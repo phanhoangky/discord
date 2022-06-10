@@ -1,19 +1,16 @@
 import useUserStore from "@/stores/UserStore";
-import { createRouter, createWebHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw,
+} from "vue-router";
 import JWT from "jwt-decode";
-const routes = [
+import useMessageStore from "@/stores/MessageStore";
+const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "home",
     component: () => import("@/views/ChatView/DashboardView.vue"),
-    meta: {
-      layout: "MainLayout",
-    },
-  },
-  {
-    path: "/Device",
-    name: "Device",
-    component: () => import("@/views/DeviceView.vue"),
     meta: {
       layout: "MainLayout",
     },
@@ -24,6 +21,12 @@ const routes = [
     component: () => import("@/views/UserProfile/UserProfileView.vue"),
     meta: {
       layout: "MainLayout",
+    },
+    beforeEnter: () => {
+      const messageStore = useMessageStore();
+      messageStore.setSelectedRoom(undefined);
+      messageStore.setSelectedUser(undefined);
+      messageStore.messages = [];
     },
   },
   {

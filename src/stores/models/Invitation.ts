@@ -1,4 +1,4 @@
-import type { BaseGetRequest, BaseModel } from "./BaseModel";
+import type { BaseModel } from "./BaseModel";
 
 export interface Invitation extends BaseModel {
   senderId: string;
@@ -6,7 +6,7 @@ export interface Invitation extends BaseModel {
   isRead: boolean;
   isAccept?: boolean;
   roomId: string;
-  content?: string | null;
+  invitationContent: string;
 }
 
 export interface SendInvitationRequest {
@@ -18,3 +18,13 @@ export interface SendInvitationRequest {
 // export interface FetchInvitationsRequest extends BaseGetRequest {
 
 // }
+
+export interface ReplyInvitationRequest {
+  invitationId: string;
+  isAccepted: boolean;
+}
+
+export interface UpdateInvitationRequest {
+  id: string[];
+  isRead: boolean;
+}

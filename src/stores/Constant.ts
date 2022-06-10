@@ -9,4 +9,6 @@ export const enum API_URL {
 
 export const enum CHAT_HUB_METHOD {
   RECEIVE_MESSAGE = "ReceiveMessage",
+  RECEIVE_INVITATION = "ReceiveInvitation",
+  RECEIVE_GROUP_MESSAGE = "ReceiveGroupMessage",
 }

@@ -4,18 +4,27 @@ import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 const ApiHelper = axios.create({
   baseURL: "https://localhost:44335/api",
   headers: {
+    // Accept: "*/*",
     Accept: "application/json",
     "Content-Type": "application/json",
   },
   timeout: 60 * 1000,
+  onDownloadProgress: (ev) => {
+    console.log("[Download ] >>>>", ev);
+  },
+  onUploadProgress: (ev) => {
+    console.log("[Upload] >>>", ev);
+  },
 });
 ApiHelper.interceptors.request.use((config) => {
   const jwtToken = document.cookie;
-  console.log("[Token] >>>", jwtToken);
+  const jwt = jwtToken.split(";");
+  // console.log("[Token] >>>", jwt[jwt.length - 1]);
 
   if (config && config.headers && jwtToken) {
-    config.headers["Authorization"] = "Bearer " + jwtToken;
+    config.headers["Authorization"] = "Bearer " + jwt[jwt.length - 1];
   }
+
   // if (config.method === "post") {
   //   config.data = JSON.stringify(config.data);
   // }
@@ -47,9 +56,9 @@ ApiHelper.interceptors.response.use(
 
     if (error.response) {
       if (error.response.data) {
-        const { data } = error.response;
+        const { data, status } = error.response;
 
-        let message: string = data.Message || "";
+        let message: string = data.Message || data || "UNCERTAIN ERROR";
         if (data.errors && data.errors.Name && data.errors.Name.length > 0) {
           data.errors.Name.forEach((e: string) => {
             console.log(e);
@@ -58,7 +67,7 @@ ApiHelper.interceptors.response.use(
         }
         toastStore.setToast(
           MESSAGE_TYPE.ERROR,
-          data.StatusCode || data.status,
+          data.StatusCode || data.status || status,
           message
         );
       }

@@ -2,10 +2,6 @@
   <div class="logo" @click="reset">
     <img src="@/assets/logo.svg" />
   </div>
-  <button class="add-room-btn click-ani" @click="() => {}">
-    <font-awesome-icon icon="user-plus"></font-awesome-icon>
-  </button>
-
   <button class="add-room-btn click-ani" @click="setShowCreateModal(true)">
     <font-awesome-icon icon="plus-square"></font-awesome-icon>
   </button>
@@ -18,14 +14,18 @@
       :class="item.id == selectedRoom?.id ? 'active' : ''"
       @click="
         () => {
+          if ($route.path != '/') {
+            $router.push('/');
+          }
           setSelectedRoom(item);
+          // setSelectedUser(undefined);
           setRoom(item);
         }
       "
     >
       <span>{{ item.name }}</span>
 
-      <font-awesome-icon
+      <!-- <font-awesome-icon
         icon="gear"
         class="edit-btn"
         @click="
@@ -33,11 +33,11 @@
             setShowEditModal(true);
           }
         "
-      ></font-awesome-icon>
+      ></font-awesome-icon> -->
     </li>
   </ul>
   <CreateRoomModal></CreateRoomModal>
-  <EditRoomModal></EditRoomModal>
+  <!-- <EditRoomModal></EditRoomModal> -->
 </template>
 
 <script lang="ts">
@@ -48,12 +48,12 @@ import { object, string } from "yup";
 import EditRoomModal from "./Modal/EditRoomModal.vue";
 import CreateRoomModal from "./Modal/CreateRoomModal.vue";
 import useMessageStore from "@/stores/MessageStore";
-import InviteUsersModal from "./Modal/InviteUsersModal.vue";
 export default defineComponent({
   setup() {
     const schema = object({
       name: string().required().max(50),
     });
+
     return {
       schema,
     };
@@ -63,7 +63,7 @@ export default defineComponent({
     // BaseModal,
     // Field,
     // ErrorMessage,
-    EditRoomModal,
+    // EditRoomModal,
     CreateRoomModal,
   },
   computed: {
@@ -86,8 +86,17 @@ export default defineComponent({
       setSelectedUser: "setSelectedUser",
     }),
     reset() {
-      this.setSelectedRoom(undefined);
-      this.setSelectedUser(undefined);
+      if (this.$route.path != "/") {
+        console.log(this.$route);
+        this.$router.push("/");
+      }
+      // this.setSelectedRoom(undefined);
+      // this.setSelectedUser(undefined);
+      useMessageStore().$patch({
+        selectedRoom: undefined,
+        selectedUser: undefined,
+      });
+      this.setRoom(undefined);
     },
   },
 
@@ -156,7 +165,8 @@ button {
       overflow: hidden;
     }
     &.active {
-      background-color: var(--vt-c-black-soft);
+      background-color: var(--vt-c-button-hover-bg);
+      color: var(--vt-c-button-hover-text);
       .edit-btn {
         width: auto;
         padding: 1em;

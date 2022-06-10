@@ -12,6 +12,18 @@
         <img src="@/assets/logo.svg" />
       </aside>
       <main class="message-content">
+        <img
+          v-if="
+            item.filePath != '' &&
+            item.fileType &&
+            item.fileType.includes('image')
+          "
+          :src="item.filePath"
+        />
+        <div v-else>
+          <a target="_blank">{{ item.filePath }}</a>
+        </div>
+        <br />
         {{ item.messageContent }}
       </main>
     </section>
