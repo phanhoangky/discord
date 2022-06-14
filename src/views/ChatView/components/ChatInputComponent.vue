@@ -48,7 +48,7 @@
             </div>
           </Transition>
         </div>
-        <input name="messageContent" v-model="messageContent" class="" />
+        <input type="text" name="messageContent" v-model="messageContent" />
       </div>
       <div class="other__func">
         <font-awesome-icon
@@ -57,8 +57,14 @@
           @click="showEmojiSelector = !showEmojiSelector"
         ></font-awesome-icon>
         <Transition name="slide-up">
-          <div class="emoji-picker-wrapper" v-if="showEmojiSelector">
+          <div
+            ref="emoji-picker"
+            class="emoji-picker-wrapper"
+            v-if="showEmojiSelector"
+          >
             <EmojiPicker
+              ref="emojiPicker"
+              id="emoji-picker"
               :options="{
                 imgSrc: '/src/assets/img/',
                 locals: 'en',
@@ -67,6 +73,7 @@
                 recentRecords: false,
               }"
               @select="selectEmoji"
+              @mouseleave="showEmojiSelector = false"
             />
           </div>
         </Transition>
@@ -85,28 +92,29 @@ import { MESSAGE_TYPE, useToastMessageStore } from "@/stores/ToastMessage";
 import { refFile } from "@/utilities/Firebase";
 import useUserStore from "@/stores/UserStore";
 import { EmojiPicker } from "vue3-twemoji-picker-final";
-// import "/node_modules/vue3-twemoji-picker-final/dist/style.css";
 
 export default defineComponent({
   setup() {
-    //State
+    //Store
     const messageStore = useMessageStore();
     const userStore = useUserStore();
+
+    // State
     let file = ref();
     const fileRef = ref();
     let showEmojiSelector = ref(false);
-    const { handleSubmit } = useForm();
-    const { value: messageContent, errorMessage: emailError } = useField(
-      "messageContent",
-      {
-        default: "",
-      }
-    );
+
+    // Form
+    const { handleSubmit, setFieldValue } = useForm();
+    setFieldValue("messageContent", "");
+    const { value: messageContent, errorMessage: emailError } =
+      useField("messageContent");
     const { value: fileMessage, errorMessage: passwordError } =
       useField("fileMessage");
+
     // Method
     const onSubmit = handleSubmit(async (values, { resetForm }) => {
-      const file = values.fileMessage?.[0];
+      const file = values.fileMessage;
       const firebaseRef = file
         ? refFile(`${userStore.user?.id}/${file.name}`)
         : undefined;
@@ -120,17 +128,8 @@ export default defineComponent({
       removeSelectedFile();
     });
 
-    const enter = (event: Event) => {
-      if (event.type == "submit") {
-        console.log(event.type, event.currentTarget);
-        onSubmit();
-      }
-    };
-
     const readFile = async (event: any) => {
       if (event) {
-        // const test = refFile("TEST-BANK-WIG.docx");
-        // const url = await getURL("Test/Ama.png");
         const selectedFile: File = event.target.files[0];
         console.log(
           selectedFile,
@@ -185,7 +184,6 @@ export default defineComponent({
       showEmojiSelector,
       messageContent,
       fileMessage,
-      enter,
       readFile,
       removeSelectedFile,
       selectEmoji,
@@ -299,7 +297,7 @@ export default defineComponent({
         background-color: var(--vt-c-divider-dark-1);
         border-radius: 10px;
         bottom: 50px;
-        right: 10px;
+        right: 100%;
         width: auto;
         height: 500px;
       }
@@ -310,8 +308,5 @@ export default defineComponent({
       line-height: 2em;
     }
   }
-}
-
-.active {
 }
 </style>

@@ -12,13 +12,9 @@
   >
     <div class="modal-content">
       <form @submit.prevent="onSearchSubmit">
-        <Field name="searchName"></Field>
+        <Field name="username"></Field>
       </form>
-      <TransitionGroup
-        name="list"
-        tag="ul"
-        v-if="listUsers.length && listUsers.length > 0"
-      >
+      <TransitionGroup name="list" tag="ul">
         <li
           v-for="user in listUsers"
           :key="user.id"
@@ -27,14 +23,16 @@
         >
           <img src="@/assets/logo.svg" />
           <span>{{ user.email }}</span>
-          <font-awesome-icon
-            icon="circle-check"
-            class="icon circle-check"
-            v-if="user.isSelected"
-          ></font-awesome-icon>
+          <Transition>
+            <font-awesome-icon
+              icon="circle-check"
+              class="icon circle-check"
+              v-if="user.isSelected"
+            ></font-awesome-icon>
+          </Transition>
         </li>
       </TransitionGroup>
-      <span v-else>Empty</span>
+      <span v-if="listUsers && listUsers.length == 0">Empty</span>
     </div>
     <!-- Invite User -->
   </BaseModal>
@@ -50,7 +48,6 @@ import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import BaseModal from "../../common/BaseModal.vue";
 import { useForm, Field } from "vee-validate";
 import useInvitationStore from "@/stores/InvitationStore";
-import { useRoomStore } from "@/stores/RoomStore";
 import useMessageStore from "@/stores/MessageStore";
 
 export default defineComponent({
@@ -118,6 +115,12 @@ export default defineComponent({
 .modal-content {
   width: 100%;
   height: 100%;
+  form {
+    input {
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+  }
   ul {
     width: 100%;
     max-height: 500px;
@@ -135,10 +138,14 @@ export default defineComponent({
       align-items: center;
       // box-shadow: 0px 0px 1px 1px var(--vt-c-blue-light-2);
       height: 50px;
+      border-radius: 10px;
+      overflow: hidden;
       grid-template-columns: 50px 1fr 50px;
       transition: all 0.3s ease;
       &.selected {
-        background-color: var(--vt-c-blue-light-2);
+        background-color: rgb(110, 110, 110);
+        box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
+        color: var(--vt-c-white-mute);
       }
       &:hover {
         background-color: var(--vt-c-list-item-bg-hover);
@@ -150,6 +157,9 @@ export default defineComponent({
       span {
       }
       .icon {
+        font-size: large;
+        border-radius: 50%;
+        box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
       }
     }
   }

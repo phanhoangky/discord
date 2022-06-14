@@ -76,7 +76,7 @@ export default defineComponent({
           }
         });
         const request: UpdateInvitationRequest = {
-          id: updateList,
+          ids: updateList,
           isRead: true,
         };
         await this.updateIsReadInvitations(request);

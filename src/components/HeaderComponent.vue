@@ -8,17 +8,45 @@
       <img src="@/assets/logo.svg" />
       <span>{{ user?.firstName }} {{ user?.lastName }}</span>
     </div>
+    <div class="header__item">
+      <div class="switcher">
+        <input
+          id="toggleButton"
+          type="checkbox"
+          class="checkbox"
+          hidden
+          @change="toggleDarkTheme"
+        />
+        <label for="toggleButton" class="switch-button">
+          <font-awesome-icon class="icon" icon="sun"></font-awesome-icon>
+          <font-awesome-icon
+            class="icon"
+            icon="star-and-crescent"
+          ></font-awesome-icon>
+          <div class="slider round"></div>
+        </label>
+      </div>
+    </div>
     <div class="logout__icon icon header__item">
-      <font-awesome-icon icon="dungeon"></font-awesome-icon>
+      <ConfirmPopup
+        :title="`Do you want to logout ?`"
+        below
+        align-right
+        width="200px"
+        :confirm-async="confirmLogout"
+      >
+        <font-awesome-icon icon="dungeon"></font-awesome-icon>
+      </ConfirmPopup>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import useUserStore from "@/stores/UserStore";
-import { mapState } from "pinia";
+import { mapActions, mapState } from "pinia";
 import { defineComponent } from "vue";
 import InvitationDrawer from "./Header/Modals/InvitationDrawer.vue";
+import ConfirmPopup from "./common/ConfirmPopup.vue";
 
 export default defineComponent({
   setup() {
@@ -30,11 +58,21 @@ export default defineComponent({
     }),
   },
   methods: {
+    ...mapActions(useUserStore, {
+      logout: "logout",
+    }),
     toUserProfileView() {
       this.$router.push({ name: "UserProfile" });
     },
+    toggleDarkTheme() {
+      const html = document.documentElement;
+      html.classList.toggle("dark-theme");
+    },
+    async confirmLogout() {
+      await this.logout();
+    },
   },
-  components: { InvitationDrawer },
+  components: { InvitationDrawer, ConfirmPopup },
 });
 </script>
 
@@ -55,6 +93,41 @@ export default defineComponent({
     transition: all 0.3s ease;
     border-radius: 5px;
     min-width: 50px;
+    .switcher {
+      width: 50px;
+      aspect-ratio: 2 / 1;
+      .checkbox:checked + .switch-button .slider {
+        transform: translateX(25px);
+      }
+      .switch-button {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 50px;
+        border: 1px solid var(--vt-c-black-mute);
+        padding: 0px;
+        position: relative;
+        background-color: var(--vt-c-black-soft);
+
+        .icon {
+          width: 50%;
+        }
+        .slider {
+          position: absolute;
+          height: 100%;
+          width: 50%;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          border-radius: 50%;
+          transition: all 0.3s ease;
+          background-color: var(--vt-c-white-mute);
+        }
+      }
+    }
     img {
       box-sizing: initial;
       height: 50%;

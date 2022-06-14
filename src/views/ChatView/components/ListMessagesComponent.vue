@@ -1,6 +1,13 @@
 <template>
-  <TransitionGroup name="list" tag="div">
-    <section class="message" v-for="item in messages" :key="item.id">
+  <TransitionGroup name="list" tag="div" id="messages-list">
+    <section
+      class="message"
+      v-for="item in messages"
+      :key="item.id"
+      :class="{
+        sender: item.senderId == user?.id,
+      }"
+    >
       <header class="header">
         <span class="username"
           >{{ item.sender.firstName }} {{ item.sender.lastName }}</span
@@ -14,14 +21,16 @@
       <main class="message-content">
         <img
           v-if="
-            item.filePath != '' &&
-            item.fileType &&
-            item.fileType.includes('image')
+            item.file?.filePath != '' &&
+            item.file?.type &&
+            item.file.type.includes('image')
           "
-          :src="item.filePath"
+          :src="item.file?.filePath"
         />
         <div v-else>
-          <a target="_blank">{{ item.filePath }}</a>
+          <a :href="item.file?.filePath" target="_blank">{{
+            item.file?.name
+          }}</a>
         </div>
         <br />
         {{ item.messageContent }}
@@ -31,14 +40,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, nextTick, onMounted, type DebuggerEvent } from "vue";
 import { mapActions, mapState } from "pinia";
 import useMessageStore from "@/stores/MessageStore";
+import useUserStore from "@/stores/UserStore";
 export default defineComponent({
   setup() {
     const messageStore = useMessageStore();
-    // await messageStore.fetchMessage();
-
+    onMounted(() => {
+      nextTick(async () => {
+        await messageStore.fetchMessage();
+      });
+    });
     return {};
   },
   components: {},
@@ -48,6 +61,9 @@ export default defineComponent({
   computed: {
     ...mapState(useMessageStore, {
       messages: "messages",
+    }),
+    ...mapState(useUserStore, {
+      user: "user",
     }),
   },
   methods: {
@@ -60,44 +76,49 @@ export default defineComponent({
 
 <style scoped lang="scss">
 section {
-  display: grid;
-  grid-template-areas:
-    "sidebar header"
-    "sidebar main";
-  grid-template-columns: 50px 1fr;
-  height: fit-content;
-  border-bottom: 1px solid black;
-  border-radius: 10px;
-  padding: 1em;
-  margin: 1em 0;
-  transition: all 0.5s ease;
-  &:hover {
-    background-color: var(--vt-c-divider-dark-2);
+  &.sender {
+    background-color: var(--vt-c-blue-light-2);
   }
-  aside {
-    grid-area: sidebar;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-right: 10px;
-    overflow: hidden;
-    &.avatar {
-      border-radius: 10px;
+  &.message {
+    display: grid;
+    grid-template-areas:
+      "sidebar header"
+      "sidebar main";
+    grid-template-columns: 50px 1fr;
+    height: fit-content;
+    border-bottom: 1px solid black;
+    border-radius: 10px;
+    padding: 1em;
+    margin: 1em 0;
+    transition: all 0.5s ease;
+    &:hover {
+      background-color: var(--vt-c-divider-dark-2);
     }
-    img {
-      width: 100%;
-      aspect-ratio: 1 /1;
+    aside {
+      grid-area: sidebar;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-right: 10px;
+      overflow: hidden;
+      &.avatar {
+        border-radius: 10px;
+      }
+      img {
+        width: 100%;
+        aspect-ratio: 1 /1;
+      }
     }
-  }
-  main {
-    grid-area: main;
-    padding: 1em 0;
-  }
-  header {
-    grid-area: header;
-    .username {
-      font-weight: bolder;
-      font-size: 1.2em;
+    main {
+      grid-area: main;
+      padding: 1em 0;
+    }
+    header {
+      grid-area: header;
+      .username {
+        font-weight: bolder;
+        font-size: 1.2em;
+      }
     }
   }
 }

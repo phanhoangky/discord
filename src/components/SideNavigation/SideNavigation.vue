@@ -2,10 +2,12 @@
   <div class="logo" @click="reset">
     <img src="@/assets/logo.svg" />
   </div>
-  <button class="add-room-btn click-ani" @click="setShowCreateModal(true)">
-    <font-awesome-icon icon="plus-square"></font-awesome-icon>
-  </button>
-
+  <div class="function-button-group">
+    <button class="add-room-btn click-ani" @click="setShowCreateModal(true)">
+      <font-awesome-icon icon="plus-square"></font-awesome-icon>
+    </button>
+  </div>
+  <font-awesome-icon icon="campground" class="group-header"></font-awesome-icon>
   <ul class="menu-container">
     <li
       class="menu-item"
@@ -17,12 +19,15 @@
           if ($route.path != '/') {
             $router.push('/');
           }
-          setSelectedRoom(item);
-          // setSelectedUser(undefined);
-          setRoom(item);
+          if (selectedRoom != item) {
+            setSelectedRoom(item);
+            // setSelectedUser(undefined);
+            setRoom(item);
+          }
         }
       "
     >
+      <div class="not-read">{{ item.notReadMessages }}</div>
       <span>{{ item.name }}</span>
 
       <!-- <font-awesome-icon
@@ -45,7 +50,6 @@ import { useRoomStore } from "@/stores/RoomStore";
 import { mapActions, mapState } from "pinia";
 import { defineComponent } from "vue";
 import { object, string } from "yup";
-import EditRoomModal from "./Modal/EditRoomModal.vue";
 import CreateRoomModal from "./Modal/CreateRoomModal.vue";
 import useMessageStore from "@/stores/MessageStore";
 export default defineComponent({
@@ -109,7 +113,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .logo {
   width: 50%;
-  background-color: var(--vt-c-divider-dark-1);
+  background-color: var(--color-heading);
   border-radius: 100%;
   flex-shrink: 0;
   overflow: hidden;
@@ -127,10 +131,20 @@ export default defineComponent({
     border-radius: 25%;
   }
 }
-button {
+
+.function-button-group {
+  padding: 5px;
   width: 100%;
-  margin-bottom: 5px;
-  flex-shrink: 0;
+  margin: 10px 0;
+  button {
+    width: 100%;
+    margin-bottom: 5px;
+    flex-shrink: 0;
+  }
+}
+.group-header {
+  font-size: 2em;
+  font-weight: bold;
 }
 .menu-container {
   display: flex;
@@ -148,7 +162,7 @@ button {
   .menu-item {
     display: flex;
     position: relative;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     padding: 1em;
     transition: all 0.5s ease;
@@ -163,6 +177,18 @@ button {
       right: 0;
       padding: 0;
       overflow: hidden;
+    }
+    .not-read {
+      aspect-ratio: 1 / 1;
+      width: 25px;
+      border-radius: 50%;
+      background-color: var(--vt-c-red-soft);
+      position: absolute;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--vt-c-white-soft);
     }
     &.active {
       background-color: var(--vt-c-button-hover-bg);

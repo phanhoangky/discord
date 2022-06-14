@@ -21,6 +21,10 @@ import {
   faMobile,
   faPeopleGroup,
   faFloppyDisk,
+  faCampground,
+  faSun,
+  faStarAndCrescent,
+  faTentArrowTurnLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* import font awesome icon component */
@@ -42,4 +46,8 @@ library.add(faEnvelope);
 library.add(faMobile);
 library.add(faPeopleGroup);
 library.add(faFloppyDisk);
+library.add(faCampground);
+library.add(faSun);
+library.add(faStarAndCrescent);
+library.add(faTentArrowTurnLeft);
 export default FontAwesomeIcon;

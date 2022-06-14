@@ -34,6 +34,7 @@ import useMessageStore from "@/stores/MessageStore";
 import { CHAT_HUB_METHOD } from "@/stores/Constant";
 import useInvitationStore from "@/stores/InvitationStore";
 import useUserStore from "@/stores/UserStore";
+import { useRoomStore } from "@/stores/RoomStore";
 
 export default defineComponent({
   setup() {
@@ -56,26 +57,29 @@ export default defineComponent({
         );
       const isMessageMutate = events.some((e) => e.key === "messages");
       console.log("[Events] >>> ", mutates, isMessageMutate);
-      if (mutates.length == 0 && !isMessageMutate) {
-        console.log("[UserInRoom] >>>", "All User", mutation);
+      // if (mutates.length == 0 && !isMessageMutate) {
+      //   console.log("[UserInRoom] >>>", "All User", mutation);
+      //   await userStore.fetchUsers();
+      // }
+      if (!state.selectedRoom && !state.selectedUser) {
         await userStore.fetchUsers();
       }
-      const event = mutates[0];
-      if (mutates.length > 0 && event) {
+      const event = mutates.length > 0 && mutates[0];
+      if (event) {
         /////
-        if (!state.selectedRoom && !state.selectedUser) {
-          console.log("[UserInRoom] >>>", "All User", mutation);
-          await userStore.fetchUsers();
-        }
+        // if (!state.selectedRoom && !state.selectedUser) {
+        //   console.log("[UserInRoom] >>>", "All User", mutation);
+        //   await userStore.fetchUsers();
+        // }
 
-        //
-        if (event.newValue && state.selectedRoom) {
-          console.log("[UserInRoom] >>>", "SelectedRoom", mutation);
-          await userStore.fetchUsersInRoom();
-        }
+        // //
+        // if (event.newValue && state.selectedRoom) {
+        //   console.log("[UserInRoom] >>>", "SelectedRoom", mutation);
+        //   await userStore.fetchUsersInRoom();
+        // }
         ///////
         if (event.newValue) {
-          console.log("[Dashboard Subscribe]", mutation, state);
+          console.log("[Set Messages List] >>>>", mutation, state);
           messageStore.totalItem = 0;
           // messageStore.messages = [];
           messageStore.$patch({
@@ -84,6 +88,17 @@ export default defineComponent({
           await messageStore.fetchMessage();
         }
       }
+    });
+
+    messageStore.$onAction(async ({ name, after }) => {
+      console.log("[Watch Action] >>>>", name);
+
+      after(async () => {
+        if (name == "setSelectedRoom") {
+          await userStore.fetchUsersInRoom();
+          return;
+        }
+      });
     });
     return {};
   },
@@ -94,6 +109,9 @@ export default defineComponent({
     }),
     ...mapActions(useInvitationStore, {
       receiveInvitation: "receiveInvitation",
+    }),
+    ...mapActions(useRoomStore, {
+      receiveMessageOnUserLeaveGroup: "receiveMessageOnUserLeaveGroup",
     }),
   },
   created() {
@@ -110,6 +128,10 @@ export default defineComponent({
     this.$chatHub.client.on(
       `${CHAT_HUB_METHOD.RECEIVE_GROUP_MESSAGE}`,
       this.receiveGroupMessage
+    );
+    this.$chatHub.client.on(
+      `${CHAT_HUB_METHOD.USER_LEAVE_GROUP}`,
+      this.receiveMessageOnUserLeaveGroup
     );
   },
   components: { SideNavigation, HeaderComponent },

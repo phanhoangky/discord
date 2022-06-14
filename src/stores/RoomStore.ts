@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import ApiHelper from "@/api";
 import { API_URL } from "./Constant";
 import useUserStore from "./UserStore";
+import type { User } from "./models/User";
 
 export interface RoomStoreState {
   rooms: Room[];
@@ -59,6 +60,25 @@ export const useRoomStore = defineStore({
     async deleteRoom(id: string) {
       await ApiHelper.delete(`${API_URL.ROOM}/${id}`);
       await this.fetchRooms();
+    },
+    async leaveRoom() {
+      const roomId = this.selectedRoom?.id;
+      await ApiHelper.delete(`${API_URL.ROOM}/leave/${roomId}`);
+    },
+    async receiveMessageOnUserLeaveGroup(user: User, roomId: string) {
+      console.log("[On Leave Group >>>]", user, roomId);
+      if (this.selectedRoom?.id == roomId) {
+        const userStore = useUserStore();
+        const isUserInRoom = userStore.usersInRoom.some((e) => e.id == user.id);
+        const newUsersList = userStore.usersInRoom.filter(
+          (u) => u.id != user.id
+        );
+        if (isUserInRoom) {
+          userStore.$patch({
+            usersInRoom: newUsersList,
+          });
+        }
+      }
     },
   },
 });

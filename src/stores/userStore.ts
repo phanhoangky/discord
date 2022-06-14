@@ -51,7 +51,13 @@ const useUserStore = defineStore({
         }
       );
     },
-
+    async logout() {
+      document.cookie = "";
+      this.$patch({
+        user: undefined,
+      });
+      router.push("/sign-in");
+    },
     async fetchUsersInRoom(username?: string) {
       const request: GetUserRequest = {
         currentItemsCount: this.usersInRoom ? this.usersInRoom.length : 0,
@@ -90,12 +96,14 @@ const useUserStore = defineStore({
       return data;
     },
 
+    async fetchUserById(id: string) {
+      const { data } = await ApiHelper.get(`${API_URL.USER}/${id}`);
+      console.log(data);
+    },
     async updateUserProfile(request: UpdateUserProfileRequest) {
-      await ApiHelper.put(`${API_URL.USER}`, request).then(() => {
-        this.setUser({
-          photoUrl: request.photoUrl,
-          phoneNumber: request.phoneNumber,
-        });
+      const { data } = await ApiHelper.put(`${API_URL.USER}`, request);
+      this.$patch({
+        user: data,
       });
     },
     setUser(value: any) {

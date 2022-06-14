@@ -32,12 +32,12 @@
                 :value="`${user?.firstName} ${user?.lastName}`"
               />
             </div>
-            <ErrorMessage name="fullname"></ErrorMessage>
+            <ErrorMessage name="fullname" class="error-message"></ErrorMessage>
             <div class="user-infor-item">
               <label>
                 <font-awesome-icon icon="envelope"></font-awesome-icon>
               </label>
-              <input disabled :value="user?.email" />
+              <Field name="email" disabled :value="user?.email" />
             </div>
             <div class="user-infor-item">
               <label>
@@ -45,7 +45,34 @@
               </label>
               <Field name="phoneNumber" :value="user?.phoneNumber" />
             </div>
-            <ErrorMessage name="phoneNumber"></ErrorMessage>
+            <ErrorMessage
+              name="phoneNumber"
+              class="error-message"
+            ></ErrorMessage>
+            <div class="user-infor-item">
+              <label>
+                <font-awesome-icon icon="mobile"></font-awesome-icon>
+              </label>
+              <Field type="date" name="dob" :value="``" />
+            </div>
+            <ErrorMessage name="dob" class="error-message"></ErrorMessage>
+            <div class="user-infor-item">
+              <label>
+                <font-awesome-icon icon="mobile"></font-awesome-icon>
+              </label>
+              <div class="radio-group">
+                <Field label="Male" type="radio" name="sex" :value="`Male`" />
+                Male
+                <Field
+                  label="Female"
+                  type="radio"
+                  name="sex"
+                  :value="`Female`"
+                />
+                Female
+              </div>
+            </div>
+            <ErrorMessage name="sex" class="error-message"></ErrorMessage>
           </Form>
         </section>
       </main>
@@ -63,7 +90,7 @@
 
 <script lang="ts">
 import useUserStore from "@/stores/UserStore";
-import { mapActions, mapState } from "pinia";
+import { mapActions, mapState, storeToRefs } from "pinia";
 import { computed, defineComponent } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
@@ -71,12 +98,15 @@ import * as yup from "yup";
 export default defineComponent({
   setup() {
     const userStore = useUserStore();
-    const oldData = userStore.user;
+    // const oldData = userStore.user;
+    const oldData = storeToRefs(userStore).user;
 
     const isChanged = computed(() => {
-      console.log(JSON.stringify(oldData) == JSON.stringify(userStore.user));
+      console.log(
+        JSON.stringify(oldData?.value) == JSON.stringify(userStore.user)
+      );
 
-      return JSON.stringify(oldData) != JSON.stringify(userStore.user);
+      return JSON.stringify(oldData?.value) != JSON.stringify(userStore.user);
     });
     const cancelChange = () => {
       userStore.setUser(oldData);
@@ -110,7 +140,9 @@ export default defineComponent({
     async previewImage(event: any) {
       console.log("[Get File >>>]", event.target.files);
       const src = URL.createObjectURL(event.target.files[0]);
-      const imgElement = document.getElementById("image-preview");
+      const imgElement = document.getElementById(
+        "image-preview"
+      ) as HTMLImageElement;
 
       if (imgElement) {
         imgElement.src = src;
@@ -132,13 +164,15 @@ export default defineComponent({
   display: flex;
   align-items: center;
   font-weight: bolder;
+  overflow-y: scroll;
   .profile-view {
     display: grid;
+    flex-direction: column;
     width: 100%;
     height: auto;
     border-radius: 10px;
     overflow: hidden;
-    grid-template-rows: 1fr 3fr 50px;
+    grid-template-rows: 1fr 4fr 50px;
     header {
       background-color: var(--vt-c-header-bg-color);
     }
@@ -146,7 +180,7 @@ export default defineComponent({
       background-color: rgb(222, 222, 222);
       display: grid;
       padding: 10px;
-      grid-template-rows: 1fr 3fr;
+      grid-template-rows: 100px 1fr;
       gap: 10px;
       .user-avatar {
         display: flex;
@@ -178,6 +212,7 @@ export default defineComponent({
           }
         }
         .username {
+          font-weight: bolder;
         }
       }
       .user-infor {
@@ -201,6 +236,18 @@ export default defineComponent({
               background-color: var(--vt-c-black-soft);
               border-top-left-radius: 10px;
               border-bottom-left-radius: 10px;
+            }
+            select {
+              width: 100%;
+            }
+            .radio-group {
+              width: 100%;
+              display: flex;
+              align-items: flex-start;
+              justify-content: space-evenly;
+              input {
+                height: auto;
+              }
             }
             input {
               width: 100%;

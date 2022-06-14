@@ -11,6 +11,7 @@ export interface User {
   updatedTime: string;
   isActive: boolean;
   isSelected?: boolean;
+  notReadMessages: number;
 }
 
 export interface SignUpModel {

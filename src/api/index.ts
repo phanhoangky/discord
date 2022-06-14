@@ -9,12 +9,12 @@ const ApiHelper = axios.create({
     "Content-Type": "application/json",
   },
   timeout: 60 * 1000,
-  onDownloadProgress: (ev) => {
-    console.log("[Download ] >>>>", ev);
-  },
-  onUploadProgress: (ev) => {
-    console.log("[Upload] >>>", ev);
-  },
+  // onDownloadProgress: (ev) => {
+  //   console.log("[Download ] >>>>", ev);
+  // },
+  // onUploadProgress: (ev) => {
+  //   console.log("[Upload] >>>", ev);
+  // },
 });
 ApiHelper.interceptors.request.use((config) => {
   const jwtToken = document.cookie;
@@ -28,6 +28,8 @@ ApiHelper.interceptors.request.use((config) => {
   // if (config.method === "post") {
   //   config.data = JSON.stringify(config.data);
   // }
+  console.log("[Data] >>>", config.data);
+
   const loadingScreenStore = useLoadingScreenStore();
   loadingScreenStore.setIsLoading(true);
   return config;

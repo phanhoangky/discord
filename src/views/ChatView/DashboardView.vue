@@ -1,7 +1,7 @@
 <template>
   <div class="grid-layout">
     <header>
-      <div>
+      <div class="header-left">
         <InviteUsersModal v-if="selectedRoom"></InviteUsersModal>
         <EditRoomModal></EditRoomModal>
         <span>#</span>
@@ -10,8 +10,12 @@
           {{ selectedUser.firstName }} {{ selectedUser.lastName }}
         </span>
       </div>
-      <div>
-        <button>Leave</button>
+      <div v-if="selectedRoom">
+        <ConfirmPopup :title="`Do you want to leave ?`" below center>
+          <button class="click-ani">
+            <font-awesome-icon icon="tent-arrow-turn-left"></font-awesome-icon>
+          </button>
+        </ConfirmPopup>
       </div>
     </header>
     <main class="main" id="main" ref="main" @scroll="mainScroll">
@@ -30,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, nextTick, onMounted, type DebuggerEvent } from "vue";
 import ListMessagesComponent from "./components/ListMessagesComponent.vue";
 import UsersInRoomComponent from "./components/UsersInRoomComponent.vue";
 import ChatInputComponent from "./components/ChatInputComponent.vue";
@@ -40,27 +44,38 @@ import InviteUsersModal from "../../components/SideNavigation/Modal/InviteUsersM
 import useInvitationStore from "@/stores/InvitationStore";
 import useUserStore from "@/stores/UserStore";
 import EditRoomModal from "../../components/SideNavigation/Modal/EditRoomModal.vue";
+import { useRoomStore } from "@/stores/RoomStore";
+import ConfirmPopup from "../../components/common/ConfirmPopup.vue";
+import SkeletonLoading from "@/components/common/SkeletonLoading.vue";
 export default defineComponent({
   setup() {
-    const messageStore = useMessageStore();
     const invitationStore = useInvitationStore();
-    const userStore = useUserStore();
-    // messageStore.$subscribe(async (mutation, state) => {
-    //   console.log("[Dashboard Subscribe] >>>", mutation, state);
-    //   if (
-    //     mutation.events.key === "selectedUser" ||
-    //     mutation.events.key === "selectedRoom"
-    //   ) {
-    //     /////
-    //     if (messageStore.selectedRoom || messageStore.selectedUser) {
-    //       console.log("[Dashboard Subscribe]", mutation, state);
-    //       messageStore.totalItem = 0;
-    //       messageStore.messages = [];
-    //       await messageStore.fetchMessage();
-    //     }
-    //   }
-    // });
-
+    const messageStore = useMessageStore();
+    // await messageStore.fetchMessage();
+    messageStore.$subscribe((mutation, state) => {
+      console.log(mutation);
+      const events = mutation.events as DebuggerEvent[];
+      const messagesMutation = events.filter((e) => e.key == "messages");
+      if (messagesMutation.length > 0) {
+        nextTick(() => {
+          const messagesListElement = document.getElementById(
+            "main"
+          ) as HTMLElement;
+          console.log(
+            messagesMutation,
+            messagesListElement,
+            messagesListElement.scrollTop,
+            messagesListElement.scrollHeight
+          );
+          if (messagesListElement) {
+            messagesListElement.scrollTo({
+              top: messagesListElement.scrollHeight,
+              behavior: "smooth",
+            });
+          }
+        });
+      }
+    });
     onMounted(async () => {
       await invitationStore.fetchInvitationByUser();
     });
@@ -68,11 +83,16 @@ export default defineComponent({
     return {};
   },
   components: {
+    // ListMessagesComponent: defineAsyncComponent({
+    //   loader: () => import("./components/ListMessagesComponent.vue"),
+    //   loadingComponent: SkeletonLoading,
+    // }),
     ListMessagesComponent,
     UsersInRoomComponent,
     ChatInputComponent,
     InviteUsersModal,
     EditRoomModal,
+    ConfirmPopup,
   },
   data: () => ({
     total: 0,
@@ -83,6 +103,9 @@ export default defineComponent({
       selectedUser: "selectedUser",
       totalItem: "totalItem",
       messages: "messages",
+    }),
+    ...mapState(useUserStore, {
+      user: "user",
     }),
     isShowChatWindow() {
       if (this.selectedRoom == undefined && this.selectedUser == undefined) {
@@ -95,13 +118,21 @@ export default defineComponent({
     ...mapActions(useMessageStore, {
       fetchMessage: "fetchMessage",
     }),
+    ...mapActions(useRoomStore, {
+      leave: "leaveRoom",
+    }),
     async mainScroll(e: UIEvent) {
       const main = document.getElementById("main");
       if (main) {
         const bottomOfWindow =
           Math.ceil(main.scrollTop) + main.clientHeight === main.scrollHeight;
-        console.log("[>>>>]", this.totalItem, this.messages.length);
-        if (bottomOfWindow && this.totalItem > this.messages.length) {
+        console.log(
+          "[>>>>]",
+          main.scrollTop,
+          this.totalItem,
+          this.messages.length
+        );
+        if (main.scrollTop == 0 && this.totalItem > this.messages.length) {
           if (this.selectedRoom || this.selectedUser) {
             const data = await this.fetchMessage();
             console.log(data.totalCount);
@@ -109,6 +140,9 @@ export default defineComponent({
           }
         }
       }
+    },
+    async leaveRoom() {
+      await this.leave();
     },
   },
 });
@@ -135,6 +169,11 @@ export default defineComponent({
     border-bottom: 1px solid var(--vt-c-blue-light-2);
     transition: all 0.4s ease;
     justify-content: space-between;
+    .header-left {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
     .icon {
       font-size: 1.5em;
     }

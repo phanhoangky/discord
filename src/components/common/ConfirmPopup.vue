@@ -7,7 +7,15 @@
       <div
         class="confirm__popup"
         id="confirmPopup"
-        :class="isShow ? 'visible' : ''"
+        :class="{
+          visible: isShow,
+          below: below,
+          'align-with-right-border': alignRight,
+          center: center,
+        }"
+        :style="{
+          width: width ? width : '200px',
+        }"
         ref="popup"
         v-if="isShow"
       >
@@ -45,12 +53,28 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    width: {
+      type: String,
+      required: false,
+    },
     confirmAsync: {
       type: Function,
       required: false,
     },
     confirm: {
       type: Function,
+      required: false,
+    },
+    below: {
+      type: Boolean,
+      required: false,
+    },
+    alignRight: {
+      type: Boolean,
+      required: false,
+    },
+    center: {
+      type: Boolean,
       required: false,
     },
   },
@@ -86,7 +110,10 @@ export default defineComponent({
 .container {
   position: relative;
   overflow: visible;
-  :first-child {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  > div {
     width: 100%;
   }
 
@@ -94,18 +121,36 @@ export default defineComponent({
     position: absolute;
     z-index: 1000;
     border-radius: 10px;
-    left: 50%;
-    transform: translateX(-50%);
+    width: auto;
     text-align: center;
     background-color: var(--vt-c-confirm-popup-bg);
     color: var(--vt-c-confirm-popup-text);
     padding: 10px;
     bottom: 110%;
+    box-shadow: 0px 0px 20px 5px var(--vt-c-black-soft);
     transition: all 0.3s ease;
+    &.center {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    &.top {
+      bottom: 110%;
+    }
+    &.below {
+      top: 110%;
+      bottom: auto;
+    }
+    &.align-with-right-border {
+      right: 0;
+      left: auto;
+    }
     &:hover {
       box-shadow: 0px 0px 20px 5px var(--vt-c-blue-light-2);
     }
-
+    header {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
     footer {
       display: flex;
       gap: 10px;
@@ -129,6 +174,6 @@ export default defineComponent({
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  transform: translateY(50px);
+  transform: translateY(-50px);
 }
 </style>

@@ -19,6 +19,7 @@
       <ConfirmPopup
         title="Do you want to delete this channel"
         :confirm-async="deleteRoom"
+        center
         ><button class="cancel-btn cancel">
           <font-awesome-icon icon="trash-can"></font-awesome-icon></button
       ></ConfirmPopup>

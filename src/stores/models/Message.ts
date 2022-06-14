@@ -5,13 +5,17 @@ export interface Message extends BaseModel {
   senderId: string;
   sender: User;
   messageContent: string;
-  filePath: string;
-  fileType?: string;
-  recepientId?: string;
-  roomId?: string;
+  file?: FileType;
   messageRecipients: MessageRecipient[];
+  notReadMessages: number;
 }
-
+export interface FileType {
+  filePath: string;
+  fullPath: string;
+  type?: string;
+  name: string;
+  size: number;
+}
 export interface SendMessageRequest {
   senderId: string;
   messageContent?: string;
@@ -31,4 +35,5 @@ export interface MessageRecipient extends BaseModel {
   messageId: string;
   isRead: boolean;
   recepientRoomId?: string;
+  roomId?: string;
 }

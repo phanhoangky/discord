@@ -24,9 +24,14 @@ const routes: RouteRecordRaw[] = [
     },
     beforeEnter: () => {
       const messageStore = useMessageStore();
-      messageStore.setSelectedRoom(undefined);
-      messageStore.setSelectedUser(undefined);
-      messageStore.messages = [];
+      // messageStore.setSelectedRoom(undefined);
+      // messageStore.setSelectedUser(undefined);
+      messageStore.$patch({
+        selectedUser: undefined,
+        messages: [],
+        selectedRoom: undefined,
+      });
+      // messageStore.messages = [];
     },
   },
   {
@@ -60,7 +65,7 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const store = useUserStore();
-  console.log(store.user);
+  // console.log(store.user);
 
   if (!store.user) {
     // console.log("[Cookie]", document.cookie);

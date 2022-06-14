@@ -7,6 +7,7 @@
       <li v-for="user in listUsers" :key="user.id" @click="selectUser(user)">
         <img src="@/assets/logo.svg" />
         <div class="username">{{ user.firstName }} {{ user.lastName }}</div>
+        <div class="not-read">{{ user.notReadMessages }}</div>
       </li>
     </TransitionGroup>
     <Form
@@ -137,6 +138,19 @@ export default defineComponent({
       border-radius: 10px;
       overflow: hidden;
       gap: 10px;
+      position: relative;
+      .not-read {
+        position: absolute;
+        right: 5px;
+        width: 25px;
+        aspect-ratio: 1 / 1;
+        background-color: var(--vt-c-red-soft);
+        color: var(--vt-c-white-soft);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
       &:hover {
         background-color: var(--vt-c-divider-dark-2);
       }

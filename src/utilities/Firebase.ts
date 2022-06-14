@@ -50,11 +50,15 @@ export const uploadFile = async (
   const loadingScreenStore = useLoadingScreenStore();
   const toastMessageStore = useToastMessageStore();
   loadingScreenStore.setIsLoading(true);
-  const task = uploadBytesResumable(ref(firebaseStorage, path), file, metadata);
-  task.on(
+  const task = await uploadBytesResumable(
+    ref(firebaseStorage, path),
+    file,
+    metadata
+  );
+  task.task.on(
     "state_changed",
     (snapshot) => {
-      const progess = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      // const progess = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
     },
     (error) => {
       console.log("[Firebase error] >>>", error);

@@ -109,7 +109,7 @@
     --color-text: var(--vt-c-text-dark-2);
   }
 } */
-html.dark-mode {
+html.dark-theme {
   --color-background: var(--vt-c-black);
   --color-background-soft: var(--vt-c-black-soft);
   --color-background-mute: var(--vt-c-black-mute);

@@ -25,6 +25,6 @@ export interface ReplyInvitationRequest {
 }
 
 export interface UpdateInvitationRequest {
-  id: string[];
+  ids: string[];
   isRead: boolean;
 }
