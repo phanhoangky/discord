@@ -42,7 +42,9 @@ export const useRoomStore = defineStore({
     async fetchRooms() {
       const userStore = useUserStore();
       const userId = userStore.user?.id;
-      const { data } = await ApiHelper.get(`${API_URL.ROOM}/user/${userId}`);
+      const { data } = await ApiHelper.get(`${API_URL.ROOM}/user/${userId}`, {
+        params: { isLoading: true },
+      });
       this.rooms = data.results;
       // if (data.length > 0) {
       //   this.selectedRoom = data[0];
@@ -50,15 +52,25 @@ export const useRoomStore = defineStore({
       return data;
     },
     async createRoom(values: any) {
-      await ApiHelper.post(`${API_URL.ROOM}`, { ...values });
+      const request = {
+        ...values,
+        isLoading: true,
+      };
+      await ApiHelper.post(`${API_URL.ROOM}`, request);
       await this.fetchRooms();
     },
     async editRoom(values: any) {
-      await ApiHelper.put(`${API_URL.ROOM}`, values);
+      const request = {
+        ...values,
+        isLoading: true,
+      };
+      await ApiHelper.put(`${API_URL.ROOM}`, request);
       await this.fetchRooms();
     },
     async deleteRoom(id: string) {
-      await ApiHelper.delete(`${API_URL.ROOM}/${id}`);
+      await ApiHelper.delete(`${API_URL.ROOM}/${id}`, {
+        params: { isLoading: true },
+      });
       await this.fetchRooms();
     },
     async leaveRoom() {
@@ -69,15 +81,13 @@ export const useRoomStore = defineStore({
       console.log("[On Leave Group >>>]", user, roomId);
       if (this.selectedRoom?.id == roomId) {
         const userStore = useUserStore();
-        const isUserInRoom = userStore.usersInRoom.some((e) => e.id == user.id);
-        const newUsersList = userStore.usersInRoom.filter(
-          (u) => u.id != user.id
-        );
-        if (isUserInRoom) {
-          userStore.$patch({
-            usersInRoom: newUsersList,
-          });
-        }
+        const isUserInRoom = userStore.users.some((e) => e.id == user.id);
+        const newUsersList = userStore.users.filter((u) => u.id != user.id);
+        // if (isUserInRoom) {
+        //   userStore.$patch({
+        //     usersInRoom: newUsersList,
+        //   });
+        // }
       }
     },
   },

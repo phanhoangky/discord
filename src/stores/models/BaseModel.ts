@@ -5,10 +5,14 @@ export interface BaseModel {
   isActive: boolean;
 }
 
-export interface BaseGetRequest {
-  currentItemsCount: number;
-  isPaging: boolean;
-  isInfiniteScroll: boolean;
-  itemsPerPage: number;
-  currentPage: number;
+export interface BaseGetRequest extends BaseRequest {
+  currentItemsCount?: number;
+  isPaging?: boolean;
+  isInfiniteScroll?: boolean;
+  itemsPerPage?: number;
+  currentPage?: number;
+}
+
+export interface BaseRequest {
+  isLoading?: boolean;
 }

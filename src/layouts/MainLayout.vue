@@ -39,56 +39,7 @@ import { useRoomStore } from "@/stores/RoomStore";
 export default defineComponent({
   setup() {
     const messageStore = useMessageStore();
-    // const unSub = messageStore.$onAction((context) => {
-    //   console.log(">>>>>>", context);
-    // });
     const userStore = useUserStore();
-
-    messageStore.$subscribe(async (mutation, state) => {
-      console.log("[Dashboard Subscribe] >>>", mutation, state);
-
-      const events: DebuggerEvent[] = mutation.events as DebuggerEvent[];
-      const mutates: DebuggerEvent[] =
-        events &&
-        events.filter(
-          (e) =>
-            (e.key === "selectedRoom" && e.newValue) ||
-            (e.key === "selectedUser" && e.newValue)
-        );
-      const isMessageMutate = events.some((e) => e.key === "messages");
-      console.log("[Events] >>> ", mutates, isMessageMutate);
-      // if (mutates.length == 0 && !isMessageMutate) {
-      //   console.log("[UserInRoom] >>>", "All User", mutation);
-      //   await userStore.fetchUsers();
-      // }
-      if (!state.selectedRoom && !state.selectedUser) {
-        await userStore.fetchUsers();
-      }
-      const event = mutates.length > 0 && mutates[0];
-      if (event) {
-        /////
-        // if (!state.selectedRoom && !state.selectedUser) {
-        //   console.log("[UserInRoom] >>>", "All User", mutation);
-        //   await userStore.fetchUsers();
-        // }
-
-        // //
-        // if (event.newValue && state.selectedRoom) {
-        //   console.log("[UserInRoom] >>>", "SelectedRoom", mutation);
-        //   await userStore.fetchUsersInRoom();
-        // }
-        ///////
-        if (event.newValue) {
-          console.log("[Set Messages List] >>>>", mutation, state);
-          messageStore.totalItem = 0;
-          // messageStore.messages = [];
-          messageStore.$patch({
-            messages: [],
-          });
-          await messageStore.fetchMessage();
-        }
-      }
-    });
 
     messageStore.$onAction(async ({ name, after }) => {
       console.log("[Watch Action] >>>>", name);
@@ -104,8 +55,9 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(useMessageStore, {
-      receiveMessage: "receiveMessage",
+      onReceivePrivateMessage: "onReceivePrivateMessage",
       receiveGroupMessage: "receiveGroupMessage",
+      onSendMessage: "onSendMessage",
     }),
     ...mapActions(useInvitationStore, {
       receiveInvitation: "receiveInvitation",
@@ -119,7 +71,11 @@ export default defineComponent({
     this.$chatHub.start();
     this.$chatHub.client.on(
       `${CHAT_HUB_METHOD.RECEIVE_MESSAGE}`,
-      this.receiveMessage
+      this.onReceivePrivateMessage
+    );
+    this.$chatHub.client.on(
+      `${CHAT_HUB_METHOD.SEND_MESSAGE}`,
+      this.onSendMessage
     );
     this.$chatHub.client.on(
       `${CHAT_HUB_METHOD.RECEIVE_INVITATION}`,

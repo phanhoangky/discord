@@ -46,35 +46,84 @@ import useUserStore from "@/stores/UserStore";
 import EditRoomModal from "../../components/SideNavigation/Modal/EditRoomModal.vue";
 import { useRoomStore } from "@/stores/RoomStore";
 import ConfirmPopup from "../../components/common/ConfirmPopup.vue";
-import SkeletonLoading from "@/components/common/SkeletonLoading.vue";
 export default defineComponent({
   setup() {
     const invitationStore = useInvitationStore();
     const messageStore = useMessageStore();
-    // await messageStore.fetchMessage();
-    messageStore.$subscribe((mutation, state) => {
-      console.log(mutation);
-      const events = mutation.events as DebuggerEvent[];
-      const messagesMutation = events.filter((e) => e.key == "messages");
-      if (messagesMutation.length > 0) {
-        nextTick(() => {
-          const messagesListElement = document.getElementById(
-            "main"
-          ) as HTMLElement;
-          console.log(
-            messagesMutation,
-            messagesListElement,
-            messagesListElement.scrollTop,
-            messagesListElement.scrollHeight
-          );
-          if (messagesListElement) {
-            messagesListElement.scrollTo({
-              top: messagesListElement.scrollHeight,
-              behavior: "smooth",
+    const userStore = useUserStore();
+
+    messageStore.$subscribe(async (mutation, state) => {
+      console.log("[Dashboard Subscribe] >>>", mutation, state);
+
+      const events: DebuggerEvent[] = mutation.events as DebuggerEvent[];
+      const mutates: DebuggerEvent[] =
+        events &&
+        events.filter(
+          (e) =>
+            (e.key === "selectedRoom" && e.newValue) ||
+            (e.key === "selectedUser" && e.newValue)
+        );
+      console.log("[Events] >>> ", mutates);
+      if (!state.selectedRoom && !state.selectedUser) {
+        await userStore.fetchUsers();
+      }
+      const event = mutates.length > 0 && mutates[0];
+      if (event) {
+        ///////
+        if (event.newValue) {
+          console.log("[Set Messages List] >>>>", mutation, state);
+          if (state.selectedRoom || state.selectedUser) {
+            messageStore.totalItem = 0;
+            // messageStore.messages = [];
+            messageStore.$patch({
+              messages: [],
+            });
+            await messageStore.fetchMessage();
+            nextTick(() => {
+              const messagesListElement = document.getElementById(
+                "main"
+              ) as HTMLElement;
+              console.log(
+                messagesListElement,
+                messagesListElement.scrollTop,
+                messagesListElement.scrollHeight
+              );
+              if (messagesListElement) {
+                messagesListElement.scrollTo({
+                  top: messagesListElement.scrollHeight,
+                  behavior: "smooth",
+                });
+              }
             });
           }
-        });
+        }
       }
+    });
+
+    messageStore.$onAction(({ after, name, store }) => {
+      after(() => {
+        if (
+          (name == "onReceivePrivateMessage" && store.selectedUser) ||
+          (name == "receiveGroupMessage" && store.selectedRoom)
+        ) {
+          nextTick(() => {
+            const messagesListElement = document.getElementById(
+              "main"
+            ) as HTMLElement;
+            console.log(
+              messagesListElement,
+              messagesListElement.scrollTop,
+              messagesListElement.scrollHeight
+            );
+            if (messagesListElement) {
+              messagesListElement.scrollTo({
+                top: messagesListElement.scrollHeight,
+                behavior: "smooth",
+              });
+            }
+          });
+        }
+      });
     });
     onMounted(async () => {
       await invitationStore.fetchInvitationByUser();
@@ -126,12 +175,13 @@ export default defineComponent({
       if (main) {
         const bottomOfWindow =
           Math.ceil(main.scrollTop) + main.clientHeight === main.scrollHeight;
-        console.log(
-          "[>>>>]",
-          main.scrollTop,
-          this.totalItem,
-          this.messages.length
-        );
+        // console.log(
+        //   "[>>>>]",
+        //   main.scrollTop,
+        //   main.scrollHeight,
+        //   this.totalItem,
+        //   this.messages.length
+        // );
         if (main.scrollTop == 0 && this.totalItem > this.messages.length) {
           if (this.selectedRoom || this.selectedUser) {
             const data = await this.fetchMessage();

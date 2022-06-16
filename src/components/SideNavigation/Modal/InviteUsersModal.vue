@@ -44,7 +44,7 @@
 <script lang="ts">
 import type { User } from "@/stores/models/User";
 import useUserStore from "@/stores/UserStore";
-import { computed, defineComponent, onMounted, ref, watch } from "vue";
+import { computed, defineComponent, onBeforeMount, ref } from "vue";
 import BaseModal from "../../common/BaseModal.vue";
 import { useForm, Field } from "vee-validate";
 import useInvitationStore from "@/stores/InvitationStore";
@@ -56,15 +56,12 @@ export default defineComponent({
     const invitationStore = useInvitationStore();
     const messageStore = useMessageStore();
     const isShow = ref(false);
+    const users = ref();
 
     const listUsers = computed(() => {
-      if (userStore.usersInRoom && userStore.usersInRoom.length > 0) {
-        return userStore.users.filter(
-          (user) => !userStore.usersInRoom.some((e) => e.id == user.id)
-        );
-      }
       return userStore.users;
     });
+
     const { handleSubmit } = useForm();
     const selectUser = (user: User) => {
       console.log("[User Selected] >>>>", user);
@@ -86,16 +83,9 @@ export default defineComponent({
         });
       }
     };
-    onMounted(() => {
-      watch(
-        () => isShow.value,
-        async (nValue, oValue) => {
-          // console.log("[Invite Modal] >>>>", nValue, oValue);
-          if (nValue == true) {
-            // await userStore.fetchUsers();
-          }
-        }
-      );
+
+    onBeforeMount(() => {
+      users;
     });
 
     return {

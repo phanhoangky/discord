@@ -23,6 +23,7 @@ import useInvitationStore from "@/stores/InvitationStore";
 import InvitationItem from "../InvitationItem.vue";
 import { mapActions, mapState } from "pinia";
 import type {
+  InvitationCompositeKey,
   ReplyInvitationRequest,
   UpdateInvitationRequest,
 } from "@/stores/models/Invitation";
@@ -66,17 +67,21 @@ export default defineComponent({
     async openDrawer() {
       this.open = true;
       if (this.invitations.some((i) => i.isRead == false)) {
-        let updateList: string[] = [];
+        let updateList: InvitationCompositeKey[] = [];
 
         this.invitations.forEach((invitation) => {
           console.log(invitation);
           if (invitation.isRead == false) {
             invitation.isRead = true;
-            updateList.push(invitation.id);
+            updateList.push({
+              id: invitation.id,
+              receiverId: invitation.receiverId,
+              senderId: invitation.senderId,
+            });
           }
         });
         const request: UpdateInvitationRequest = {
-          ids: updateList,
+          keys: updateList,
           isRead: true,
         };
         await this.updateIsReadInvitations(request);

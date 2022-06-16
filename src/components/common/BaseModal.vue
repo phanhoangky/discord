@@ -5,7 +5,7 @@
         <div
           class="modal"
           :style="{
-            // width: width,
+            width: width ? width : 'auto',
           }"
           @click.stop="() => {}"
         >

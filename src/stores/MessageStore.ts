@@ -3,6 +3,7 @@ import type {
   FetchMessageRequest,
   Message,
   SendMessageRequest,
+  UpdateMessageRecipientRequest,
 } from "./models/Message";
 import { defineStore } from "pinia";
 import ApiHelper from "@/api";
@@ -26,13 +27,12 @@ export interface MessageStoreState {
 
 const useMessageStore = defineStore({
   id: "message-store",
-  state: () =>
-    ({
-      messages: [],
-      totalItem: 0,
-      selectedRoom: undefined,
-      selectedUser: undefined,
-    } as MessageStoreState),
+  state: (): MessageStoreState => ({
+    messages: [],
+    totalItem: 0,
+    selectedRoom: undefined,
+    selectedUser: undefined,
+  }),
   actions: {
     async fetchMessage() {
       const userStore = useUserStore();
@@ -58,7 +58,7 @@ const useMessageStore = defineStore({
             const fileMetadata = (await fetchFileMetadata(
               element.filePath
             )) as FullMetadata;
-            console.log("[Metadata] >>>", element, fileMetadata);
+            // console.log("[Metadata] >>>", element, fileMetadata);
             element.file = {
               ...fileMetadata,
               filePath: element.filePath,
@@ -98,7 +98,7 @@ const useMessageStore = defineStore({
           request.filePath = downloadURL;
         }
 
-        console.log("[Send Message Request] >>>>", request);
+        // console.log("[Send Message Request] >>>>", request);
         await ApiHelper.post(`${API_URL.MESSAGE}`, request, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -107,94 +107,144 @@ const useMessageStore = defineStore({
       }
     },
     setSelectedRoom(value?: Room) {
-      // this.selectedUser = undefined;
-      // this.selectedRoom = value;
       this.$patch({
         selectedRoom: value,
         selectedUser: undefined,
       });
     },
     setSelectedUser(value?: User) {
-      // this.selectedRoom = undefined;
-      // this.selectedUser = value;
       this.$patch({
         selectedRoom: undefined,
         selectedUser: value,
       });
     },
-    async receiveMessage(values: any) {
-      console.log("[Store Receive]>>>", values);
-      const userStore = useUserStore();
-      const source =
-        !this.selectedRoom && !this.selectedUser
-          ? userStore.users
-          : userStore.usersInRoom;
-      const receiverId = values.messageRecipients[0].recepientId;
-      source.filter((s) => s.id == receiverId)[0].notReadMessages++;
 
-      if (this.selectedUser) {
-        const newMesasge: Message = {
-          ...values,
+    async appendToMessageList(message: any) {
+      const newMesasge: Message = {
+        ...message,
+      };
+      if (message.filePath && message.filePath != "") {
+        // const fileURL = await fetchFileURL(values.filePath);
+        const metadata = (await fetchFileMetadata(
+          message.filePath
+        )) as FullMetadata;
+        newMesasge.file = {
+          filePath: message.filePath,
+          fullPath: metadata.fullPath,
+          name: metadata.name,
+          size: metadata.size,
+          type: metadata.contentType,
         };
-        if (values.filePath && values.filePath != "") {
-          // const fileURL = await fetchFileURL(values.filePath);
-          const metadata = (await fetchFileMetadata(
-            values.filePath
-          )) as FullMetadata;
-          newMesasge.file = {
-            filePath: values.filePath,
-            fullPath: metadata.fullPath,
-            name: metadata.name,
-            size: metadata.size,
-            type: metadata.contentType,
-          };
-          // values.fileType = metadata.contentType;
-        }
-        this.$patch({
-          messages: [...this.messages, newMesasge],
-        });
+      }
+      this.$patch({
+        messages: [...this.messages, newMesasge],
+      });
+    },
+    async onSendMessage(message: any) {
+      const userStore = useUserStore();
+      const isSender = userStore.user?.id == message.senderId;
+      if (isSender) {
+        this.appendToMessageList(message);
       }
     },
+
+    async onReceivePrivateMessage(values: any) {
+      const userStore = useUserStore();
+      const source = userStore.users;
+
+      console.log("[Store Receive]>>>", values, source);
+      const senderId = values.senderId;
+      const senders = source.filter((s) => s.id == senderId);
+      // If current user is a receiver
+      // If list user contain a sender
+      if (senders.length > 0) {
+        // If user currently chat with other user
+        if (
+          !this.selectedUser ||
+          (this.selectedUser && this.selectedUser.id != senderId)
+        ) {
+          senders[0].notReadMessages++;
+        }
+
+        // If user is current chat with message receiver or if current is sender
+        if (this.selectedUser && this.selectedUser.id == senderId) {
+          const newMesasge: Message = {
+            ...values,
+          };
+          await this.appendToMessageList(newMesasge);
+
+          // Update isRead = true to DB
+          newMesasge.messageRecipients[0].isRead = true;
+          console.log("[Update Is Read of New message ]", newMesasge);
+          const request: UpdateMessageRecipientRequest = {
+            id: newMesasge.messageRecipients[0].id,
+            isRead: true,
+            messageId: newMesasge.id,
+            isLoading: false,
+            recepientRoomId: undefined,
+            recipientId: newMesasge.messageRecipients[0].recepientId,
+          };
+          await this.updateMessageRecipient(request);
+        }
+      }
+    },
+
     async receiveGroupMessage(values: any) {
       console.log("[Store Receive receiveGroupMessage]>>>", values);
       const rooms = useRoomStore().rooms;
-
       const receiverId = values.messageRecipients[0].roomId;
       if (rooms.length > 0) {
-        const receiver = rooms.filter((r) => r.id == receiverId);
-        if (receiver.length > 0) {
-          receiver[0].notReadMessages++;
-        }
-      }
-      if (this.selectedRoom) {
-        const newMesasge: Message = {
-          ...values,
-        };
-        if (values.filePath && values.filePath != "") {
-          const metadata = (await fetchFileMetadata(
-            values.filePath
-          )) as FullMetadata;
-          newMesasge.file = {
-            filePath: values.filePath,
-            fullPath: metadata.fullPath,
-            name: metadata.name,
-            size: metadata.size,
-            type: metadata.contentType,
-          };
-          // values.fileType = metadata.contentType;
-        }
+        // Receiver is a room
+        const receivers = rooms.filter((r) => r.id == receiverId);
 
-        this.$patch({
-          messages: [...this.messages, newMesasge],
-        });
+        // If found a room
+        if (receivers.length > 0) {
+          // Receiver is a room
+          const receiver = receivers[0];
+
+          // If user currently chat with others
+          if (
+            !this.selectedRoom ||
+            (this.selectedRoom && this.selectedRoom.id != receiverId)
+          ) {
+            receiver.notReadMessages++;
+          }
+
+          // If user currently chat with receiver room
+          if (this.selectedRoom && this.selectedRoom.id == receiver.id) {
+            const newMesasge: Message = {
+              ...values,
+            };
+            await this.appendToMessageList(newMesasge);
+            // Update isRead = true to DB
+            const roomUser = newMesasge.messageRecipients.filter(
+              (e) =>
+                e.userInRoomId == this.selectedUser?.id &&
+                e.roomId == this.selectedRoom?.id
+            )?.[0];
+
+            const request: UpdateMessageRecipientRequest = {
+              id: roomUser.id,
+              isRead: true,
+              isLoading: false,
+              messageId: newMesasge.id,
+              recepientRoomId: roomUser.recepientRoomId,
+              recipientId: undefined,
+            };
+            await ApiHelper.put(`${API_URL.MESSAGE_RECIPIENT}`, request);
+          }
+        }
       }
+    },
+
+    async updateMessageRecipient(param: any) {
+      const request: UpdateMessageRecipientRequest = {
+        isLoading: false,
+        isRead: true,
+        ...param,
+      };
+      await ApiHelper.put(`${API_URL.MESSAGE_RECIPIENT}`, request);
     },
   },
 });
-// ChatHub.client.on("ReceiveRoomMessage", () => {
-//   console.log("[Room Meesage]");
-// });
-// ChatHub.client.on("ReceivePrivateMeesage", () => {
-//   console.log("[PrivateMessage]");
-// });
 export default useMessageStore;

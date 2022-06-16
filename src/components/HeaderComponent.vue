@@ -68,8 +68,8 @@ export default defineComponent({
       const html = document.documentElement;
       html.classList.toggle("dark-theme");
     },
-    async confirmLogout() {
-      await this.logout();
+    confirmLogout() {
+      this.logout();
     },
   },
   components: { InvitationDrawer, ConfirmPopup },

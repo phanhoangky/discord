@@ -34,6 +34,7 @@ const useInvitationStore = defineStore({
         currentPage: 0,
         isInfiniteScroll: true,
         isPaging: false,
+        isLoading: true,
         itemsPerPage: 10,
       };
       const { data } = await ApiHelper.get(`${API_URL.INVITATION}`, {

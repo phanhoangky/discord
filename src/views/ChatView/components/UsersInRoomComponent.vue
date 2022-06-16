@@ -4,7 +4,7 @@
       <font-awesome-icon icon="people-group"></font-awesome-icon>
     </div>
     <TransitionGroup name="list" tag="ul">
-      <li v-for="user in listUsers" :key="user.id" @click="selectUser(user)">
+      <li v-for="user in users" :key="user.id" @click="selectUser(user)">
         <img src="@/assets/logo.svg" />
         <div class="username">{{ user.firstName }} {{ user.lastName }}</div>
         <div class="not-read">{{ user.notReadMessages }}</div>
@@ -36,26 +36,10 @@ import * as yup from "yup";
 import { useRoomStore } from "@/stores/RoomStore";
 export default defineComponent({
   setup() {
-    const userStore = useUserStore();
-    const messageStore = useMessageStore();
     const schema = yup.object({
       username: yup.string().max(50),
     });
 
-    // messageStore.$subscribe(async (mutation, state) => {
-    //   console.log("[UserInRoom] >>>", "", mutation);
-    //   if (!messageStore.selectedRoom && !messageStore.selectedUser) {
-    //     console.log("[UserInRoom] >>>", "All User", mutation);
-    //     await userStore.fetchUsers();
-    //   }
-    //   if (mutation.events.target.selectedRoom && messageStore.selectedRoom) {
-    //     console.log("[UserInRoom] >>>", "SelectedRoom", mutation);
-    //     await userStore.fetchUsersInRoom();
-    //   }
-    // });
-    // messageStore.$onAction((context) => {
-    //   console.log("Message Store Action>>>>>>", context);
-    // });
     return { schema };
   },
   components: {
@@ -67,25 +51,17 @@ export default defineComponent({
   }),
   computed: {
     ...mapState(useUserStore, {
-      usersInRoom: "usersInRoom",
       users: "users",
     }),
     ...mapState(useMessageStore, {
       selectedUser: "selectedUser",
       selectedRoom: "selectedRoom",
     }),
-    listUsers(): User[] {
-      if (this.selectedRoom) {
-        return this.usersInRoom;
-      }
-      return this.users;
-    },
   },
   methods: {
     ...mapActions(useUserStore, {
       fetchUsersInRoom: "fetchUsersInRoom",
       fetchUsers: "fetchUsers",
-      setUser: "setUser",
     }),
     ...mapActions(useMessageStore, {
       setSelectedUser: "setSelectedUser",
@@ -94,9 +70,9 @@ export default defineComponent({
       setRoom: "setSelectedRoom",
     }),
     async searchUserByName(values: any) {
-      console.log(values, this.listUsers);
+      // console.log(values, this.users);
       if (this.selectedRoom) {
-        await this.fetchUsersInRoom(...values);
+        await this.fetchUsersInRoom(values);
       } else {
         await this.fetchUsers(values);
       }

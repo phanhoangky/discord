@@ -28,10 +28,12 @@ ApiHelper.interceptors.request.use((config) => {
   // if (config.method === "post") {
   //   config.data = JSON.stringify(config.data);
   // }
-  console.log("[Data] >>>", config.data);
-
-  const loadingScreenStore = useLoadingScreenStore();
-  loadingScreenStore.setIsLoading(true);
+  // console.log("[Data] >>>", config, config.data);
+  const param = config.data || config.params;
+  if (param.isLoading) {
+    const loadingScreenStore = useLoadingScreenStore();
+    loadingScreenStore.setIsLoading(true);
+  }
   return config;
 });
 
@@ -39,7 +41,9 @@ ApiHelper.interceptors.response.use(
   (response) => {
     const toastStore = useToastMessageStore();
     const loadingScreenStore = useLoadingScreenStore();
-    if (response.config.method != "get") {
+    // console.log(response.config.data, response.config.params);
+    const param = response.config.data || response.config.params;
+    if (param && param.isLoading) {
       toastStore.setToast(MESSAGE_TYPE.SUCCESS, "Success", response.statusText);
     }
     loadingScreenStore.setIsLoading(false);

@@ -1,4 +1,4 @@
-import type { BaseGetRequest, BaseModel } from "./BaseModel";
+import type { BaseGetRequest, BaseModel, BaseRequest } from "./BaseModel";
 import type { User } from "./User";
 
 export interface Message extends BaseModel {
@@ -7,8 +7,18 @@ export interface Message extends BaseModel {
   messageContent: string;
   file?: FileType;
   messageRecipients: MessageRecipient[];
-  notReadMessages: number;
+  notReadMessages?: number;
 }
+
+export interface MessageRecipient extends BaseModel {
+  recepientId?: string;
+  messageId: string;
+  isRead: boolean;
+  recepientRoomId?: string;
+  roomId?: string;
+  userInRoomId?: string;
+}
+
 export interface FileType {
   filePath: string;
   fullPath: string;
@@ -30,10 +40,10 @@ export interface FetchMessageRequest extends BaseGetRequest {
   roomId?: string;
 }
 
-export interface MessageRecipient extends BaseModel {
-  recepientId?: string;
+export interface UpdateMessageRecipientRequest extends BaseRequest {
+  id: string;
   messageId: string;
-  isRead: boolean;
+  recipientId?: string;
   recepientRoomId?: string;
-  roomId?: string;
+  isRead: boolean;
 }

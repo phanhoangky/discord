@@ -47,11 +47,7 @@ import useUserStore from "@/stores/UserStore";
 export default defineComponent({
   setup() {
     const messageStore = useMessageStore();
-    onMounted(() => {
-      nextTick(async () => {
-        await messageStore.fetchMessage();
-      });
-    });
+
     return {};
   },
   components: {},
@@ -66,11 +62,7 @@ export default defineComponent({
       user: "user",
     }),
   },
-  methods: {
-    ...mapActions(useMessageStore, {
-      fetchMessage: "fetchMessage",
-    }),
-  },
+  methods: {},
 });
 </script>
 

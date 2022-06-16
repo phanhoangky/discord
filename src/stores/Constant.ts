@@ -5,6 +5,7 @@ export const enum API_URL {
   USER = "user",
   MESSAGE = "message",
   INVITATION = "invitation",
+  MESSAGE_RECIPIENT = "message-recipient",
 }
 
 export const enum CHAT_HUB_METHOD {
@@ -12,4 +13,5 @@ export const enum CHAT_HUB_METHOD {
   RECEIVE_INVITATION = "ReceiveInvitation",
   RECEIVE_GROUP_MESSAGE = "ReceiveGroupMessage",
   USER_LEAVE_GROUP = "UserLeaveGroup",
+  SEND_MESSAGE = "OnSendMessage",
 }

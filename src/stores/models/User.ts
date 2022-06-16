@@ -1,4 +1,4 @@
-import type { BaseGetRequest } from "./BaseModel";
+import type { BaseGetRequest, BaseRequest } from "./BaseModel";
 
 export interface User {
   id: string;
@@ -25,7 +25,7 @@ export interface GetUserRequest extends BaseGetRequest {
   searchName?: string;
 }
 
-export interface UpdateUserProfileRequest {
+export interface UpdateUserProfileRequest extends BaseRequest {
   fullname?: string;
   photoUrl?: string;
   phoneNumber?: string;

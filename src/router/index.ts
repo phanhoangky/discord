@@ -41,6 +41,17 @@ const routes: RouteRecordRaw[] = [
     meta: {
       layout: "AuthLayout",
     },
+    beforeEnter: () => {
+      const messageStore = useMessageStore();
+      // messageStore.setSelectedRoom(undefined);
+      // messageStore.setSelectedUser(undefined);
+      messageStore.$patch({
+        selectedUser: undefined,
+        messages: [],
+        selectedRoom: undefined,
+      });
+      // messageStore.messages = [];
+    },
   },
   {
     path: "/sign-up",

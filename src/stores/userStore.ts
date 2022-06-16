@@ -9,12 +9,13 @@ import ApiHelper from "@/api";
 import { API_URL } from "./Constant";
 import router from "@/router";
 import useMessageStore from "./MessageStore";
+import { callGetUserByRoom } from "./services/UserStoreServices";
 
 export type UserState = {
   user?: User;
-  usersInRoom: User[];
-  allUsers: User[];
   users: User[];
+  fetchUsersInvitationRequest: GetUserRequest;
+  fetchUsersInRoomRequest: GetUserRequest;
 };
 
 const useUserStore = defineStore({
@@ -22,77 +23,95 @@ const useUserStore = defineStore({
   state: () =>
     ({
       user: undefined,
-      usersInRoom: [],
-      allUsers: [],
       users: [],
+      fetchUsersInvitationRequest: {
+        currentItemsCount: 0,
+        currentPage: 0,
+        isInfiniteScroll: false,
+        isLoading: true,
+        isPaging: false,
+        itemsPerPage: 10,
+        searchName: "",
+      },
+      fetchUsersInRoomRequest: {
+        currentItemsCount: 0,
+        currentPage: 0,
+        isInfiniteScroll: false,
+        isLoading: true,
+        isPaging: false,
+        itemsPerPage: 10,
+        searchName: "",
+      },
     } as UserState),
-  getters: {
-    totalUser: (state) => state.allUsers.length,
-    totalUserInRoom: (state) => state.usersInRoom.length,
-  },
+
   actions: {
     async SignIn(email: string, password: string) {
       const { data } = await ApiHelper.post(`${API_URL.AUTHENTICATE}/login`, {
         email,
         password,
+        isLoading: true,
       });
       document.cookie = data.token;
       this.user = data.user;
-
       router.push({ name: "home" });
     },
 
     async SignUp(model: SignUpModel) {
-      await ApiHelper.post(`${API_URL.AUTHENTICATE}/register`, model).then(
-        (res) => {
-          if (res.data.id) {
-            router.push({ name: "SignIn" });
-          }
+      await ApiHelper.post(`${API_URL.AUTHENTICATE}/register`, {
+        ...model,
+        isLoading: true,
+      }).then((res) => {
+        if (res.data.id) {
+          router.push({ name: "SignIn" });
         }
-      );
+      });
     },
-    async logout() {
+    logout() {
       document.cookie = "";
       this.$patch({
         user: undefined,
       });
       router.push("/sign-in");
     },
-    async fetchUsersInRoom(username?: string) {
+    async fetchUsersInRoom(params?: any) {
       const request: GetUserRequest = {
-        currentItemsCount: this.usersInRoom ? this.usersInRoom.length : 0,
+        currentItemsCount: this.user ? this.users.length : 0,
         currentPage: 0,
         isInfiniteScroll: false,
         isPaging: false,
         itemsPerPage: 10,
-        searchName: username,
+        isLoading: true,
+        ...params,
       };
       const messageStore = useMessageStore();
-      const { data } = await ApiHelper.get(
-        `${API_URL.USER}/room/${messageStore.selectedRoom?.id}`,
-        {
-          params: request,
-        }
+      const data = await callGetUserByRoom(
+        request,
+        messageStore.selectedRoom?.id
       );
       console.log("[Fetch UserInRoom] >>>>", data);
 
-      this.usersInRoom = data.results;
+      this.$patch({
+        users: data.results,
+      });
       return data;
     },
 
-    async fetchUsers(values?: any) {
+    async fetchUsers(params?: any) {
       const request: GetUserRequest = {
         currentItemsCount: this.users ? this.users.length : 0,
         currentPage: 0,
         isInfiniteScroll: false,
         isPaging: false,
+        isLoading: true,
         itemsPerPage: 10,
-        ...values,
+        ...params,
       };
       const { data } = await ApiHelper.get(`${API_URL.USER}`, {
         params: request,
       });
-      this.users = data.results;
+      this.$patch({
+        users: data.results,
+      });
       return data;
     },
 
@@ -107,19 +126,8 @@ const useUserStore = defineStore({
       });
     },
     setUser(value: any) {
-      // this.user = {
-      //   ...this.user,
-      //   ...value,
-      // };
       this.$patch({
         user: { ...this.user, ...value },
-      });
-    },
-
-    setUsersInRoom(values: User[]) {
-      // this.usersInRoom = values;
-      this.$patch({
-        usersInRoom: values,
       });
     },
   },
