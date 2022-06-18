@@ -1,5 +1,5 @@
 import { HubConnectionBuilder, HubConnection } from "@microsoft/signalr";
-import { API_URL } from "../Constant";
+import { API_URL, CHAT_HUB_METHOD } from "../Constant";
 import useMessageStore from "../MessageStore";
 
 export class ChatHub {
@@ -32,6 +32,12 @@ export class ChatHub {
     console.log("[Client] start listening >>>>", this.client.connectionId);
   }
   async end() {
+    this.client.off(`${CHAT_HUB_METHOD.INVITATION_ACCEPTED}`);
+    this.client.off(`${CHAT_HUB_METHOD.RECEIVE_GROUP_MESSAGE}`);
+    this.client.off(`${CHAT_HUB_METHOD.RECEIVE_INVITATION}`);
+    this.client.off(`${CHAT_HUB_METHOD.RECEIVE_MESSAGE}`);
+    this.client.off(`${CHAT_HUB_METHOD.SEND_MESSAGE}`);
+    this.client.off(`${CHAT_HUB_METHOD.USER_LEAVE_GROUP}`);
     await this.client.stop();
   }
 }

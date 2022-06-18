@@ -10,6 +10,7 @@ import { API_URL } from "./Constant";
 import router from "@/router";
 import useMessageStore from "./MessageStore";
 import { callGetUserByRoom } from "./services/UserStoreServices";
+import { fetchFileURL, refFile, uploadFile } from "@/utilities/Firebase";
 
 export type UserState = {
   user?: User;
@@ -57,14 +58,16 @@ const useUserStore = defineStore({
     },
 
     async SignUp(model: SignUpModel) {
-      await ApiHelper.post(`${API_URL.AUTHENTICATE}/register`, {
-        ...model,
-        isLoading: true,
-      }).then((res) => {
-        if (res.data.id) {
-          router.push({ name: "SignIn" });
+      const { data } = await ApiHelper.post(
+        `${API_URL.AUTHENTICATE}/register`,
+        {
+          ...model,
+          isLoading: true,
         }
-      });
+      );
+      if (data && data.id) {
+        router.push({ name: "SignIn" });
+      }
     },
     logout() {
       document.cookie = "";
@@ -120,10 +123,21 @@ const useUserStore = defineStore({
       console.log(data);
     },
     async updateUserProfile(request: UpdateUserProfileRequest) {
-      const { data } = await ApiHelper.put(`${API_URL.USER}`, request);
+      const userStore = useUserStore();
+      if (request.file) {
+        const fileRef = refFile(`${userStore.user?.id}/${request.file.name}`);
+        await uploadFile(fileRef.fullPath, request.file);
+        const url = await fetchFileURL(fileRef.fullPath);
+        request.photoUrl = url;
+      }
+      const { data } = await ApiHelper.put(`${API_URL.USER}/${request.id}`, {
+        ...request,
+        isLoading: true,
+      });
       this.$patch({
         user: data,
       });
+      return data;
     },
     setUser(value: any) {
       this.$patch({

@@ -7,11 +7,15 @@ import type {
   Invitation,
   ReplyInvitationRequest,
   SendInvitationRequest,
+  UpdateInvitationByUserRequest,
   UpdateInvitationRequest,
 } from "./models/Invitation";
+import type { User } from "./models/User";
+import useUserStore from "./UserStore";
 
 export interface InvitationStoreState {
   invitations: Invitation[];
+  showInviteUsersModal: boolean;
 }
 
 const useInvitationStore = defineStore({
@@ -19,6 +23,7 @@ const useInvitationStore = defineStore({
   state: () =>
     ({
       invitations: [],
+      showInviteUsersModal: false,
     } as InvitationStoreState),
   getters: {},
   actions: {
@@ -47,14 +52,13 @@ const useInvitationStore = defineStore({
       await ApiHelper.put(`${API_URL.INVITATION}/reply`, {
         invitationId: request.invitationId,
         isAccepted: request.isAccepted,
-      } as ReplyInvitationRequest).then(async () => {
-        this.invitations = this.invitations.filter(
-          (i) => i.id != request.invitationId
-        );
-        const roomStore = useRoomStore();
-        await roomStore.fetchRooms();
-      });
-      // await this.fetchInvitationByUser();
+      } as ReplyInvitationRequest);
+      this.invitations = this.invitations.filter(
+        (i) => i.id != request.invitationId
+      );
+      const roomStore = useRoomStore();
+      await roomStore.fetchRooms();
+      await this.fetchInvitationByUser();
     },
 
     async receiveInvitation(invitation: Invitation) {
@@ -65,6 +69,21 @@ const useInvitationStore = defineStore({
 
     async updateIsReadInvitations(request: UpdateInvitationRequest) {
       await ApiHelper.put(`${API_URL.INVITATION}`, request);
+    },
+    async updateInvitationsByUser(request: UpdateInvitationByUserRequest) {
+      await ApiHelper.put(`${API_URL.INVITATION}/${request.userId}`, request);
+    },
+
+    async onInvitationAccepted(user: User, roomId: string) {
+      const userStore = useUserStore();
+      const roomStore = useRoomStore();
+      if (roomStore.selectedRoom) {
+        if (roomId == roomStore.selectedRoom?.id) {
+          userStore.$patch({
+            users: [...userStore.users, user],
+          });
+        }
+      }
     },
   },
 });

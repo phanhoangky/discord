@@ -2,16 +2,23 @@
   <div class="grid-layout">
     <header>
       <div class="header-left">
-        <InviteUsersModal v-if="selectedRoom"></InviteUsersModal>
-        <EditRoomModal></EditRoomModal>
+        <InviteUsersModal v-if="selectedRoom"> </InviteUsersModal>
+        <EditRoomModal
+          v-if="selectedRoom?.creatorId == user?.id"
+        ></EditRoomModal>
         <span>#</span>
         <span v-if="selectedRoom">{{ selectedRoom.name }}</span>
         <span v-if="selectedUser">
           {{ selectedUser.firstName }} {{ selectedUser.lastName }}
         </span>
       </div>
-      <div v-if="selectedRoom">
-        <ConfirmPopup :title="`Do you want to leave ?`" below center>
+      <div v-if="showLeaveRoomButton">
+        <ConfirmPopup
+          :title="`Do you want to leave ?`"
+          below
+          center
+          :confirm-async="leaveRoom"
+        >
           <button class="click-ani">
             <font-awesome-icon icon="tent-arrow-turn-left"></font-awesome-icon>
           </button>
@@ -46,12 +53,23 @@ import useUserStore from "@/stores/UserStore";
 import EditRoomModal from "../../components/SideNavigation/Modal/EditRoomModal.vue";
 import { useRoomStore } from "@/stores/RoomStore";
 import ConfirmPopup from "../../components/common/ConfirmPopup.vue";
+import { computed } from "@vue/reactivity";
 export default defineComponent({
   setup() {
+    // Store
     const invitationStore = useInvitationStore();
     const messageStore = useMessageStore();
     const userStore = useUserStore();
-
+    //State
+    const { showInviteUsersModal } = invitationStore;
+    // Computed
+    let showLeaveRoomButton = computed(() => {
+      return (
+        messageStore.selectedRoom &&
+        messageStore.selectedRoom.creatorId != userStore.user?.id
+      );
+    });
+    // Watch state and action
     messageStore.$subscribe(async (mutation, state) => {
       console.log("[Dashboard Subscribe] >>>", mutation, state);
 
@@ -129,7 +147,10 @@ export default defineComponent({
       await invitationStore.fetchInvitationByUser();
     });
 
-    return {};
+    return {
+      showLeaveRoomButton,
+      showInviteUsersModal,
+    };
   },
   components: {
     // ListMessagesComponent: defineAsyncComponent({
@@ -155,6 +176,9 @@ export default defineComponent({
     }),
     ...mapState(useUserStore, {
       user: "user",
+    }),
+    ...mapState(useRoomStore, {
+      roomSelected: "selectedRoom",
     }),
     isShowChatWindow() {
       if (this.selectedRoom == undefined && this.selectedUser == undefined) {

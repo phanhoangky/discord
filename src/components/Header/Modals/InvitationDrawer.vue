@@ -23,10 +23,10 @@ import useInvitationStore from "@/stores/InvitationStore";
 import InvitationItem from "../InvitationItem.vue";
 import { mapActions, mapState } from "pinia";
 import type {
-  InvitationCompositeKey,
   ReplyInvitationRequest,
-  UpdateInvitationRequest,
+  UpdateInvitationByUserRequest,
 } from "@/stores/models/Invitation";
+import useUserStore from "@/stores/UserStore";
 export default defineComponent({
   setup() {
     const invitationStore = useInvitationStore();
@@ -58,33 +58,39 @@ export default defineComponent({
     ...mapState(useInvitationStore, {
       invitations: "invitations",
     }),
+    ...mapState(useUserStore, {
+      user: "user",
+    }),
   },
   methods: {
     ...mapActions(useInvitationStore, {
       reply: "replyInvitation",
       updateIsReadInvitations: "updateIsReadInvitations",
+      updateInvitationsByUser: "updateInvitationsByUser",
+      fetchInvitationByUser: "fetchInvitationByUser",
     }),
     async openDrawer() {
       this.open = true;
-      if (this.invitations.some((i) => i.isRead == false)) {
-        let updateList: InvitationCompositeKey[] = [];
+      // if current list contains not read invitation
+      if (this.user) {
+        if (this.invitations.some((i) => i.isRead == false)) {
+          let request: UpdateInvitationByUserRequest = {
+            invitations: [],
+            isRead: true,
+            userId: this.user.id,
+            isLoading: true,
+          };
 
-        this.invitations.forEach((invitation) => {
-          console.log(invitation);
-          if (invitation.isRead == false) {
-            invitation.isRead = true;
-            updateList.push({
-              id: invitation.id,
-              receiverId: invitation.receiverId,
-              senderId: invitation.senderId,
-            });
-          }
-        });
-        const request: UpdateInvitationRequest = {
-          keys: updateList,
-          isRead: true,
-        };
-        await this.updateIsReadInvitations(request);
+          this.invitations.forEach((invitation) => {
+            console.log(invitation);
+            if (invitation.isRead == false) {
+              invitation.isRead = true;
+              request.invitations.push(invitation);
+            }
+          });
+          await this.updateInvitationsByUser(request);
+          await this.fetchInvitationByUser();
+        }
       }
     },
     async onReply(invitationId: string, isAccepted: boolean) {

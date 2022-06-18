@@ -4,6 +4,11 @@ import ApiHelper from "@/api";
 import { API_URL } from "./Constant";
 import useUserStore from "./UserStore";
 import type { User } from "./models/User";
+import useMessageStore from "./MessageStore";
+import {
+  callGetRoomById,
+  updateNotReadMessageOfRoom,
+} from "./services/RoomStoreServices";
 
 export interface RoomStoreState {
   rooms: Room[];
@@ -65,8 +70,74 @@ export const useRoomStore = defineStore({
         isLoading: true,
       };
       await ApiHelper.put(`${API_URL.ROOM}`, request);
+      const messageStore = useMessageStore();
+      messageStore.$patch({
+        selectedRoom: {
+          ...messageStore.selectedRoom,
+          ...values,
+        },
+      });
+      this.$patch({
+        selectedRoom: {
+          ...this.selectedRoom,
+          ...values,
+        },
+      });
       await this.fetchRooms();
     },
+    async fetchRoomById(roomId: string) {
+      const data = await callGetRoomById(roomId);
+      console.log("[Fetch room by Id]>>>", data);
+
+      this.$patch({
+        selectedRoom: data,
+      });
+
+      this.$patch({
+        rooms: this.rooms.map((r) => {
+          if (r.id == data.id) {
+            const notRead = data?.roomUser?.MessageRecipients.filter(
+              (e: any) => e.isRead == false
+            );
+            r.notReadMessages = notRead.length;
+          }
+          return r;
+        }),
+      });
+      return data;
+    },
+
+    async updateNotReadMessageOfRoomByUser(roomId: string) {
+      const userStore = useUserStore();
+      if (userStore.user) {
+        const updatedUser = (await updateNotReadMessageOfRoom({
+          roomId,
+          userId: userStore.user.id,
+          isLoading: false,
+        })) as Room;
+        console.log("[ss] >>>", updatedUser);
+        this.$patch({
+          rooms: this.rooms.map((r) => {
+            if (r.id == updatedUser.id) {
+              const notRead = updatedUser.roomUsers
+                ?.filter(
+                  (e) => e.roomId == roomId && e.userId == userStore.user?.id
+                )[0]
+                .messageRecipients.filter(
+                  (mr) => mr.isRead == false && mr.isActive == true
+                ).length;
+              if (notRead != undefined) {
+                r.notReadMessages = notRead;
+              }
+            }
+            return r;
+          }),
+        });
+        return updatedUser;
+      }
+      return undefined;
+    },
+
     async deleteRoom(id: string) {
       await ApiHelper.delete(`${API_URL.ROOM}/${id}`, {
         params: { isLoading: true },
@@ -75,19 +146,30 @@ export const useRoomStore = defineStore({
     },
     async leaveRoom() {
       const roomId = this.selectedRoom?.id;
-      await ApiHelper.delete(`${API_URL.ROOM}/leave/${roomId}`);
+      await ApiHelper.delete(`${API_URL.ROOM}/leave/${roomId}`, {
+        params: { isLoading: true },
+      });
+      const messageStore = useMessageStore();
+      messageStore.$patch({
+        selectedRoom: undefined,
+        selectedUser: undefined,
+      });
+      await this.fetchRooms();
+      // this.$patch({
+      //   rooms: this.rooms.filter((r) => r.id != roomId),
+      // });
     },
-    async receiveMessageOnUserLeaveGroup(user: User, roomId: string) {
+    async onOtherUserLeaveRoom(user: User, roomId: string) {
       console.log("[On Leave Group >>>]", user, roomId);
       if (this.selectedRoom?.id == roomId) {
         const userStore = useUserStore();
         const isUserInRoom = userStore.users.some((e) => e.id == user.id);
         const newUsersList = userStore.users.filter((u) => u.id != user.id);
-        // if (isUserInRoom) {
-        //   userStore.$patch({
-        //     usersInRoom: newUsersList,
-        //   });
-        // }
+        if (isUserInRoom) {
+          userStore.$patch({
+            users: newUsersList,
+          });
+        }
       }
     },
   },

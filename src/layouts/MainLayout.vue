@@ -61,9 +61,10 @@ export default defineComponent({
     }),
     ...mapActions(useInvitationStore, {
       receiveInvitation: "receiveInvitation",
+      onInvitationAccepted: "onInvitationAccepted",
     }),
     ...mapActions(useRoomStore, {
-      receiveMessageOnUserLeaveGroup: "receiveMessageOnUserLeaveGroup",
+      onOtherUserLeaveRoom: "onOtherUserLeaveRoom",
     }),
   },
   created() {
@@ -87,8 +88,15 @@ export default defineComponent({
     );
     this.$chatHub.client.on(
       `${CHAT_HUB_METHOD.USER_LEAVE_GROUP}`,
-      this.receiveMessageOnUserLeaveGroup
+      this.onOtherUserLeaveRoom
     );
+    this.$chatHub.client.on(
+      `${CHAT_HUB_METHOD.INVITATION_ACCEPTED}`,
+      this.onInvitationAccepted
+    );
+  },
+  beforeUnmount() {
+    this.$chatHub.end();
   },
   components: { SideNavigation, HeaderComponent },
 });

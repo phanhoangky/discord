@@ -28,7 +28,13 @@ export interface InvitationCompositeKey {
   senderId: string;
   receiverId: string;
 }
-export interface UpdateInvitationRequest {
-  keys: InvitationCompositeKey[];
+export interface UpdateInvitationRequest extends BaseRequest {
+  invitations: Invitation[];
+  isRead: boolean;
+}
+
+export interface UpdateInvitationByUserRequest extends BaseRequest {
+  userId: string;
+  invitations: Invitation[];
   isRead: boolean;
 }

@@ -1,12 +1,18 @@
 <template>
   <BaseModal
-    :show="isShow"
+    :show="invitationStore.showInviteUsersModal"
     :modal-name="`Invite users`"
-    @close="isShow = false"
+    @close="
+      invitationStore.$patch({
+        showInviteUsersModal: false,
+      })
+    "
     @submit="
       async () => {
         await sendInvitation();
-        isShow = false;
+        invitationStore.$patch({
+          showInviteUsersModal: false,
+        });
       }
     "
   >
@@ -36,8 +42,10 @@
     </div>
     <!-- Invite User -->
   </BaseModal>
-  <button class="click-ani" @click="isShow = true">
-    <slot> <font-awesome-icon icon="user-plus"></font-awesome-icon> </slot>
+  <button class="click-ani" @click="openInviteUsersModal">
+    <slot>
+      <font-awesome-icon icon="user-plus"></font-awesome-icon>
+    </slot>
   </button>
 </template>
 
@@ -52,16 +60,18 @@ import useMessageStore from "@/stores/MessageStore";
 
 export default defineComponent({
   setup() {
+    // Store
     const userStore = useUserStore();
     const invitationStore = useInvitationStore();
     const messageStore = useMessageStore();
-    const isShow = ref(false);
-    const users = ref();
-
+    //State
+    const { showInviteUsersModal } = invitationStore;
+    //
     const listUsers = computed(() => {
       return userStore.users;
     });
 
+    // Method
     const { handleSubmit } = useForm();
     const selectUser = (user: User) => {
       console.log("[User Selected] >>>>", user);
@@ -83,18 +93,20 @@ export default defineComponent({
         });
       }
     };
-
-    onBeforeMount(() => {
-      users;
-    });
-
+    const openInviteUsersModal = async () => {
+      invitationStore.$patch({
+        showInviteUsersModal: true,
+      });
+      await userStore.fetchUsers();
+    };
     return {
-      isShow,
+      invitationStore,
       userStore,
+      listUsers,
       selectUser,
       onSearchSubmit,
       sendInvitation,
-      listUsers,
+      openInviteUsersModal,
     };
   },
   components: { BaseModal, Field },

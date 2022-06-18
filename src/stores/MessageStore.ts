@@ -74,6 +74,16 @@ const useMessageStore = defineStore({
         this.$patch({
           messages: temp,
         });
+        // if (request.roomId) {
+        //   this.messages.forEach((m) => {
+        //     const notRead = m.messageRecipients.filter(
+        //       (e) =>
+        //         e.roomId == request.roomId &&
+        //         e.userInRoomId == userStore.user?.id
+        //     );
+        //     console.log(notRead, m);
+        //   });
+        // }
         return data;
       }
       return null;
@@ -192,16 +202,15 @@ const useMessageStore = defineStore({
     async receiveGroupMessage(values: any) {
       console.log("[Store Receive receiveGroupMessage]>>>", values);
       const rooms = useRoomStore().rooms;
+      const userStore = useUserStore();
       const receiverId = values.messageRecipients[0].roomId;
       if (rooms.length > 0) {
         // Receiver is a room
         const receivers = rooms.filter((r) => r.id == receiverId);
-
         // If found a room
         if (receivers.length > 0) {
           // Receiver is a room
           const receiver = receivers[0];
-
           // If user currently chat with others
           if (
             !this.selectedRoom ||
@@ -209,7 +218,6 @@ const useMessageStore = defineStore({
           ) {
             receiver.notReadMessages++;
           }
-
           // If user currently chat with receiver room
           if (this.selectedRoom && this.selectedRoom.id == receiver.id) {
             const newMesasge: Message = {
@@ -217,21 +225,24 @@ const useMessageStore = defineStore({
             };
             await this.appendToMessageList(newMesasge);
             // Update isRead = true to DB
-            const roomUser = newMesasge.messageRecipients.filter(
-              (e) =>
-                e.userInRoomId == this.selectedUser?.id &&
-                e.roomId == this.selectedRoom?.id
-            )?.[0];
-
-            const request: UpdateMessageRecipientRequest = {
-              id: roomUser.id,
-              isRead: true,
-              isLoading: false,
-              messageId: newMesasge.id,
-              recepientRoomId: roomUser.recepientRoomId,
-              recipientId: undefined,
-            };
-            await ApiHelper.put(`${API_URL.MESSAGE_RECIPIENT}`, request);
+            if (newMesasge.senderId != userStore.user?.id) {
+              const roomUser = newMesasge.messageRecipients.filter(
+                (e) =>
+                  e.userInRoomId == userStore.user?.id &&
+                  e.roomId == this.selectedRoom?.id
+              );
+              if (roomUser.length > 0) {
+                const request: UpdateMessageRecipientRequest = {
+                  id: roomUser[0].id,
+                  isRead: true,
+                  isLoading: false,
+                  messageId: newMesasge.id,
+                  recepientRoomId: roomUser[0].recepientRoomId,
+                  recipientId: undefined,
+                };
+                await ApiHelper.put(`${API_URL.MESSAGE_RECIPIENT}`, request);
+              }
+            }
           }
         }
       }

@@ -43,8 +43,6 @@ const routes: RouteRecordRaw[] = [
     },
     beforeEnter: () => {
       const messageStore = useMessageStore();
-      // messageStore.setSelectedRoom(undefined);
-      // messageStore.setSelectedUser(undefined);
       messageStore.$patch({
         selectedUser: undefined,
         messages: [],

@@ -45,7 +45,7 @@ export const fetchFileURL = async (path: string) => {
 export const uploadFile = async (
   path: string,
   file: File,
-  metadata: UploadMetadata
+  metadata?: UploadMetadata
 ) => {
   const loadingScreenStore = useLoadingScreenStore();
   const toastMessageStore = useToastMessageStore();

@@ -25,6 +25,10 @@ import {
   faSun,
   faStarAndCrescent,
   faTentArrowTurnLeft,
+  faL,
+  faF,
+  faCakeCandles,
+  faVenusMars,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* import font awesome icon component */
@@ -50,4 +54,8 @@ library.add(faCampground);
 library.add(faSun);
 library.add(faStarAndCrescent);
 library.add(faTentArrowTurnLeft);
+library.add(faL);
+library.add(faF);
+library.add(faCakeCandles);
+library.add(faVenusMars);
 export default FontAwesomeIcon;

@@ -14,18 +14,7 @@
       v-for="item in rooms"
       :key="item.id"
       :class="item.id == selectedRoom?.id ? 'active' : ''"
-      @click="
-        () => {
-          if ($route.path != '/') {
-            $router.push('/');
-          }
-          if (selectedRoom != item) {
-            setSelectedRoom(item);
-            // setSelectedUser(undefined);
-            setRoom(item);
-          }
-        }
-      "
+      @click="selectItem(item)"
     >
       <div class="not-read">{{ item.notReadMessages }}</div>
       <span>{{ item.name }}</span>
@@ -52,6 +41,7 @@ import { defineComponent } from "vue";
 import { object, string } from "yup";
 import CreateRoomModal from "./Modal/CreateRoomModal.vue";
 import useMessageStore from "@/stores/MessageStore";
+import type { Room } from "@/stores/models/Room";
 export default defineComponent({
   setup() {
     const schema = object({
@@ -84,6 +74,8 @@ export default defineComponent({
       setShowCreateModal: "setShowCreateModal",
       setShowEditModal: "setShowEditModal",
       setRoom: "setSelectedRoom",
+      fetchRoomById: "fetchRoomById",
+      updateNotReadMessageOfRoomByUser: "updateNotReadMessageOfRoomByUser",
     }),
     ...mapActions(useMessageStore, {
       setSelectedRoom: "setSelectedRoom",
@@ -101,6 +93,19 @@ export default defineComponent({
         selectedUser: undefined,
       });
       this.setRoom(undefined);
+    },
+    async selectItem(item: Room) {
+      if (this.$route.path != "/") {
+        this.$router.push("/");
+      }
+      if (this.selectedRoom != item) {
+        this.setSelectedRoom(item);
+        // setSelectedUser(undefined);
+        const room = await this.updateNotReadMessageOfRoomByUser(item.id);
+        if (room) {
+          this.setRoom(room);
+        }
+      }
     },
   },
 

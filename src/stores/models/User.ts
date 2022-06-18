@@ -6,7 +6,10 @@ export interface User {
   lastName: string;
   email: string;
   photoUrl: string;
+  file?: File;
   phoneNumber: string;
+  gender?: string;
+  dateOfBirth?: Date;
   createdTime: string;
   updatedTime: string;
   isActive: boolean;
@@ -26,7 +29,12 @@ export interface GetUserRequest extends BaseGetRequest {
 }
 
 export interface UpdateUserProfileRequest extends BaseRequest {
-  fullname?: string;
+  id: string;
+  firstname?: string;
+  lastname?: string;
   photoUrl?: string;
+  file?: File;
   phoneNumber?: string;
+  gender?: string;
+  dateOfBirth?: Date;
 }

@@ -14,4 +14,5 @@ export const enum CHAT_HUB_METHOD {
   RECEIVE_GROUP_MESSAGE = "ReceiveGroupMessage",
   USER_LEAVE_GROUP = "UserLeaveGroup",
   SEND_MESSAGE = "OnSendMessage",
+  INVITATION_ACCEPTED = "OnInvitationAccepted",
 }

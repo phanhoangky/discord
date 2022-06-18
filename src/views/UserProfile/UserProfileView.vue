@@ -6,7 +6,15 @@
         <section class="user-avatar">
           <label class="avatar" for="avatar">
             <div class="avatar-overlay">
-              <img id="image-preview" src="@/assets/logo.svg" />
+              <img
+                id="image-preview"
+                v-if="newUser.photoUrl != ''"
+                :src="newUser.photoUrl"
+              />
+              <font-awesome-icon
+                v-if="!newUser.photoUrl || newUser.photoUrl == ''"
+                icon="user"
+              ></font-awesome-icon>
             </div>
           </label>
           <input
@@ -22,17 +30,28 @@
         </section>
         <section class="user-infor">
           <Form :validation-schema="schema">
-            <div class="user-infor-item">
-              <label>
-                <font-awesome-icon icon="user"></font-awesome-icon>
-              </label>
-              <Field
-                name="fullname"
-                disabled
-                :value="`${user?.firstName} ${user?.lastName}`"
-              />
+            <div class="user-infor-item flex-horizontal">
+              <div class="field-group">
+                <label>
+                  <font-awesome-icon icon="l"></font-awesome-icon>
+                </label>
+                <Field name="lastname" disabled v-model="user!.lastName" />
+                <ErrorMessage
+                  name="lastname"
+                  class="error-message"
+                ></ErrorMessage>
+              </div>
+              <div class="field-group">
+                <label>
+                  <font-awesome-icon icon="f"></font-awesome-icon>
+                </label>
+                <Field name="firstname" disabled v-model="user!.firstName" />
+                <ErrorMessage
+                  name="firstname"
+                  class="error-message"
+                ></ErrorMessage>
+              </div>
             </div>
-            <ErrorMessage name="fullname" class="error-message"></ErrorMessage>
             <div class="user-infor-item">
               <label>
                 <font-awesome-icon icon="envelope"></font-awesome-icon>
@@ -43,7 +62,7 @@
               <label>
                 <font-awesome-icon icon="mobile"></font-awesome-icon>
               </label>
-              <Field name="phoneNumber" :value="user?.phoneNumber" />
+              <Field name="phoneNumber" v-model="newUser.phoneNumber" />
             </div>
             <ErrorMessage
               name="phoneNumber"
@@ -51,28 +70,35 @@
             ></ErrorMessage>
             <div class="user-infor-item">
               <label>
-                <font-awesome-icon icon="mobile"></font-awesome-icon>
+                <font-awesome-icon icon="cake-candles"></font-awesome-icon>
               </label>
-              <Field type="date" name="dob" :value="``" />
+              <Field type="date" name="dob" v-model="newUser.dateOfBirth" />
             </div>
             <ErrorMessage name="dob" class="error-message"></ErrorMessage>
             <div class="user-infor-item">
               <label>
-                <font-awesome-icon icon="mobile"></font-awesome-icon>
+                <font-awesome-icon icon="venus-mars"></font-awesome-icon>
               </label>
               <div class="radio-group">
-                <Field label="Male" type="radio" name="sex" :value="`Male`" />
+                <Field
+                  label="Male"
+                  type="radio"
+                  name="gender"
+                  :value="`Male`"
+                  v-model="newUser.gender"
+                />
                 Male
                 <Field
                   label="Female"
                   type="radio"
-                  name="sex"
+                  name="gender"
                   :value="`Female`"
+                  v-model="newUser.gender"
                 />
                 Female
               </div>
             </div>
-            <ErrorMessage name="sex" class="error-message"></ErrorMessage>
+            <ErrorMessage name="gender" class="error-message"></ErrorMessage>
           </Form>
         </section>
       </main>
@@ -80,7 +106,7 @@
         <button @click="cancelChange">
           <font-awesome-icon icon="circle-xmark"></font-awesome-icon>
         </button>
-        <button :disabled="!isChanged">
+        <button :disabled="!isChanged" @click="updateProfile">
           <font-awesome-icon icon="floppy-disk"></font-awesome-icon>
         </button>
       </footer>
@@ -91,35 +117,91 @@
 <script lang="ts">
 import useUserStore from "@/stores/UserStore";
 import { mapActions, mapState, storeToRefs } from "pinia";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+import type { UpdateUserProfileRequest } from "@/stores/models/User";
+import { onBeforeRouteLeave } from "vue-router";
 
 export default defineComponent({
   setup() {
     const userStore = useUserStore();
     // const oldData = userStore.user;
-    const oldData = storeToRefs(userStore).user;
-
+    const user = { ...userStore.user };
+    const newUser = ref({ ...user });
     const isChanged = computed(() => {
+      console.log("[Compare]>>>", newUser.value, userStore.user);
+
       console.log(
-        JSON.stringify(oldData?.value) == JSON.stringify(userStore.user)
+        JSON.stringify(newUser?.value) == JSON.stringify(userStore.user)
       );
 
-      return JSON.stringify(oldData?.value) != JSON.stringify(userStore.user);
+      return JSON.stringify(newUser?.value) != JSON.stringify(userStore.user);
     });
     const cancelChange = () => {
-      userStore.setUser(oldData);
+      // newData = storeToRefs(userStore);
+      newUser.value = { ...user };
+      const imgElement = document.getElementById(
+        "image-preview"
+      ) as HTMLImageElement;
+
+      if (imgElement) {
+        imgElement.src = "";
+      }
     };
     const schema = yup.object({
       fullname: yup.string().required().max(50),
       phoneNumber: yup.string().required().min(9),
     });
+
+    //Method
+    const previewImage = async (event: any) => {
+      const file = event.target.files[0];
+      console.log("[Get File >>>]", event.target.files);
+      const src = URL.createObjectURL(file);
+      const imgElement = document.getElementById(
+        "image-preview"
+      ) as HTMLImageElement;
+
+      if (imgElement) {
+        imgElement.src = src;
+        newUser.value.file = file;
+        // await this.updateUser({
+        //   photoUrl: src,
+        // });
+        // this.setUser({ photoUrl: src });
+        console.log("[New User] >>>>", newUser.value);
+      }
+    };
+    const updateProfile = async () => {
+      //
+      if (userStore.user) {
+        const request: UpdateUserProfileRequest = {
+          id: userStore.user.id,
+          ...newUser.value,
+        };
+        const data = await userStore.updateUserProfile(request);
+      }
+    };
+    onBeforeRouteLeave((to, from, next) => {
+      //
+    });
+    // Subcribe
+    userStore.$onAction(({ after, name }) => {
+      if (name == "updateUserProfile") {
+        after((res) => {
+          newUser.value = { ...res };
+        });
+      }
+    });
     return {
-      oldData,
+      newUser,
+      user,
       isChanged,
-      cancelChange,
       schema,
+      cancelChange,
+      previewImage,
+      updateProfile,
     };
   },
   components: {
@@ -127,31 +209,12 @@ export default defineComponent({
     Field,
     ErrorMessage,
   },
-  computed: {
-    ...mapState(useUserStore, {
-      user: "user",
-    }),
-  },
+  computed: {},
   methods: {
     ...mapActions(useUserStore, {
       setUser: "setUser",
       updateUser: "updateUserProfile",
     }),
-    async previewImage(event: any) {
-      console.log("[Get File >>>]", event.target.files);
-      const src = URL.createObjectURL(event.target.files[0]);
-      const imgElement = document.getElementById(
-        "image-preview"
-      ) as HTMLImageElement;
-
-      if (imgElement) {
-        imgElement.src = src;
-        await this.updateUser({
-          photoUrl: src,
-        });
-        this.setUser({ photoUrl: src });
-      }
-    },
   },
 });
 </script>
@@ -226,6 +289,16 @@ export default defineComponent({
           gap: 10px;
           .user-infor-item {
             display: flex;
+            &.flex-horizontal {
+              flex-direction: row;
+              gap: 10px;
+            }
+            &.flex-verticle {
+              flex-direction: column;
+            }
+            .field-group {
+              width: 100%;
+            }
             label {
               width: 50px;
               aspect-ratio: 1 / 1;
