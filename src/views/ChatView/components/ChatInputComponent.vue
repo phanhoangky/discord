@@ -40,11 +40,12 @@
               >
                 {{ file?.name }}
               </span>
-              <font-awesome-icon
-                class="icon"
-                icon="circle-xmark"
-                @click="removeSelectedFile"
-              ></font-awesome-icon>
+              <button class="icon button click-ani" @click="removeSelectedFile">
+                <font-awesome-icon
+                  class="icon"
+                  icon="circle-xmark"
+                ></font-awesome-icon>
+              </button>
             </div>
           </Transition>
         </div>
@@ -229,8 +230,10 @@ export default defineComponent({
         width: 15%;
         min-width: 100px;
         position: absolute;
-        bottom: 100%;
+        bottom: calc(100% + 10px);
         transition: all 0.3s ease;
+        border-radius: 5px;
+        overflow: hidden;
         .preview {
           position: absolute;
           width: 100%;
@@ -238,6 +241,8 @@ export default defineComponent({
           opacity: 0;
           transform: translateY(-50px);
           transition: all 0.3s ease;
+          background-color: var(--vt-c-divider-dark-1);
+          padding: 5px;
           &.active {
             opacity: 1;
             transform: translateY(0);
@@ -246,7 +251,7 @@ export default defineComponent({
             position: absolute;
             right: 0;
             top: 0;
-            width: auto;
+            width: 25px;
           }
           img {
             height: 100%;

@@ -5,7 +5,9 @@
     </div> -->
     <InvitationDrawer class="header__item icon"></InvitationDrawer>
     <div class="user__profile header__item" @click="toUserProfileView">
-      <img src="@/assets/logo.svg" />
+      <div class="image-overlay">
+        <img :src="user?.photoUrl != '' ? user?.photoUrl : defaultAvatarURL" />
+      </div>
       <span>{{ user?.firstName }} {{ user?.lastName }}</span>
     </div>
     <div class="header__item">
@@ -56,6 +58,10 @@ export default defineComponent({
     ...mapState(useUserStore, {
       user: "user",
     }),
+    defaultAvatarURL() {
+      const url = new URL("../assets/defaultuser.png", import.meta.url);
+      return url.toString();
+    },
   },
   methods: {
     ...mapActions(useUserStore, {
@@ -128,15 +134,25 @@ export default defineComponent({
         }
       }
     }
-    img {
-      box-sizing: initial;
+    .image-overlay {
       height: 50%;
-      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       border-radius: 50%;
-      padding: 4px;
-      background-color: transparent;
-      outline: var(--vt-c-blue-light-2) solid 4px;
+      aspect-ratio: 1 / 1;
+      background-color: var(--vt-c-white-mute);
+      img {
+        box-sizing: initial;
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 50%;
+        padding: 4px;
+        background-color: transparent;
+        outline: var(--vt-c-blue-light-2) solid 4px;
+      }
     }
+
     &:hover {
       background-color: var(--vt-c-button-hover-bg);
       color: var(--vt-c-button-hover-text);

@@ -16,7 +16,11 @@
         <span>{{ new Date(item.createdTime) }} </span>
       </header>
       <aside class="avatar">
-        <img src="@/assets/logo.svg" />
+        <img
+          :src="
+            item.sender.photoUrl != '' ? item.sender.photoUrl : defaultAvatarURL
+          "
+        />
       </aside>
       <main class="message-content">
         <img
@@ -61,6 +65,10 @@ export default defineComponent({
     ...mapState(useUserStore, {
       user: "user",
     }),
+    defaultAvatarURL() {
+      const url = new URL("../../../assets/defaultuser.png", import.meta.url);
+      return url.toString();
+    },
   },
   methods: {},
 });

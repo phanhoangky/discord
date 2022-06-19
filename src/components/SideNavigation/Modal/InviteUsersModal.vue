@@ -27,7 +27,7 @@
           @click="selectUser(user)"
           :class="user.isSelected ? `selected` : ``"
         >
-          <img src="@/assets/logo.svg" />
+          <img :src="user.photoUrl != '' ? user.photoUrl : defaultAvatarURL" />
           <span>{{ user.email }}</span>
           <Transition>
             <font-awesome-icon
@@ -66,9 +66,18 @@ export default defineComponent({
     const messageStore = useMessageStore();
     //State
     const { showInviteUsersModal } = invitationStore;
-    //
+
+    //Conmputed
     const listUsers = computed(() => {
       return userStore.users;
+    });
+
+    const defaultAvatarURL = computed(() => {
+      const imgUrl = new URL(
+        "../../../assets/defaultuser.png",
+        import.meta.url
+      );
+      return imgUrl.toString();
     });
 
     // Method
@@ -103,6 +112,7 @@ export default defineComponent({
       invitationStore,
       userStore,
       listUsers,
+      defaultAvatarURL,
       selectUser,
       onSearchSubmit,
       sendInvitation,

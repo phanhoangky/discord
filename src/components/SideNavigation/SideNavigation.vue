@@ -86,8 +86,6 @@ export default defineComponent({
         console.log(this.$route);
         this.$router.push("/");
       }
-      // this.setSelectedRoom(undefined);
-      // this.setSelectedUser(undefined);
       useMessageStore().$patch({
         selectedRoom: undefined,
         selectedUser: undefined,
@@ -99,11 +97,11 @@ export default defineComponent({
         this.$router.push("/");
       }
       if (this.selectedRoom != item) {
-        this.setSelectedRoom(item);
         // setSelectedUser(undefined);
         const room = await this.updateNotReadMessageOfRoomByUser(item.id);
         if (room) {
           this.setRoom(room);
+          this.setSelectedRoom(item);
         }
       }
     },

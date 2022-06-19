@@ -5,7 +5,9 @@
     </div>
     <TransitionGroup name="list" tag="ul">
       <li v-for="user in users" :key="user.id" @click="selectUser(user)">
-        <img src="@/assets/logo.svg" />
+        <div class="image-overlay">
+          <img :src="user.photoUrl != '' ? user.photoUrl : defaultAvatarURL" />
+        </div>
         <div class="username">{{ user.firstName }} {{ user.lastName }}</div>
         <div class="not-read">{{ user.notReadMessages }}</div>
       </li>
@@ -27,7 +29,6 @@
 
 <script lang="ts">
 import useMessageStore from "@/stores/MessageStore";
-import type { User } from "@/stores/models/User";
 import useUserStore from "@/stores/UserStore";
 import { mapActions, mapState } from "pinia";
 import { defineComponent } from "vue";
@@ -57,6 +58,13 @@ export default defineComponent({
       selectedUser: "selectedUser",
       selectedRoom: "selectedRoom",
     }),
+    defaultAvatarURL() {
+      const imgUrl = new URL(
+        "../../../assets/defaultuser.png",
+        import.meta.url
+      );
+      return imgUrl.toString();
+    },
   },
   methods: {
     ...mapActions(useUserStore, {
@@ -69,6 +77,7 @@ export default defineComponent({
     ...mapActions(useRoomStore, {
       setRoom: "setSelectedRoom",
     }),
+
     async searchUserByName(values: any) {
       // console.log(values, this.users);
       if (this.selectedRoom) {
@@ -130,12 +139,17 @@ export default defineComponent({
       &:hover {
         background-color: var(--vt-c-divider-dark-2);
       }
-      img {
-        flex: 1;
+      .image-overlay {
+        flex-shrink: 0;
         width: 50px;
         aspect-ratio: 1 / 1;
-        flex-shrink: 0;
+        border-radius: 50%;
+        background-color: var(--vt-c-white-soft);
+        img {
+          width: 100%;
+        }
       }
+
       .username {
         flex: 4;
         overflow: hidden;

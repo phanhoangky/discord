@@ -8,13 +8,10 @@
             <div class="avatar-overlay">
               <img
                 id="image-preview"
-                v-if="newUser.photoUrl != ''"
-                :src="newUser.photoUrl"
+                :src="
+                  newUser.photoUrl != '' ? newUser.photoUrl : defaultAvatarURL
+                "
               />
-              <font-awesome-icon
-                v-if="!newUser.photoUrl || newUser.photoUrl == ''"
-                icon="user"
-              ></font-awesome-icon>
             </div>
           </label>
           <input
@@ -153,19 +150,24 @@ export default defineComponent({
       fullname: yup.string().required().max(50),
       phoneNumber: yup.string().required().min(9),
     });
-
+    // Computed
+    const defaultAvatarURL = computed(() => {
+      const imgUrl = new URL("../../assets/defaultuser.png", import.meta.url);
+      return imgUrl.toString();
+    });
     //Method
     const previewImage = async (event: any) => {
       const file = event.target.files[0];
-      console.log("[Get File >>>]", event.target.files);
       const src = URL.createObjectURL(file);
       const imgElement = document.getElementById(
         "image-preview"
       ) as HTMLImageElement;
 
+      console.log("[Get File >>>]", event.target.files, imgElement);
       if (imgElement) {
         imgElement.src = src;
         newUser.value.file = file;
+        newUser.value.photoUrl = src;
         // await this.updateUser({
         //   photoUrl: src,
         // });
@@ -199,6 +201,7 @@ export default defineComponent({
       user,
       isChanged,
       schema,
+      defaultAvatarURL,
       cancelChange,
       previewImage,
       updateProfile,
@@ -261,6 +264,13 @@ export default defineComponent({
             aspect-ratio: 1 / 1;
             border-radius: 50%;
             background-color: antiquewhite;
+            overflow: hidden;
+            .image-preview {
+              height: 100%;
+              aspect-ratio: 1 / 1;
+              border-radius: 50%;
+              text-align: center;
+            }
             img {
               width: 100%;
               aspect-ratio: 1 / 1;
