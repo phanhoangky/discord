@@ -84,7 +84,7 @@ export default defineComponent({
     reset() {
       if (this.$route.path != "/") {
         console.log(this.$route);
-        this.$router.push("/");
+        this.$router.push({ name: "home" });
       }
       useMessageStore().$patch({
         selectedRoom: undefined,
@@ -92,17 +92,20 @@ export default defineComponent({
       });
       this.setRoom(undefined);
     },
-    async selectItem(item: Room) {
+    selectItem(item: Room) {
       if (this.$route.path != "/") {
-        this.$router.push("/");
+        this.$router.push({ name: "home" });
       }
-      if (this.selectedRoom != item) {
+      if (!this.selectedRoom || this.selectedRoom != item) {
         // setSelectedUser(undefined);
-        const room = await this.updateNotReadMessageOfRoomByUser(item.id);
-        if (room) {
-          this.setRoom(room);
-          this.setSelectedRoom(item);
-        }
+        this.update(item);
+      }
+    },
+    async update(item: Room) {
+      const room = await this.updateNotReadMessageOfRoomByUser(item.id);
+      if (room) {
+        this.setRoom(room);
+        this.setSelectedRoom(item);
       }
     },
   },

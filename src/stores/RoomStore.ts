@@ -164,8 +164,8 @@ export const useRoomStore = defineStore({
       if (this.selectedRoom?.id == roomId) {
         const userStore = useUserStore();
         const isUserInRoom = userStore.users.some((e) => e.id == user.id);
-        const newUsersList = userStore.users.filter((u) => u.id != user.id);
         if (isUserInRoom) {
+          const newUsersList = userStore.users.filter((u) => u.id != user.id);
           userStore.$patch({
             users: newUsersList,
           });

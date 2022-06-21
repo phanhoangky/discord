@@ -62,17 +62,11 @@ export default defineComponent({
   },
   computed: {},
   methods: {
-    ...mapActions(useLoadingScreenStore, {
-      setIsLoading: "setIsLoading",
-    }),
     ...mapActions(useUserStore, {
       signIn: "SignIn",
     }),
-    login(values: any) {
-      this.setIsLoading(true);
-      this.signIn(values.email, values.password).then(() => {
-        this.setIsLoading(false);
-      });
+    async login(values: any) {
+      await this.signIn(values.email, values.password);
       console.log(values);
     },
   },

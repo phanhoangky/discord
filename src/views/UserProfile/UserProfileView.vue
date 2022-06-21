@@ -29,20 +29,30 @@
           <Form :validation-schema="schema">
             <div class="user-infor-item flex-horizontal">
               <div class="field-group">
-                <label>
+                <label class="field-label">
                   <font-awesome-icon icon="l"></font-awesome-icon>
                 </label>
-                <Field name="lastname" disabled v-model="user!.lastName" />
+                <Field
+                  name="lastname"
+                  type="text"
+                  disabled
+                  v-model="user!.lastName"
+                />
                 <ErrorMessage
                   name="lastname"
                   class="error-message"
                 ></ErrorMessage>
               </div>
               <div class="field-group">
-                <label>
+                <label class="field-label">
                   <font-awesome-icon icon="f"></font-awesome-icon>
                 </label>
-                <Field name="firstname" disabled v-model="user!.firstName" />
+                <Field
+                  name="firstname"
+                  type="text"
+                  disabled
+                  v-model="user!.firstName"
+                />
                 <ErrorMessage
                   name="firstname"
                   class="error-message"
@@ -50,49 +60,61 @@
               </div>
             </div>
             <div class="user-infor-item">
-              <label>
+              <label class="field-label">
                 <font-awesome-icon icon="envelope"></font-awesome-icon>
               </label>
-              <Field name="email" disabled :value="user?.email" />
+              <Field type="text" name="email" disabled :value="user?.email" />
             </div>
             <div class="user-infor-item">
-              <label>
+              <label class="field-label">
                 <font-awesome-icon icon="mobile"></font-awesome-icon>
               </label>
-              <Field name="phoneNumber" v-model="newUser.phoneNumber" />
+              <Field
+                type="text"
+                name="phoneNumber"
+                v-model="newUser.phoneNumber"
+              />
             </div>
             <ErrorMessage
               name="phoneNumber"
               class="error-message"
             ></ErrorMessage>
             <div class="user-infor-item">
-              <label>
+              <label class="field-label">
                 <font-awesome-icon icon="cake-candles"></font-awesome-icon>
               </label>
               <Field type="date" name="dob" v-model="newUser.dateOfBirth" />
             </div>
             <ErrorMessage name="dob" class="error-message"></ErrorMessage>
             <div class="user-infor-item">
-              <label>
+              <label class="field-label">
                 <font-awesome-icon icon="venus-mars"></font-awesome-icon>
               </label>
               <div class="radio-group">
-                <Field
-                  label="Male"
-                  type="radio"
-                  name="gender"
-                  :value="`Male`"
-                  v-model="newUser.gender"
-                />
-                Male
-                <Field
-                  label="Female"
-                  type="radio"
-                  name="gender"
-                  :value="`Female`"
-                  v-model="newUser.gender"
-                />
-                Female
+                <div class="radio-group-item">
+                  <Field
+                    label="Male"
+                    id="male"
+                    type="radio"
+                    class="custom-radio"
+                    name="gender"
+                    :value="`Male`"
+                    v-model="newUser.gender"
+                  />
+                  <label for="male"> Male </label>
+                </div>
+                <div class="radio-group-item">
+                  <Field
+                    label="Female"
+                    id="female"
+                    class="custom-radio"
+                    type="radio"
+                    name="gender"
+                    :value="`Female`"
+                    v-model="newUser.gender"
+                  />
+                  <label for="female"> Female </label>
+                </div>
               </div>
             </div>
             <ErrorMessage name="gender" class="error-message"></ErrorMessage>
@@ -108,54 +130,80 @@
         </button>
       </footer>
     </article>
+
+    <BaseModal
+      :show="showDiscardChangeModal"
+      :modal-name="`Discard change ?`"
+      @close="
+        () => {
+          isChanged = true;
+          showDiscardChangeModal = false;
+          $router.push(routeTo);
+        }
+      "
+      @submit="
+        () => {
+          showDiscardChangeModal = false;
+        }
+      "
+    >
+      <span>You have made some change, do you want to discard them ?</span>
+      <template #cancel-button>Discard</template>
+      <template #submit-button>Cancel</template>
+    </BaseModal>
   </div>
 </template>
 
 <script lang="ts">
 import useUserStore from "@/stores/UserStore";
-import { mapActions, mapState, storeToRefs } from "pinia";
+import { mapActions } from "pinia";
 import { computed, defineComponent, ref } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
 import type { UpdateUserProfileRequest } from "@/stores/models/User";
 import { onBeforeRouteLeave } from "vue-router";
+import BaseModal from "../../components/common/BaseModal.vue";
 
 export default defineComponent({
   setup() {
+    //Store
     const userStore = useUserStore();
-    // const oldData = userStore.user;
+    //State
     const user = { ...userStore.user };
     const newUser = ref({ ...user });
-    const isChanged = computed(() => {
-      console.log("[Compare]>>>", newUser.value, userStore.user);
-
-      console.log(
-        JSON.stringify(newUser?.value) == JSON.stringify(userStore.user)
-      );
-
-      return JSON.stringify(newUser?.value) != JSON.stringify(userStore.user);
-    });
-    const cancelChange = () => {
-      // newData = storeToRefs(userStore);
-      newUser.value = { ...user };
-      const imgElement = document.getElementById(
-        "image-preview"
-      ) as HTMLImageElement;
-
-      if (imgElement) {
-        imgElement.src = "";
-      }
-    };
+    const showDiscardChangeModal = ref(false);
     const schema = yup.object({
       fullname: yup.string().required().max(50),
       phoneNumber: yup.string().required().min(9),
     });
-    // Computed
+    const routeTo = ref("");
+    //Computed
+    const isChanged = computed({
+      // getter
+      get() {
+        console.log("[Compare]>>>", newUser.value, userStore.user);
+        return JSON.stringify(newUser?.value) != JSON.stringify(userStore.user);
+      },
+      // setter
+      set(newValue) {
+        cancelChange();
+      },
+    });
     const defaultAvatarURL = computed(() => {
       const imgUrl = new URL("../../assets/defaultuser.png", import.meta.url);
       return imgUrl.toString();
     });
     //Method
+    const cancelChange = () => {
+      newUser.value = { ...user };
+      // const imgElement = document.getElementById(
+      //   "image-preview"
+      // ) as HTMLImageElement;
+
+      // if (imgElement) {
+      //   const newUser = ref({ ...user });
+      // }
+    };
     const previewImage = async (event: any) => {
       const file = event.target.files[0];
       const src = URL.createObjectURL(file);
@@ -168,11 +216,6 @@ export default defineComponent({
         imgElement.src = src;
         newUser.value.file = file;
         newUser.value.photoUrl = src;
-        // await this.updateUser({
-        //   photoUrl: src,
-        // });
-        // this.setUser({ photoUrl: src });
-        console.log("[New User] >>>>", newUser.value);
       }
     };
     const updateProfile = async () => {
@@ -185,9 +228,7 @@ export default defineComponent({
         const data = await userStore.updateUserProfile(request);
       }
     };
-    onBeforeRouteLeave((to, from, next) => {
-      //
-    });
+
     // Subcribe
     userStore.$onAction(({ after, name }) => {
       if (name == "updateUserProfile") {
@@ -196,12 +237,27 @@ export default defineComponent({
         });
       }
     });
+    onBeforeRouteLeave((to, from, next) => {
+      if (isChanged.value) {
+        showDiscardChangeModal.value = true;
+        from.meta.isReady = false;
+        routeTo.value = to.path;
+        return;
+      }
+      //
+      if (!isChanged.value) {
+        from.meta.isReady = true;
+        next();
+      }
+    });
     return {
       newUser,
       user,
       isChanged,
       schema,
       defaultAvatarURL,
+      showDiscardChangeModal,
+      routeTo,
       cancelChange,
       previewImage,
       updateProfile,
@@ -211,6 +267,7 @@ export default defineComponent({
     Form,
     Field,
     ErrorMessage,
+    BaseModal,
   },
   computed: {},
   methods: {
@@ -252,9 +309,9 @@ export default defineComponent({
         display: flex;
         align-items: center;
         gap: 10px;
-        transform: translateY(-25%);
+        transform: translateY(-30%);
         .avatar {
-          height: 125%;
+          height: 100%;
           aspect-ratio: 1 / 1;
           position: relative;
           cursor: alias;
@@ -274,10 +331,6 @@ export default defineComponent({
             img {
               width: 100%;
               aspect-ratio: 1 / 1;
-              // position: absolute;
-              // top: 0;
-              // right: 0;
-              // left: 0;
               padding: 5px;
               border-radius: 50%;
               border: 5px solid var(--vt-c-blue-light-2);
@@ -299,17 +352,11 @@ export default defineComponent({
           gap: 10px;
           .user-infor-item {
             display: flex;
-            &.flex-horizontal {
-              flex-direction: row;
-              gap: 10px;
-            }
-            &.flex-verticle {
-              flex-direction: column;
-            }
-            .field-group {
+            input[type="text"],
+            input[type="date"] {
               width: 100%;
             }
-            label {
+            label.field-label {
               width: 50px;
               aspect-ratio: 1 / 1;
               display: flex;
@@ -323,23 +370,35 @@ export default defineComponent({
             select {
               width: 100%;
             }
+            &.flex-horizontal {
+              flex-direction: row;
+              gap: 10px;
+            }
+            &.flex-verticle {
+              flex-direction: column;
+            }
+            .field-group {
+              width: 100%;
+            }
+
             .radio-group {
               width: 100%;
+              height: 100%;
               display: flex;
-              align-items: flex-start;
-              justify-content: space-evenly;
-              input {
-                height: auto;
+              align-items: center;
+              justify-content: center;
+              .radio-group-item {
+                display: flex;
+                align-items: center;
               }
-            }
-            input {
-              width: 100%;
+              // input {
+              //   height: auto;
+              // }
             }
           }
         }
       }
     }
-
     .footer {
       display: flex;
       align-items: center;
@@ -347,8 +406,6 @@ export default defineComponent({
       padding: 10px;
       gap: 10px;
       background-color: var(--vt-c-header-bg-color);
-      button {
-      }
     }
   }
 }

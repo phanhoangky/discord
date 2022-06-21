@@ -99,6 +99,8 @@ router.beforeEach((to, from, next) => {
       router.push("sign-in");
     }
   }
+  console.log("Next >>>>", to, from);
+
   next();
 });
 export default router;

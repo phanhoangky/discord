@@ -20,6 +20,7 @@
     >
       <Field
         name="username"
+        type="text"
         placeholder="....Username"
         @focusout="resetForm"
       ></Field>

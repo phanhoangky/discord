@@ -29,6 +29,7 @@ import {
   faF,
   faCakeCandles,
   faVenusMars,
+  faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* import font awesome icon component */
@@ -58,4 +59,5 @@ library.add(faL);
 library.add(faF);
 library.add(faCakeCandles);
 library.add(faVenusMars);
+library.add(faMagnifyingGlass);
 export default FontAwesomeIcon;

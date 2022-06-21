@@ -71,6 +71,12 @@
   --vt-c-input-text: #ffffff;
   --vt-c-input-bg-hover: #565656;
   --vt-c-input-text-hover: #ffffff;
+
+  /*Form */
+    /*Label*/
+    --vt-c-label-bg: var(--vt-c-black-soft);
+    --vt-c-label-text: #ffffff;
+  /*End form*/
 }
 
 /* semantic color variables for this project */

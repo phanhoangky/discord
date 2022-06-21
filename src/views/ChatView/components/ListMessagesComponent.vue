@@ -112,6 +112,11 @@ section {
     main {
       grid-area: main;
       padding: 1em 0;
+      &.message-content {
+        img {
+          max-width: 50%;
+        }
+      }
     }
     header {
       grid-area: header;

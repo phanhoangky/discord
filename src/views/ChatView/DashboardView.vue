@@ -25,7 +25,12 @@
         </ConfirmPopup>
       </div>
     </header>
-    <main class="main" id="main" ref="main" @scroll="mainScroll">
+    <main
+      class="main"
+      id="main-messages-container"
+      ref="main"
+      @scroll="mainScroll"
+    >
       <Transition name="message-slide">
         <ListMessagesComponent v-if="isShowChatWindow"></ListMessagesComponent>
         <img src="@/assets/defaultbackground.jpg" v-else />
@@ -54,6 +59,7 @@ import EditRoomModal from "../../components/SideNavigation/Modal/EditRoomModal.v
 import { useRoomStore } from "@/stores/RoomStore";
 import ConfirmPopup from "../../components/common/ConfirmPopup.vue";
 import { computed } from "@vue/reactivity";
+import { scrollToBottom } from "@/utilities/ScrollToBottom";
 export default defineComponent({
   setup() {
     // Store
@@ -89,29 +95,20 @@ export default defineComponent({
       if (event) {
         ///////
         if (event.newValue) {
-          console.log("[Set Messages List] >>>>", mutation, state);
           if (state.selectedRoom || state.selectedUser) {
             messageStore.totalItem = 0;
-            // messageStore.messages = [];
             messageStore.$patch({
               messages: [],
             });
             await messageStore.fetchMessage();
             nextTick(() => {
-              const messagesListElement = document.getElementById(
-                "main"
-              ) as HTMLElement;
-              console.log(
-                messagesListElement,
-                messagesListElement.scrollTop,
-                messagesListElement.scrollHeight
-              );
-              if (messagesListElement) {
-                messagesListElement.scrollTo({
-                  top: messagesListElement.scrollHeight,
-                  behavior: "smooth",
-                });
-              }
+              scrollToBottom("main-messages-container");
+              // if (messagesListElement) {
+              //   messagesListElement.scrollTo({
+              //     top: messagesListElement.scrollHeight,
+              //     behavior: "smooth",
+              //   });
+              // }
             });
           }
         }
@@ -122,23 +119,11 @@ export default defineComponent({
       after(() => {
         if (
           (name == "onReceivePrivateMessage" && store.selectedUser) ||
-          (name == "receiveGroupMessage" && store.selectedRoom)
+          (name == "receiveGroupMessage" && store.selectedRoom) ||
+          name == "onSendMessage"
         ) {
           nextTick(() => {
-            const messagesListElement = document.getElementById(
-              "main"
-            ) as HTMLElement;
-            console.log(
-              messagesListElement,
-              messagesListElement.scrollTop,
-              messagesListElement.scrollHeight
-            );
-            if (messagesListElement) {
-              messagesListElement.scrollTo({
-                top: messagesListElement.scrollHeight,
-                behavior: "smooth",
-              });
-            }
+            scrollToBottom("main-messages-container");
           });
         }
       });
@@ -195,10 +180,8 @@ export default defineComponent({
       leave: "leaveRoom",
     }),
     async mainScroll(e: UIEvent) {
-      const main = document.getElementById("main");
+      const main = document.getElementById("main-messages-container");
       if (main) {
-        const bottomOfWindow =
-          Math.ceil(main.scrollTop) + main.clientHeight === main.scrollHeight;
         // console.log(
         //   "[>>>>]",
         //   main.scrollTop,
@@ -218,6 +201,17 @@ export default defineComponent({
     async leaveRoom() {
       await this.leave();
     },
+  },
+
+  beforeRouteEnter(to, from, next) {
+    console.log("[Dashboard] >>>", to, from);
+    if (from.name == "UserProfile") {
+      if (from.meta.isReady == true) {
+        next();
+      }
+      return;
+    }
+    next();
   },
 });
 </script>

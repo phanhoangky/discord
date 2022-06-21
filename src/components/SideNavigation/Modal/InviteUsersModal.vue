@@ -18,17 +18,40 @@
   >
     <div class="modal-content">
       <form @submit.prevent="onSearchSubmit">
-        <Field name="username"></Field>
+        <div class="field-group">
+          <label for="username" class="field-label">
+            <font-awesome-icon icon="magnifying-glass"></font-awesome-icon>
+          </label>
+          <Field
+            id="username"
+            type="text"
+            name="username"
+            class="field-input"
+            placeholder="Search username ....."
+          ></Field>
+        </div>
       </form>
-      <TransitionGroup name="list" tag="ul">
+      <TransitionGroup
+        name="list"
+        tag="ul"
+        id="list-users"
+        :class="{ hidden: listUsers.length == 0 }"
+        @scroll="infiniteScroll"
+      >
         <li
           v-for="user in listUsers"
           :key="user.id"
           @click="selectUser(user)"
           :class="user.isSelected ? `selected` : ``"
         >
-          <img :src="user.photoUrl != '' ? user.photoUrl : defaultAvatarURL" />
-          <span>{{ user.email }}</span>
+          <section class="user-infor">
+            <div class="image-overlay">
+              <img
+                :src="user.photoUrl != '' ? user.photoUrl : defaultAvatarURL"
+              />
+            </div>
+            <span>{{ user.firstName }} {{ user.lastName }}</span>
+          </section>
           <Transition>
             <font-awesome-icon
               icon="circle-check"
@@ -50,13 +73,15 @@
 </template>
 
 <script lang="ts">
-import type { User } from "@/stores/models/User";
+import type { GetUserRequest, User } from "@/stores/models/User";
 import useUserStore from "@/stores/UserStore";
-import { computed, defineComponent, onBeforeMount, ref } from "vue";
+import { computed, defineComponent, ref, watch, watchEffect } from "vue";
 import BaseModal from "../../common/BaseModal.vue";
 import { useForm, Field } from "vee-validate";
 import useInvitationStore from "@/stores/InvitationStore";
 import useMessageStore from "@/stores/MessageStore";
+import { storeToRefs } from "pinia";
+import { callGetUsers } from "@/stores/services/UserStoreServices";
 
 export default defineComponent({
   setup() {
@@ -65,13 +90,22 @@ export default defineComponent({
     const invitationStore = useInvitationStore();
     const messageStore = useMessageStore();
     //State
-    const { showInviteUsersModal } = invitationStore;
-
+    const listUsers = ref([] as User[]);
+    const { showInviteUsersModal } = storeToRefs(invitationStore);
+    let request = ref({
+      currentItemsCount: listUsers.value.length,
+      currentPage: 0,
+      isInfiniteScroll: true,
+      isLoading: true,
+      isPaging: true,
+      itemsPerPage: 10,
+      searchName: "",
+    } as GetUserRequest);
+    let totalUsers = ref(0);
     //Conmputed
-    const listUsers = computed(() => {
-      return userStore.users;
-    });
-
+    // const listUsers = computed(() => {
+    //   return userStore.users;
+    // });
     const defaultAvatarURL = computed(() => {
       const imgUrl = new URL(
         "../../../assets/defaultuser.png",
@@ -89,7 +123,7 @@ export default defineComponent({
 
     const onSearchSubmit = handleSubmit(async (values) => {
       console.log("[Searchname] >>>", values);
-      await userStore.fetchUsers(values);
+      // await userStore.fetchUsers(values);
     });
 
     const sendInvitation = async () => {
@@ -106,17 +140,47 @@ export default defineComponent({
       invitationStore.$patch({
         showInviteUsersModal: true,
       });
-      await userStore.fetchUsers();
+      const data = await callGetUsers(request);
+      totalUsers.value = data.totalCount;
+      const inRoomUsers = userStore.users;
+      const exceptUsers = data.results.filter((r: any) =>
+        inRoomUsers.every((u) => u.id != r.id)
+      );
+      listUsers.value = [...listUsers.value, ...exceptUsers];
     };
+    const infiniteScroll = async () => {
+      const listWrapper = document.getElementById("list-users");
+      if (listWrapper) {
+        const bottomOfWindow =
+          Math.ceil(listWrapper.scrollTop) + listWrapper.clientHeight ===
+          listWrapper.scrollHeight;
+        if (bottomOfWindow) {
+          if (totalUsers.value > listUsers.value.length) {
+            const data = await callGetUsers(request);
+            totalUsers.value = data.totalCount;
+            listUsers.value = [...listUsers.value, ...data.results];
+          }
+        }
+      }
+    };
+    // Watch
+    // watch(request, async (oldValue, newValue) => {
+    //   //
+    //   const { data } = await callGetUsers(newValue);
+    //   listUsers.value = data;
+    // });
     return {
       invitationStore,
       userStore,
       listUsers,
       defaultAvatarURL,
+      showInviteUsersModal,
+      request,
       selectUser,
       onSearchSubmit,
       sendInvitation,
       openInviteUsersModal,
+      infiniteScroll,
     };
   },
   components: { BaseModal, Field },
@@ -142,8 +206,11 @@ export default defineComponent({
     flex-direction: column;
     gap: 10px;
     padding: 5px;
+    &.hidden {
+      visibility: hidden;
+    }
     li {
-      display: grid;
+      display: flex;
       gap: 5px;
       // border: 1px solid black;
       // padding: 5px;
@@ -153,7 +220,28 @@ export default defineComponent({
       border-radius: 10px;
       overflow: hidden;
       grid-template-columns: 50px 1fr 50px;
+      grid-template-rows: 50px;
       transition: all 0.3s ease;
+      .user-infor {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        position: relative;
+        .image-overlay {
+          height: 100%;
+          border-radius: 50%;
+          background-color: var(--vt-c-white-soft);
+          overflow: hidden;
+          border: 3px solid var(--vt-c-blue-light-2);
+          padding: 3px;
+          img {
+            height: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 50%;
+            position: relative;
+          }
+        }
+      }
       &.selected {
         background-color: rgb(110, 110, 110);
         box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
@@ -161,12 +249,6 @@ export default defineComponent({
       }
       &:hover {
         background-color: var(--vt-c-list-item-bg-hover);
-      }
-      img {
-        height: 100%;
-        aspect-ratio: 1 / 1;
-      }
-      span {
       }
       .icon {
         font-size: large;

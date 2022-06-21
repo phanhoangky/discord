@@ -5,7 +5,7 @@
         <HeaderComponent></HeaderComponent>
       </slot>
     </header>
-    <main class="main">
+    <main class="main" id="main-layout-content">
       <slot>
         <router-view v-slot="{ Component }">
           <Transition name="slide" mode="out-in">

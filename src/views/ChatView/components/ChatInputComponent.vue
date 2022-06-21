@@ -27,27 +27,36 @@
       <div class="input-wrapper">
         <div class="preview-file">
           <Transition>
-            <div class="preview" :class="file ? 'active' : ''">
-              <img
-                src=""
-                id="preview-image-img"
-                ref="preview-img"
-                :class="file?.type.includes('image') ? 'active' : ''"
-              />
-              <span
-                id="preview-filename-span"
-                :class="file?.type.includes('application') ? 'active' : ''"
-              >
-                {{ file?.name }}
-              </span>
-              <button class="icon button click-ani" @click="removeSelectedFile">
-                <font-awesome-icon
-                  class="icon"
-                  icon="circle-xmark"
-                ></font-awesome-icon>
-              </button>
-            </div>
+            <!-- <div class="preview" :class="file ? 'active' : ''"> -->
+            <img
+              src=""
+              id="preview-image-img"
+              ref="preview-img"
+              :class="file?.type.includes('image') ? 'active' : ''"
+            />
           </Transition>
+          <Transition>
+            <span
+              id="preview-filename-span"
+              :class="file?.type.includes('application') ? 'active' : ''"
+            >
+              {{ file?.name }}
+            </span>
+          </Transition>
+          <Transition>
+            <button
+              class="button click-ani"
+              type="button"
+              @click.stop="removeSelectedFile"
+              :class="file ? 'active' : ''"
+            >
+              <font-awesome-icon
+                class="icon"
+                icon="circle-xmark"
+              ></font-awesome-icon>
+            </button>
+          </Transition>
+          <!-- </div> -->
         </div>
         <input type="text" name="messageContent" v-model="messageContent" />
       </div>
@@ -108,10 +117,8 @@ export default defineComponent({
     // Form
     const { handleSubmit, setFieldValue } = useForm();
     setFieldValue("messageContent", "");
-    const { value: messageContent, errorMessage: emailError } =
-      useField("messageContent");
-    const { value: fileMessage, errorMessage: passwordError } =
-      useField("fileMessage");
+    const { value: messageContent } = useField("messageContent");
+    const { value: fileMessage } = useField("fileMessage");
 
     // Method
     const onSubmit = handleSubmit(async (values, { resetForm }) => {
@@ -132,11 +139,7 @@ export default defineComponent({
     const readFile = async (event: any) => {
       if (event) {
         const selectedFile: File = event.target.files[0];
-        console.log(
-          selectedFile,
-          50 * (1000 * 1000),
-          selectedFile.type.includes("image")
-        );
+        console.log(selectedFile, 50 * (1000 * 1000));
         if (selectedFile.size > 50 * (1000 * 1000)) {
           useToastMessageStore().setToast(
             `${MESSAGE_TYPE.ERROR}`,
@@ -145,13 +148,16 @@ export default defineComponent({
           );
           return;
         }
+        const img: HTMLImageElement = document.getElementById(
+          "preview-image-img"
+        ) as HTMLImageElement;
+        console.log(img);
+        const src = URL.createObjectURL(selectedFile);
         if (selectedFile.type.includes("image")) {
-          const img: HTMLImageElement = document.getElementById(
-            "preview-image-img"
-          ) as HTMLImageElement;
-          console.log(img);
-          const src = URL.createObjectURL(selectedFile);
           img.src = src;
+        }
+        if (!selectedFile.type.includes("image")) {
+          img.src = "";
         }
         file.value = selectedFile;
         const reader = new FileReader();
@@ -225,61 +231,76 @@ export default defineComponent({
       display: grid;
       position: relative;
       .preview-file {
-        height: 100%;
-        // aspect-ratio: 2 / 1;
-        width: 15%;
-        min-width: 100px;
+        width: fit-content;
+        height: fit-content;
         position: absolute;
+        // text-overflow: ellipsis;
+        // white-space: nowrap;
+        overflow: visible;
         bottom: calc(100% + 10px);
         transition: all 0.3s ease;
-        border-radius: 5px;
-        overflow: hidden;
-        .preview {
-          position: absolute;
-          width: 100%;
-          height: 100%;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        color: var(--vt-c-white-soft);
+        .button {
+          width: 30px;
+          aspect-ratio: 1 / 1;
+          border-radius: 50%;
+          text-align: center;
+          padding: 0;
           opacity: 0;
           transform: translateY(-50px);
-          transition: all 0.3s ease;
-          background-color: var(--vt-c-divider-dark-1);
-          padding: 5px;
           &.active {
             opacity: 1;
             transform: translateY(0);
           }
           .icon {
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: 25px;
-          }
-          img {
-            height: 100%;
-            position: absolute;
-            aspect-ratio: 1 / 1;
-            opacity: 0;
-            transform: translateY(-50px);
-            top: 0;
-            left: 0;
-            &.active {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          span {
-            position: absolute;
+            color: var(--vt-c-black-soft);
             width: 100%;
             height: 100%;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transform: translateY(-50px);
-            &.active {
-              opacity: 1;
-              transform: translateY(0);
-            }
           }
         }
+        img,
+        span {
+          height: 100%;
+          width: auto;
+          background-color: var(--vt-c-divider-dark-1);
+          padding: 10px;
+          opacity: 0;
+          transform: translateY(-50px);
+          transition: all 0.3s ease;
+          border-radius: 10px;
+          &.active {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        img {
+          object-fit: contain;
+          max-height: 200px;
+        }
+        span {
+        }
+        // .preview {
+        //   position: absolute;
+        //   height: 300%;
+        //   width: 50%;
+        //   bottom: 0;
+        //   opacity: 0;
+        //   transform: translateY(-50px);
+        //   transition: all 0.3s ease;
+        //   background-color: var(--vt-c-divider-dark-1);
+        //   color: var(--vt-c-white-soft);
+        //   padding: 5px;
+        //   display: inline-block;
+        //   border-radius: 5px;
+        //   &.active {
+        //     opacity: 1;
+        //     transform: translateY(0);
+        //   }
+
+        // }
       }
       input {
         padding: 10px;

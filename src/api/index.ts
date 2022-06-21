@@ -41,8 +41,12 @@ ApiHelper.interceptors.response.use(
   (response) => {
     const toastStore = useToastMessageStore();
     const loadingScreenStore = useLoadingScreenStore();
-    // console.log(response.config.data, response.config.params);
-    const param = response.config.data || response.config.params;
+    console.log(response.config.data, response.config.params);
+    let parsedData = response.config.data;
+    if (response.config.data && !(response.config.data instanceof Object)) {
+      parsedData = JSON.parse(response.config.data);
+    }
+    const param = parsedData || response.config.params;
     if (param && param.isLoading) {
       toastStore.setToast(MESSAGE_TYPE.SUCCESS, "Success", response.statusText);
     }
