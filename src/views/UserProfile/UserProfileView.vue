@@ -83,9 +83,16 @@
               <label class="field-label">
                 <font-awesome-icon icon="cake-candles"></font-awesome-icon>
               </label>
-              <Field type="date" name="dob" v-model="newUser.dateOfBirth" />
+              <Field
+                type="date"
+                name="dateOfBirth"
+                v-model="newUser.dateOfBirth"
+              />
             </div>
-            <ErrorMessage name="dob" class="error-message"></ErrorMessage>
+            <ErrorMessage
+              name="dateOfBirth"
+              class="error-message"
+            ></ErrorMessage>
             <div class="user-infor-item">
               <label class="field-label">
                 <font-awesome-icon icon="venus-mars"></font-awesome-icon>
@@ -131,6 +138,7 @@
       </footer>
     </article>
 
+    <!-- Change route discard modal -->
     <BaseModal
       :show="showDiscardChangeModal"
       :modal-name="`Discard change ?`"
@@ -156,7 +164,6 @@
 
 <script lang="ts">
 import useUserStore from "@/stores/UserStore";
-import { mapActions } from "pinia";
 import { computed, defineComponent, ref } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
@@ -225,7 +232,7 @@ export default defineComponent({
           id: userStore.user.id,
           ...newUser.value,
         };
-        const data = await userStore.updateUserProfile(request);
+        await userStore.updateUserProfile(request);
       }
     };
 
@@ -270,11 +277,9 @@ export default defineComponent({
     BaseModal,
   },
   computed: {},
-  methods: {
-    ...mapActions(useUserStore, {
-      setUser: "setUser",
-      updateUser: "updateUserProfile",
-    }),
+  methods: {},
+  created() {
+    console.log(useUserStore().user);
   },
 });
 </script>
@@ -296,11 +301,12 @@ export default defineComponent({
     border-radius: 10px;
     overflow: hidden;
     grid-template-rows: 1fr 4fr 50px;
+    box-shadow: 5px 5px 20px 2px var(--vt-c-primary-shadow-box);
     header {
       background-color: var(--vt-c-header-bg-color);
     }
     main {
-      background-color: rgb(222, 222, 222);
+      background-color: var(--color-background-soft);
       display: grid;
       padding: 10px;
       grid-template-rows: 100px 1fr;
@@ -339,6 +345,8 @@ export default defineComponent({
         }
         .username {
           font-weight: bolder;
+          color: var(--color-text);
+          text-shadow: var(--vt-c-header-text-shadow);
         }
       }
       .user-infor {
@@ -387,13 +395,16 @@ export default defineComponent({
               display: flex;
               align-items: center;
               justify-content: center;
+              gap: 10px;
               .radio-group-item {
                 display: flex;
                 align-items: center;
+                color: var(--color-text);
+                .custom-radio {
+                  width: 40px;
+                  height: 40px;
+                }
               }
-              // input {
-              //   height: auto;
-              // }
             }
           }
         }

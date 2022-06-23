@@ -10,7 +10,7 @@
       <div class="field-group">
         <label for="name"><span>Name</span></label>
         <!-- <Field name="name"></Field> -->
-        <input id="name" name="name" v-model="name" />
+        <input type="text" id="name" name="name" v-model="name" />
       </div>
       <span class="error-message">{{ nameError }}</span>
       <!-- <ErrorMessage name="name" class="error-message"></ErrorMessage> -->
@@ -118,4 +118,13 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+form {
+  .field-group {
+    input[type="text"] {
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+  }
+}
+</style>

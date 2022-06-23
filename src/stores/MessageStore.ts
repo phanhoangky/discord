@@ -39,7 +39,7 @@ const useMessageStore = defineStore({
       if (userStore.user) {
         const request: FetchMessageRequest = {
           senderId: userStore.user?.id,
-          repepientId: this.selectedUser?.id,
+          recipientId: this.selectedUser?.id,
           roomId: this.selectedRoom?.id,
           currentItemsCount: this.messages.length,
           currentPage: 0,
@@ -54,11 +54,9 @@ const useMessageStore = defineStore({
         for (let index = 0; index < data.results.length; index++) {
           const element = data.results[index];
           if (element.filePath != "") {
-            // element.filePath = await fetchFileURL(element.filePath);
             const fileMetadata = (await fetchFileMetadata(
               element.filePath
             )) as FullMetadata;
-            // console.log("[Metadata] >>>", element, fileMetadata);
             element.file = {
               ...fileMetadata,
               filePath: element.filePath,
@@ -74,16 +72,6 @@ const useMessageStore = defineStore({
         this.$patch({
           messages: temp,
         });
-        // if (request.roomId) {
-        //   this.messages.forEach((m) => {
-        //     const notRead = m.messageRecipients.filter(
-        //       (e) =>
-        //         e.roomId == request.roomId &&
-        //         e.userInRoomId == userStore.user?.id
-        //     );
-        //     console.log(notRead, m);
-        //   });
-        // }
         return data;
       }
       return null;
@@ -120,15 +108,26 @@ const useMessageStore = defineStore({
       this.$patch({
         selectedRoom: value,
         selectedUser: undefined,
+        messages: [],
+        totalItem: 0,
       });
     },
     setSelectedUser(value?: User) {
       this.$patch({
         selectedRoom: undefined,
         selectedUser: value,
+        messages: [],
+        totalItem: 0,
       });
     },
-
+    resetSelectedRoomAndUser() {
+      this.$patch({
+        selectedRoom: undefined,
+        selectedUser: undefined,
+        messages: [],
+        totalItem: 0,
+      });
+    },
     async appendToMessageList(message: any) {
       const newMesasge: Message = {
         ...message,
@@ -191,7 +190,7 @@ const useMessageStore = defineStore({
             isRead: true,
             messageId: newMesasge.id,
             isLoading: false,
-            recepientRoomId: undefined,
+            recipientRoomId: undefined,
             recipientId: newMesasge.messageRecipients[0].recepientId,
           };
           await this.updateMessageRecipient(request);
@@ -225,7 +224,9 @@ const useMessageStore = defineStore({
             };
             await this.appendToMessageList(newMesasge);
             // Update isRead = true to DB
+            // Check if current user is not sender, because sender already set isRead = true in BE
             if (newMesasge.senderId != userStore.user?.id) {
+              // Check if user is currently in the room
               const roomUser = newMesasge.messageRecipients.filter(
                 (e) =>
                   e.userInRoomId == userStore.user?.id &&
@@ -237,10 +238,10 @@ const useMessageStore = defineStore({
                   isRead: true,
                   isLoading: false,
                   messageId: newMesasge.id,
-                  recepientRoomId: roomUser[0].recepientRoomId,
+                  recipientRoomId: roomUser[0].recepientRoomId,
                   recipientId: undefined,
                 };
-                await ApiHelper.put(`${API_URL.MESSAGE_RECIPIENT}`, request);
+                await this.updateMessageRecipient(request);
               }
             }
           }
@@ -251,7 +252,6 @@ const useMessageStore = defineStore({
     async updateMessageRecipient(param: any) {
       const request: UpdateMessageRecipientRequest = {
         isLoading: false,
-        isRead: true,
         ...param,
       };
       await ApiHelper.put(`${API_URL.MESSAGE_RECIPIENT}`, request);

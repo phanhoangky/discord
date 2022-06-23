@@ -154,6 +154,7 @@ export default defineComponent({
     footer {
       display: flex;
       gap: 10px;
+      justify-content: space-evenly;
       button {
         min-width: 50px;
       }

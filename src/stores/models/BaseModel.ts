@@ -15,4 +15,5 @@ export interface BaseGetRequest extends BaseRequest {
 
 export interface BaseRequest {
   isLoading?: boolean;
+  isNotify?: boolean;
 }

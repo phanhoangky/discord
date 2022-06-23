@@ -61,7 +61,12 @@
           </Transition>
         </li>
       </TransitionGroup>
-      <span v-if="listUsers && listUsers.length == 0">Empty</span>
+      <div class="empty-list" v-if="listUsers && listUsers.length == 0">
+        <font-awesome-icon
+          class="empty-icon"
+          icon="users-slash"
+        ></font-awesome-icon>
+      </div>
     </div>
     <!-- Invite User -->
   </BaseModal>
@@ -75,7 +80,14 @@
 <script lang="ts">
 import type { GetUserRequest, User } from "@/stores/models/User";
 import useUserStore from "@/stores/UserStore";
-import { computed, defineComponent, ref, watch, watchEffect } from "vue";
+import {
+  computed,
+  defineComponent,
+  onUnmounted,
+  ref,
+  watch,
+  watchEffect,
+} from "vue";
 import BaseModal from "../../common/BaseModal.vue";
 import { useForm, Field } from "vee-validate";
 import useInvitationStore from "@/stores/InvitationStore";
@@ -169,6 +181,13 @@ export default defineComponent({
     //   const { data } = await callGetUsers(newValue);
     //   listUsers.value = data;
     // });
+    watch(showInviteUsersModal, (newValue, oldValue) => {
+      if (newValue == false) {
+        listUsers.value = [];
+      }
+    });
+    //Life circle hook
+
     return {
       invitationStore,
       userStore,
@@ -255,6 +274,18 @@ export default defineComponent({
         border-radius: 50%;
         box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
       }
+    }
+  }
+  .empty-list {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    .empty-icon {
+      font-size: 2em;
+      align-self: center;
     }
   }
 }

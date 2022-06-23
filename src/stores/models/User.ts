@@ -38,3 +38,8 @@ export interface UpdateUserProfileRequest extends BaseRequest {
   gender?: string;
   dateOfBirth?: Date;
 }
+
+export interface UpdateNotReadMessageOfUser extends BaseRequest {
+  currentUserId: string;
+  senderId: string;
+}

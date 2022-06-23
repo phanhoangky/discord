@@ -38,8 +38,10 @@
           <Transition>
             <span
               id="preview-filename-span"
-              :class="file?.type.includes('application') ? 'active' : ''"
+              v-if="file?.type.includes('application')"
             >
+              <!-- :class="file?.type.includes('application') ? 'active' : ''" -->
+              <font-awesome-icon icon="file-zipper"></font-awesome-icon>
               {{ file?.name }}
             </span>
           </Transition>
@@ -58,7 +60,12 @@
           </Transition>
           <!-- </div> -->
         </div>
-        <input type="text" name="messageContent" v-model="messageContent" />
+        <input
+          placeholder="Message ........."
+          type="text"
+          name="messageContent"
+          v-model="messageContent"
+        />
       </div>
       <div class="other__func">
         <font-awesome-icon
@@ -87,8 +94,6 @@
             />
           </div>
         </Transition>
-        <!-- <font-awesome-icon icon="user" class="icon"></font-awesome-icon>
-      <font-awesome-icon icon="user" class="icon"></font-awesome-icon> -->
       </div>
     </form>
   </div>
@@ -234,15 +239,12 @@ export default defineComponent({
         width: fit-content;
         height: fit-content;
         position: absolute;
-        // text-overflow: ellipsis;
-        // white-space: nowrap;
         overflow: visible;
         bottom: calc(100% + 10px);
         transition: all 0.3s ease;
         border-radius: 10px;
         display: flex;
         align-items: center;
-        color: var(--vt-c-white-soft);
         .button {
           width: 30px;
           aspect-ratio: 1 / 1;
@@ -256,7 +258,7 @@ export default defineComponent({
             transform: translateY(0);
           }
           .icon {
-            color: var(--vt-c-black-soft);
+            color: var(--vt-c-button-text);
             width: 100%;
             height: 100%;
           }
@@ -265,10 +267,9 @@ export default defineComponent({
         span {
           height: 100%;
           width: auto;
-          background-color: var(--vt-c-divider-dark-1);
+          background-color: var(--vt-c-modal-bg);
+          color: var(--vt-c-modal-text);
           padding: 10px;
-          opacity: 0;
-          transform: translateY(-50px);
           transition: all 0.3s ease;
           border-radius: 10px;
           &.active {
@@ -279,28 +280,11 @@ export default defineComponent({
         img {
           object-fit: contain;
           max-height: 200px;
+          opacity: 0;
+          transform: translateY(-50px);
         }
         span {
         }
-        // .preview {
-        //   position: absolute;
-        //   height: 300%;
-        //   width: 50%;
-        //   bottom: 0;
-        //   opacity: 0;
-        //   transform: translateY(-50px);
-        //   transition: all 0.3s ease;
-        //   background-color: var(--vt-c-divider-dark-1);
-        //   color: var(--vt-c-white-soft);
-        //   padding: 5px;
-        //   display: inline-block;
-        //   border-radius: 5px;
-        //   &.active {
-        //     opacity: 1;
-        //     transform: translateY(0);
-        //   }
-
-        // }
       }
       input {
         padding: 10px;
@@ -326,6 +310,7 @@ export default defineComponent({
         right: 100%;
         width: auto;
         height: 500px;
+        z-index: 1099;
       }
     }
     .icon {

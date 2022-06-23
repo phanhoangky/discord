@@ -14,7 +14,7 @@
     <form ref="form" @submit="onSubmit">
       <div class="field-group">
         <label for="name">Name</label>
-        <input name="name" id="name" v-model="name" />
+        <input type="text" name="name" id="name" v-model="name" />
       </div>
       <span class="error-message">{{ nameError }}</span>
     </form>
@@ -69,4 +69,13 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+form {
+  .field-group {
+    input[type="text"] {
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+  }
+}
+</style>

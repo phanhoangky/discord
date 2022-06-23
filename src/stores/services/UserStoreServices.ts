@@ -1,6 +1,9 @@
 import ApiHelper from "@/api";
 import { API_URL } from "../Constant";
-import type { GetUserRequest } from "../models/User";
+import type {
+  GetUserRequest,
+  UpdateNotReadMessageOfUser,
+} from "../models/User";
 
 export const callGetUsers = async (request?: any) => {
   const base: GetUserRequest = {
@@ -29,5 +32,19 @@ export const callGetUserByRoom = async (request?: any, roomId?: string) => {
   const { data } = await ApiHelper.get(`${API_URL.USER}/room/${roomId}`, {
     params: base,
   });
+  return data;
+};
+
+export const callUpdateNotReadMessageOfUser = async (request?: any) => {
+  //
+  const baseRequest: UpdateNotReadMessageOfUser = {
+    ...request,
+    isLoading: false,
+  };
+
+  const { data } = await ApiHelper.put(
+    `${API_URL.USER}/${baseRequest.currentUserId}/${baseRequest.senderId}/not-read`,
+    baseRequest
+  );
   return data;
 };

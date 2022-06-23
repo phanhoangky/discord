@@ -4,7 +4,13 @@
       <font-awesome-icon icon="people-group"></font-awesome-icon>
     </div>
     <TransitionGroup name="list" tag="ul">
-      <li v-for="user in users" :key="user.id" @click="selectUser(user)">
+      <li
+        v-for="user in users"
+        :key="user.id"
+        @click="selectUser(user)"
+        class="list-item"
+        :class="{ selected: user.isSelected }"
+      >
         <div class="image-overlay">
           <img :src="user.photoUrl != '' ? user.photoUrl : defaultAvatarURL" />
         </div>
@@ -36,6 +42,7 @@ import { defineComponent } from "vue";
 import { Form, Field } from "vee-validate";
 import * as yup from "yup";
 import { useRoomStore } from "@/stores/RoomStore";
+import type { User } from "@/stores/models/User";
 export default defineComponent({
   setup() {
     const schema = yup.object({
@@ -54,6 +61,7 @@ export default defineComponent({
   computed: {
     ...mapState(useUserStore, {
       users: "users",
+      user: "user",
     }),
     ...mapState(useMessageStore, {
       selectedUser: "selectedUser",
@@ -71,6 +79,7 @@ export default defineComponent({
     ...mapActions(useUserStore, {
       fetchUsersInRoom: "fetchUsersInRoom",
       fetchUsers: "fetchUsers",
+      updateNotReadMessageOfUser: "updateNotReadMessageOfUser",
     }),
     ...mapActions(useMessageStore, {
       setSelectedUser: "setSelectedUser",
@@ -87,15 +96,27 @@ export default defineComponent({
         await this.fetchUsers(values);
       }
     },
-    selectUser(user: any) {
-      this.setSelectedUser(user);
+    async selectUser(item: User) {
+      if (item.notReadMessages > 0) {
+        if (this.user) {
+          await this.updateNotReadMessageOfUser(this.user.id, item.id);
+        }
+      }
+      this.setSelectedUser(item);
       this.setRoom(undefined);
+      this.users = this.users.map((u) => {
+        if (u.id == item.id) {
+          u.isSelected = true;
+        }
+        if (u.id != item.id) {
+          u.isSelected = false;
+        }
+        return u;
+      });
     },
   },
   async created() {
-    const data = await this.fetchUsers();
-    console.log(data);
-    // this.totalCount = data.totalCount;
+    await this.fetchUsers();
   },
 });
 </script>
@@ -110,11 +131,14 @@ export default defineComponent({
     align-items: center;
     justify-content: center;
     font-size: 2em;
+    color: var(--vt-c-navbar-text-color);
   }
   ul {
     height: 100%;
     overflow-x: hidden;
     overflow-y: scroll;
+    padding: 5px;
+    padding-top: 10px;
     li {
       display: flex;
       justify-content: space-around;
@@ -125,12 +149,18 @@ export default defineComponent({
       overflow: hidden;
       gap: 10px;
       position: relative;
+      color: var(--vt-c-list-item-text);
+      &.selected {
+        box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
+        transform: skewY(-5deg);
+      }
       .not-read {
         position: absolute;
         right: 5px;
         width: 25px;
         aspect-ratio: 1 / 1;
         background-color: var(--vt-c-red-soft);
+        box-shadow: 0px 0px 4px 4px var(--vt-c-red-soft);
         color: var(--vt-c-white-soft);
         border-radius: 50%;
         display: flex;
@@ -146,6 +176,7 @@ export default defineComponent({
         aspect-ratio: 1 / 1;
         border-radius: 50%;
         background-color: var(--vt-c-white-soft);
+        overflow: hidden;
         img {
           width: 100%;
         }

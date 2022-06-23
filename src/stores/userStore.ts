@@ -1,6 +1,7 @@
 import type {
   GetUserRequest,
   SignUpModel,
+  UpdateNotReadMessageOfUser,
   UpdateUserProfileRequest,
   User,
 } from "./models/User";
@@ -9,8 +10,12 @@ import ApiHelper from "@/api";
 import { API_URL } from "./Constant";
 import router from "@/router";
 import useMessageStore from "./MessageStore";
-import { callGetUserByRoom } from "./services/UserStoreServices";
+import {
+  callGetUserByRoom,
+  callUpdateNotReadMessageOfUser,
+} from "./services/UserStoreServices";
 import { fetchFileURL, refFile, uploadFile } from "@/utilities/Firebase";
+import moment from "moment";
 
 export type UserState = {
   user?: User;
@@ -53,7 +58,10 @@ const useUserStore = defineStore({
         isLoading: true,
       });
       document.cookie = data.token;
-      this.user = data.user;
+      this.user = {
+        ...data.user,
+        dateOfBirth: moment(data.user.dateOfBirth).format("YYYY-MM-DD"),
+      };
       router.push({ name: "home" });
     },
 
@@ -130,12 +138,35 @@ const useUserStore = defineStore({
         const url = await fetchFileURL(fileRef.fullPath);
         request.photoUrl = url;
       }
-      const { data } = await ApiHelper.put(`${API_URL.USER}/${request.id}`, {
+      let { data } = await ApiHelper.put(`${API_URL.USER}/${request.id}`, {
         ...request,
         isLoading: true,
       });
+      data = {
+        ...data,
+        dateOfBirth: moment(data.dateOfBirth).format("YYYY-MM-DD"),
+      };
       this.$patch({
         user: data,
+      });
+      return data;
+    },
+    async updateNotReadMessageOfUser(currentUserId: string, senderId: string) {
+      //
+      const request: UpdateNotReadMessageOfUser = {
+        currentUserId,
+        senderId,
+        isLoading: false,
+        isNotify: false,
+      };
+      const data = await callUpdateNotReadMessageOfUser(request);
+      this.$patch({
+        users: this.users.map((u) => {
+          if (u.id == data.id) {
+            return data;
+          }
+          return u;
+        }),
       });
       return data;
     },

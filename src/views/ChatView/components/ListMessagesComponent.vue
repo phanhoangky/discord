@@ -6,6 +6,7 @@
       :key="item.id"
       :class="{
         sender: item.senderId == user?.id,
+        receive: item.senderId != user?.id,
       }"
     >
       <header class="header">
@@ -77,7 +78,12 @@ export default defineComponent({
 <style scoped lang="scss">
 section {
   &.sender {
-    background-color: var(--vt-c-blue-light-2);
+    background-color: var(--vt-c-send-message-bg);
+    color: var(--vt-c-send-message-text);
+  }
+  &.receive {
+    background-color: var(--vt-c-receive-message-bg);
+    color: var(--vt-c-receive-message-text);
   }
   &.message {
     display: grid;
@@ -92,7 +98,8 @@ section {
     margin: 1em 0;
     transition: all 0.5s ease;
     &:hover {
-      background-color: var(--vt-c-divider-dark-2);
+      background-color: var(--vt-c-message-hover-bg);
+      color: var(--vt-c-message-hover-text);
     }
     aside {
       grid-area: sidebar;
@@ -103,10 +110,12 @@ section {
       overflow: hidden;
       &.avatar {
         border-radius: 10px;
+        overflow: hidden;
       }
       img {
         width: 100%;
         aspect-ratio: 1 /1;
+        border-radius: 50%;
       }
     }
     main {

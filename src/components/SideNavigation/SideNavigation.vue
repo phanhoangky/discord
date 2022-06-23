@@ -18,16 +18,6 @@
     >
       <div class="not-read">{{ item.notReadMessages }}</div>
       <span>{{ item.name }}</span>
-
-      <!-- <font-awesome-icon
-        icon="gear"
-        class="edit-btn"
-        @click="
-          () => {
-            setShowEditModal(true);
-          }
-        "
-      ></font-awesome-icon> -->
     </li>
   </ul>
   <CreateRoomModal></CreateRoomModal>
@@ -86,10 +76,11 @@ export default defineComponent({
         console.log(this.$route);
         this.$router.push({ name: "home" });
       }
-      useMessageStore().$patch({
-        selectedRoom: undefined,
-        selectedUser: undefined,
-      });
+      // useMessageStore().$patch({
+      //   selectedRoom: undefined,
+      //   selectedUser: undefined,
+      // });
+      useMessageStore().resetSelectedRoomAndUser();
       this.setRoom(undefined);
     },
     selectItem(item: Room) {
@@ -157,6 +148,7 @@ export default defineComponent({
   flex-direction: column;
   width: 100%;
   padding: 5px;
+  padding-top: 1em;
   flex: 1;
   flex-shrink: 0;
   overflow-y: scroll;
@@ -177,18 +169,15 @@ export default defineComponent({
     border-bottom: 1px solid var(--vt-c-white-soft);
     text-decoration: none;
     color: inherit;
-    .edit-btn {
-      position: absolute;
-      width: 0;
-      right: 0;
-      padding: 0;
-      overflow: hidden;
-    }
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     .not-read {
       aspect-ratio: 1 / 1;
       width: 25px;
       border-radius: 50%;
       background-color: var(--vt-c-red-soft);
+      box-shadow: 0px 0px 4px 4px var(--vt-c-red-soft);
       position: absolute;
       right: 0;
       display: flex;
@@ -199,19 +188,13 @@ export default defineComponent({
     &.active {
       background-color: var(--vt-c-button-hover-bg);
       color: var(--vt-c-button-hover-text);
-      .edit-btn {
-        width: auto;
-        padding: 1em;
-      }
+      box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
+      transform: skewY(5deg);
     }
     &:hover {
       background-color: var(--vt-c-black-mute);
       color: var(--vt-c-button-hover-text);
       border-top: 1px solid var(--vt-c-white-soft);
-      .edit-btn {
-        width: auto;
-        padding: 1em;
-      }
     }
   }
 }

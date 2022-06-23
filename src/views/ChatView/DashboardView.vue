@@ -33,15 +33,16 @@
     >
       <Transition name="message-slide">
         <ListMessagesComponent v-if="isShowChatWindow"></ListMessagesComponent>
-        <img src="@/assets/defaultbackground.jpg" v-else />
       </Transition>
     </main>
     <aside class="sidebar">
       <UsersInRoomComponent></UsersInRoomComponent>
     </aside>
-    <footer class="footer">
-      <ChatInputComponent></ChatInputComponent>
-    </footer>
+    <Transition>
+      <footer class="footer" v-if="isShowChatWindow">
+        <ChatInputComponent></ChatInputComponent>
+      </footer>
+    </Transition>
   </div>
 </template>
 
@@ -76,47 +77,81 @@ export default defineComponent({
       );
     });
     // Watch state and action
-    messageStore.$subscribe(async (mutation, state) => {
-      console.log("[Dashboard Subscribe] >>>", mutation, state);
+    // messageStore.$subscribe(async (mutation, state) => {
+    //   console.log("[Dashboard Subscribe] >>>", mutation, state);
 
-      const events: DebuggerEvent[] = mutation.events as DebuggerEvent[];
-      const mutates: DebuggerEvent[] =
-        events &&
-        events.filter(
-          (e) =>
-            (e.key === "selectedRoom" && e.newValue) ||
-            (e.key === "selectedUser" && e.newValue)
-        );
-      console.log("[Events] >>> ", mutates);
-      if (!state.selectedRoom && !state.selectedUser) {
-        await userStore.fetchUsers();
-      }
-      const event = mutates.length > 0 && mutates[0];
-      if (event) {
-        ///////
-        if (event.newValue) {
-          if (state.selectedRoom || state.selectedUser) {
-            messageStore.totalItem = 0;
-            messageStore.$patch({
-              messages: [],
-            });
-            await messageStore.fetchMessage();
-            nextTick(() => {
-              scrollToBottom("main-messages-container");
-              // if (messagesListElement) {
-              //   messagesListElement.scrollTo({
-              //     top: messagesListElement.scrollHeight,
-              //     behavior: "smooth",
-              //   });
-              // }
-            });
-          }
+    //   const events: DebuggerEvent[] = mutation.events as DebuggerEvent[];
+    //   const mutates: DebuggerEvent[] =
+    //     events &&
+    //     events.filter(
+    //       (e) =>
+    //         (e.key === "selectedRoom" && e.newValue) ||
+    //         (e.key === "selectedUser" && e.newValue)
+    //     );
+    //   console.log("[Events] >>> ", mutates);
+    //   // if (!state.selectedRoom && !state.selectedUser) {
+    //   //   await userStore.fetchUsers();
+    //   // }
+    //   const event = mutates.length > 0 && mutates[0];
+    //   if (event) {
+    //     ///////
+    //     if (event.newValue) {
+    //       if (state.selectedRoom || state.selectedUser) {
+    //         messageStore.totalItem = 0;
+    //         messageStore.$patch({
+    //           messages: [],
+    //         });
+    //         await messageStore.fetchMessage();
+    //         nextTick(() => {
+    //           scrollToBottom("main-messages-container");
+    //         });
+    //       }
+    //     }
+    //   }
+    // });
+
+    messageStore.$onAction(async ({ after, name, store }) => {
+      // console.log(
+      //   "[Watch Message action] >>>",
+      //   name,
+      //   store.selectedRoom,
+      //   store.selectedUser
+      // );
+      if (name == "resetSelectedRoomAndUser") {
+        if (store.selectedRoom || store.selectedUser) {
+          console.log("[Watch Message action] >>>", "Fetch Users");
+          await userStore.fetchUsers({ currentItemsCount: 0 });
+          return;
         }
       }
-    });
+      after(async () => {
+        console.log(
+          "[Watch Message action] >>>",
+          "After Store",
+          name,
+          store.selectedRoom,
+          store.selectedUser
+        );
 
-    messageStore.$onAction(({ after, name, store }) => {
-      after(() => {
+        if (name == "setSelectedRoom") {
+          await userStore.fetchUsersInRoom({ currentItemsCount: 0 });
+          await messageStore.fetchMessage();
+          nextTick(() => {
+            setTimeout(() => {
+              scrollToBottom("main-messages-container");
+            }, 300);
+          });
+          return;
+        }
+        if (name == "setSelectedUser") {
+          await messageStore.fetchMessage();
+          nextTick(() => {
+            setTimeout(() => {
+              scrollToBottom("main-messages-container");
+            }, 300);
+          });
+          return;
+        }
         if (
           (name == "onReceivePrivateMessage" && store.selectedUser) ||
           (name == "receiveGroupMessage" && store.selectedRoom) ||
@@ -125,9 +160,12 @@ export default defineComponent({
           nextTick(() => {
             scrollToBottom("main-messages-container");
           });
+          return;
         }
       });
     });
+
+    //Life circle hook
     onMounted(async () => {
       await invitationStore.fetchInvitationByUser();
     });
@@ -182,13 +220,13 @@ export default defineComponent({
     async mainScroll(e: UIEvent) {
       const main = document.getElementById("main-messages-container");
       if (main) {
-        // console.log(
-        //   "[>>>>]",
-        //   main.scrollTop,
-        //   main.scrollHeight,
-        //   this.totalItem,
-        //   this.messages.length
-        // );
+        console.log(
+          "[>>>>]",
+          main.scrollTop,
+          main.scrollHeight,
+          this.totalItem,
+          this.messages.length
+        );
         if (main.scrollTop == 0 && this.totalItem > this.messages.length) {
           if (this.selectedRoom || this.selectedUser) {
             const data = await this.fetchMessage();
@@ -227,7 +265,10 @@ export default defineComponent({
   grid-template-columns: 1fr;
   grid-template-rows: 50px 1fr 50px;
   transition: all 0.5s ease;
-
+  background-image: url("@/assets/defaultbackground.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   header {
     grid-area: header;
     padding: 0 5px;
@@ -241,6 +282,8 @@ export default defineComponent({
       display: flex;
       gap: 10px;
       align-items: center;
+      color: var(--vt-c-header-text-color);
+      text-shadow: 0px 2px 5px var(--vt-c-header-text-shadow);
     }
     .icon {
       font-size: 1.5em;
@@ -252,16 +295,15 @@ export default defineComponent({
     overflow-y: scroll;
     transition: all 0.4s ease;
     position: relative;
-
-    img {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
-    }
+    // img {
+    //   width: 100%;
+    //   height: 100%;
+    //   position: absolute;
+    //   top: 0;
+    //   right: 0;
+    //   left: 0;
+    //   bottom: 0;
+    // }
   }
 
   aside {

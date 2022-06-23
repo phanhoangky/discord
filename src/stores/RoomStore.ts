@@ -115,7 +115,6 @@ export const useRoomStore = defineStore({
           userId: userStore.user.id,
           isLoading: false,
         })) as Room;
-        console.log("[ss] >>>", updatedUser);
         this.$patch({
           rooms: this.rooms.map((r) => {
             if (r.id == updatedUser.id) {

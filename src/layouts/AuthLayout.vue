@@ -1,6 +1,8 @@
 <template>
   <div class="grid-container">
-    <aside class="sidebar"></aside>
+    <aside class="sidebar">
+      <img src="@/assets/signInBg.svg" />
+    </aside>
     <main class="main">
       <slot>
         <router-view></router-view>
@@ -26,9 +28,17 @@ export default defineComponent({
     "footer";
   grid-template-columns: 1fr;
   transition: all 0.5s ease;
+  background-image: url("@/assets/wave.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 .sidebar {
   grid-area: sidebar;
+  overflow: hidden;
+  img {
+    height: 100%;
+  }
 }
 .main {
   grid-area: main;
@@ -48,7 +58,6 @@ export default defineComponent({
       "sidebar main"
       "footer footer";
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 100px;
     .main {
       height: auto;
     }

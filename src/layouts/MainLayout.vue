@@ -38,19 +38,19 @@ import { useRoomStore } from "@/stores/RoomStore";
 
 export default defineComponent({
   setup() {
-    const messageStore = useMessageStore();
-    const userStore = useUserStore();
+    // const messageStore = useMessageStore();
+    // const userStore = useUserStore();
 
-    messageStore.$onAction(async ({ name, after }) => {
-      console.log("[Watch Action] >>>>", name);
+    // messageStore.$onAction(async ({ name, after }) => {
+    //   console.log("[Watch Action] >>>>", name);
 
-      after(async () => {
-        if (name == "setSelectedRoom") {
-          await userStore.fetchUsersInRoom();
-          return;
-        }
-      });
-    });
+    //   after(async () => {
+    //     if (name == "setSelectedRoom") {
+    //       await userStore.fetchUsersInRoom();
+    //       return;
+    //     }
+    //   });
+    // });
     return {};
   },
   methods: {
@@ -118,6 +118,7 @@ export default defineComponent({
     // padding: 1em;
     background-color: var(--vt-c-header-bg-color);
     color: var(--vt-c-header-text-color);
+    border-bottom: 1px solid #292b30;
   }
 
   .main {

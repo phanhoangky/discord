@@ -30,6 +30,9 @@ import {
   faCakeCandles,
   faVenusMars,
   faMagnifyingGlass,
+  faUsersSlash,
+  faBars,
+  faFileZipper,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* import font awesome icon component */
@@ -60,4 +63,8 @@ library.add(faF);
 library.add(faCakeCandles);
 library.add(faVenusMars);
 library.add(faMagnifyingGlass);
+library.add(faUsersSlash);
+library.add(faBars);
+library.add(faFileZipper);
+
 export default FontAwesomeIcon;

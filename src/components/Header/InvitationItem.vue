@@ -42,8 +42,12 @@ export default defineComponent({
   padding: 10px;
   border-radius: 10px;
   gap: 10px;
+  box-shadow: 0px 2px 10px 2px var(--vt-c-black-soft);
+  border: none;
+  outline: none;
   &:hover {
     background-color: var(--vt-c-list-item-bg-hover);
+    transform: skew(5deg);
   }
   header {
     grid-area: header;

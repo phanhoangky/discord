@@ -36,7 +36,7 @@ export interface SendMessageRequest {
 
 export interface FetchMessageRequest extends BaseGetRequest {
   senderId: string;
-  repepientId?: string;
+  recipientId?: string;
   roomId?: string;
 }
 
@@ -44,6 +44,6 @@ export interface UpdateMessageRecipientRequest extends BaseRequest {
   id: string;
   messageId: string;
   recipientId?: string;
-  recepientRoomId?: string;
+  recipientRoomId?: string;
   isRead: boolean;
 }
