@@ -36,7 +36,7 @@
       </button>
     </Form>
     <hr />
-    <router-link to="/forget-password">Forget your password ?</router-link>
+    <router-link to="/forgot-password">Forget your password ?</router-link>
   </div>
 </template>
 
@@ -45,7 +45,6 @@ import { defineComponent } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { object, string } from "yup";
 import { mapActions } from "pinia";
-import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 import useUserStore from "@/stores/UserStore";
 export default defineComponent({
   components: {

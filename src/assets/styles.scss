@@ -156,6 +156,11 @@ form {
   display: flex;
   width: 100%;
   flex-direction: column;
+  fieldset {
+    &.field-group {
+      border: none;
+    }
+  }
   .field-group {
     // color: var(--vt-c-white);
     width: 100%;

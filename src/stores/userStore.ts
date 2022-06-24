@@ -73,9 +73,11 @@ const useUserStore = defineStore({
           isLoading: true,
         }
       );
-      if (data && data.id) {
-        router.push({ name: "SignIn" });
-      }
+      console.log("[Sign Up Data] >>>", data);
+
+      // if (data) {
+      router.push({ name: "ConfirmEmail" });
+      // }
     },
     logout() {
       document.cookie = "";
@@ -169,6 +171,9 @@ const useUserStore = defineStore({
         }),
       });
       return data;
+    },
+    async forgotPassword(email: string) {
+      //
     },
     setUser(value: any) {
       this.$patch({

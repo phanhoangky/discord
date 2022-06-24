@@ -24,14 +24,11 @@ const routes: RouteRecordRaw[] = [
     },
     beforeEnter: () => {
       const messageStore = useMessageStore();
-      // messageStore.setSelectedRoom(undefined);
-      // messageStore.setSelectedUser(undefined);
       messageStore.$patch({
         selectedUser: undefined,
         messages: [],
         selectedRoom: undefined,
       });
-      // messageStore.messages = [];
     },
   },
   {
@@ -48,7 +45,6 @@ const routes: RouteRecordRaw[] = [
         messages: [],
         selectedRoom: undefined,
       });
-      // messageStore.messages = [];
     },
   },
   {
@@ -59,14 +55,38 @@ const routes: RouteRecordRaw[] = [
       layout: "AuthLayout",
     },
   },
-  // {
-  //   path: "/about",
-  //   name: "about",
-  //   // route level code-splitting
-  //   // this generates a separate chunk (About.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () => import("../views/AboutView.vue"),
-  // },
+  {
+    path: "/forgot-password",
+    name: "ForgotPassword",
+    component: () => import("@/views/ForgotPasswordView.vue"),
+    meta: {
+      layout: "AuthLayout",
+    },
+  },
+  {
+    path: "/reset-password",
+    name: "ResetPassword",
+    component: () => import("@/views/ResetPasswordView.vue"),
+    meta: {
+      layout: "AuthLayout",
+    },
+  },
+  {
+    path: "/confirm-email",
+    name: "ConfirmEmail",
+    component: () => import("@/views/ConfirmEmailView.vue"),
+    meta: {
+      layout: "AuthLayout",
+    },
+  },
+  {
+    path: "/confirmed-email",
+    name: "ConfirmedEmail",
+    component: () => import("@/views/ConfirmedEmailView.vue"),
+    meta: {
+      layout: "AuthLayout",
+    },
+  },
 ];
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -93,7 +113,14 @@ router.beforeEach((to, from, next) => {
     //     router.push("sign-in");
     //   }
     // }
-    const anonymous: string[] = ["SignUp", "SignIn"];
+    const anonymous: string[] = [
+      "SignUp",
+      "SignIn",
+      "ForgotPassword",
+      "ResetPassword",
+      "ConfirmedEmail",
+      "ConfirmEmail",
+    ];
     if (to.name && !anonymous.includes(to.name.toString())) {
       console.log("[Push Login]");
       router.push("sign-in");
