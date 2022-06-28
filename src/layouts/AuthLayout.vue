@@ -1,7 +1,7 @@
 <template>
   <div class="grid-container">
     <aside class="sidebar">
-      <img src="@/assets/signInBg.svg" />
+      <img src="@/assets/pinpng.com-discord.png" />
     </aside>
     <main class="main">
       <slot>
@@ -28,7 +28,7 @@ export default defineComponent({
     "footer";
   grid-template-columns: 1fr;
   transition: all 0.5s ease;
-  background-image: url("@/assets/wave.png");
+  background-image: url("@/assets/background.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -36,8 +36,13 @@ export default defineComponent({
 .sidebar {
   grid-area: sidebar;
   overflow: hidden;
+  background-color: rgba(25, 25, 25, 0.5);
+  padding: 0 2em;
+  display: flex;
+  align-items: center;
   img {
-    height: 100%;
+    width: 100%;
+    object-fit: contain;
   }
 }
 .main {
@@ -54,10 +59,9 @@ export default defineComponent({
   .grid-container {
     height: 100vh;
     display: grid;
-    grid-template-areas:
-      "sidebar main"
-      "footer footer";
+    grid-template-areas: "sidebar main";
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
     .main {
       height: auto;
     }

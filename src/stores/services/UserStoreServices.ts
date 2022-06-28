@@ -35,6 +35,21 @@ export const callGetUserByRoom = async (request?: any, roomId?: string) => {
   return data;
 };
 
+export const callGetUsersForInvitation = async (request?: any) => {
+  const base: GetUserRequest = {
+    isInfiniteScroll: true,
+    isLoading: true,
+    isNotify: false,
+    isPaging: true,
+    itemsPerPage: 10,
+    ...request,
+  };
+  const { data } = await ApiHelper.get(`${API_URL.USER}/invitation`, {
+    params: base,
+  });
+  return data;
+};
+
 export const callUpdateNotReadMessageOfUser = async (request?: any) => {
   //
   const baseRequest: UpdateNotReadMessageOfUser = {

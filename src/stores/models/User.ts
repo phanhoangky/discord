@@ -13,6 +13,8 @@ export interface User {
   createdTime: string;
   updatedTime: string;
   isActive: boolean;
+  isInvited?: boolean;
+  isOnline?: boolean;
   isSelected?: boolean;
   notReadMessages: number;
 }

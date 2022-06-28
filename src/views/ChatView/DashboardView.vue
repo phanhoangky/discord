@@ -35,7 +35,24 @@
         <ListMessagesComponent v-if="isShowChatWindow"></ListMessagesComponent>
       </Transition>
     </main>
-    <aside class="sidebar">
+    <aside
+      class="sidebar"
+      :class="{
+        active: isShowUserInRoom,
+      }"
+    >
+      <div
+        class="open-sidebar-icon"
+        @click="isShowUserInRoom = !isShowUserInRoom"
+      >
+        <Transition mode="out-in">
+          <font-awesome-icon
+            v-if="!isShowUserInRoom"
+            icon="caret-left"
+          ></font-awesome-icon>
+          <font-awesome-icon v-else icon="caret-right"></font-awesome-icon>
+        </Transition>
+      </div>
       <UsersInRoomComponent></UsersInRoomComponent>
     </aside>
     <Transition>
@@ -111,12 +128,6 @@ export default defineComponent({
     // });
 
     messageStore.$onAction(async ({ after, name, store }) => {
-      // console.log(
-      //   "[Watch Message action] >>>",
-      //   name,
-      //   store.selectedRoom,
-      //   store.selectedUser
-      // );
       if (name == "resetSelectedRoomAndUser") {
         if (store.selectedRoom || store.selectedUser) {
           console.log("[Watch Message action] >>>", "Fetch Users");
@@ -189,6 +200,7 @@ export default defineComponent({
   },
   data: () => ({
     total: 0,
+    isShowUserInRoom: false,
   }),
   computed: {
     ...mapState(useMessageStore, {
@@ -269,13 +281,15 @@ export default defineComponent({
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
+  overflow: hidden;
   header {
     grid-area: header;
     padding: 0 5px;
     display: flex;
     align-items: center;
     gap: 10px;
-    border-bottom: 1px solid var(--vt-c-blue-light-2);
+    border-bottom: 1px solid var(--vt-c-divider-dark-1);
+    background-color: var(--vt-c-black-soft);
     transition: all 0.4s ease;
     justify-content: space-between;
     .header-left {
@@ -295,30 +309,44 @@ export default defineComponent({
     overflow-y: scroll;
     transition: all 0.4s ease;
     position: relative;
-    // img {
-    //   width: 100%;
-    //   height: 100%;
-    //   position: absolute;
-    //   top: 0;
-    //   right: 0;
-    //   left: 0;
-    //   bottom: 0;
-    // }
   }
 
   aside {
     grid-area: sidebar;
-    width: 0;
-    height: 0;
+    width: 200px;
+    height: 100%;
     transition: all 0.4s ease;
     display: flex;
     flex-direction: column;
     padding: 0 5px;
-
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: visible;
     &.sidebar {
       background-color: var(--vt-c-navbar-bg-color);
-      // overflow-y: scroll;
-      // overflow-x: hidden;
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translateX(100%);
+      transition: all 0.3s ease;
+      .open-sidebar-icon {
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        height: 25px;
+        aspect-ratio: 1 / 1;
+        background-color: var(--color-background);
+        transition: all 0.3s ease;
+
+        :first-child {
+          color: var(--color-text);
+          height: 100%;
+          aspect-ratio: 1 / 1;
+        }
+      }
+    }
+    &.active {
+      transform: translateX(0);
     }
   }
 
@@ -352,8 +380,16 @@ export default defineComponent({
     grid-template-rows: 50px 1fr 50px;
 
     aside {
-      width: 200px;
-      height: auto;
+      &.sidebar {
+        background-color: var(--vt-c-navbar-bg-color);
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translateX(0);
+        .open-sidebar-icon {
+          display: none;
+        }
+      }
     }
   }
 }

@@ -33,6 +33,11 @@ import {
   faUsersSlash,
   faBars,
   faFileZipper,
+  faTruckArrowRight,
+  faEnvelopeCircleCheck,
+  faBoxArchive,
+  faCaretRight,
+  faCaretLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* import font awesome icon component */
@@ -66,5 +71,10 @@ library.add(faMagnifyingGlass);
 library.add(faUsersSlash);
 library.add(faBars);
 library.add(faFileZipper);
+library.add(faTruckArrowRight);
+library.add(faEnvelopeCircleCheck);
+library.add(faBoxArchive);
+library.add(faCaretRight);
+library.add(faCaretLeft);
 
 export default FontAwesomeIcon;

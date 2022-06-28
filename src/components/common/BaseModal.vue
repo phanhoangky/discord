@@ -94,6 +94,7 @@ export default defineComponent({
     box-shadow: 0px 0px 20px 5px var(--vt-c-white-soft);
     background-color: var(--vt-c-modal-bg);
     color: var(--vt-c-modal-text);
+
     header {
       border-bottom: 2px solid rgb(25, 25, 25);
       align-items: center;
@@ -139,7 +140,7 @@ export default defineComponent({
 @media only screen and (min-width: 40em) {
   .modal-backdrop {
     .modal {
-      width: 60%;
+      width: 50%;
     }
   }
 }

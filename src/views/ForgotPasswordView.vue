@@ -1,19 +1,27 @@
 <template>
-  <div>
+  <div class="forgot-password-component-wrapper">
+    <h1 class="title custom-text-shadow">Forgot Password</h1>
     <section>
-      <form @submit="onSubmit">
-        <fieldset>
-          <label>
+      <form @submit="onSubmit" class="forgot-password-form">
+        <fieldset class="field-group">
+          <label class="field-label">
             <font-awesome-icon icon="lock"></font-awesome-icon>
           </label>
-          <input type="text" name="email" v-model="email" />
-          <span>{{ emailError }}</span>
+          <input
+            type="text"
+            placeholder="Email........."
+            name="email"
+            v-model="email"
+          />
         </fieldset>
-        <button type="submit">Submit</button>
+        <span class="error-message">{{ emailError }}</span>
+        <button type="submit" class="click-ani primary">Submit</button>
       </form>
     </section>
-    <router-link to="sign-in">Back to login</router-link>
-    <div v-if="isShow">
+    <router-link class="custom-text-shadow" to="sign-in"
+      >Back to login</router-link
+    >
+    <div class="verify-link-notify" v-if="isShow">
       Verify link has been sent to your mail, please check it to confirm
     </div>
   </div>
@@ -51,4 +59,47 @@ const onSubmit = handleSubmit(async (values) => {
 //
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.forgot-password-component-wrapper {
+  width: 100%;
+  background-color: var(--vt-c-divider-dark-1);
+  padding: 1em;
+  border-radius: 10px;
+  .title {
+    text-align: center;
+    color: var(--vt-c-blue-light-2);
+    margin-bottom: 1em;
+    font-weight: bolder;
+  }
+  section {
+    form {
+      &.forgot-password-form {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+        fieldset {
+          display: flex;
+        }
+      }
+      // input {
+      //   border-top-left-radius: 10px;
+      //   border-bottom-left-radius: 10px;
+      // }
+    }
+  }
+  .verify-link-notify {
+    font-size: large;
+    font-weight: bold;
+  }
+  a {
+    text-decoration: underline;
+    color: var(--vt-c-blue-light-2);
+  }
+}
+
+@media only screen and (min-width: 40em) {
+  .forgot-password-component-wrapper {
+    width: 60%;
+  }
+}
+</style>

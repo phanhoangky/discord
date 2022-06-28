@@ -175,6 +175,32 @@ const useUserStore = defineStore({
     async forgotPassword(email: string) {
       //
     },
+    onUserOnline(userId: string) {
+      //
+      if (this.users.some((u) => u.id == userId)) {
+        this.$patch({
+          users: this.users.map((u) => {
+            if (u.id == userId) {
+              u.isOnline = true;
+            }
+            return u;
+          }),
+        });
+      }
+    },
+    onUserOffline(userId: string) {
+      //
+      if (this.users.some((u) => u.id == userId)) {
+        this.$patch({
+          users: this.users.map((u) => {
+            if (u.id == userId) {
+              u.isOnline = false;
+            }
+            return u;
+          }),
+        });
+      }
+    },
     setUser(value: any) {
       this.$patch({
         user: { ...this.user, ...value },

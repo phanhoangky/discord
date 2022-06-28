@@ -24,7 +24,8 @@
   --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
 
   --vt-c-blue-light-1: #1a77da;
-  --vt-c-blue-light-2: #0de3c6;
+  --vt-c-blue-light-2: #5865f2;
+  --vt-c-green-light-1: #00ff9d;
 
   /* Button */
   --vt-c-button-bg: #ffffff;
@@ -42,7 +43,7 @@
   --vt-c-navbar-text-color: #050505;
 
   /*Header*/
-  --vt-c-header-bg-color: #0c78ec;
+  --vt-c-header-bg-color: #7289da;
   --vt-c-header-text-color: #f6f6f6;
   --vt-c-header-text-shadow: #2d2d2d;
 
@@ -71,6 +72,8 @@
   --vt-c-input-text-hover: #ffffff;
 
   /*Form */
+  --vt-c-form-bg: #d7d7d7;
+  --vt-c-form-text: #2c2c2c;
     /*Label*/
     --vt-c-label-bg: var(--vt-c-black-soft);
     --vt-c-label-text: #ffffff;
@@ -86,6 +89,8 @@
 
   /* Shadow box*/
   --vt-c-primary-shadow-box: #232323;
+
+  /* */
 }
 
 /* semantic color variables for this project */
@@ -177,6 +182,8 @@ html.dark-theme {
   --vt-c-input-text-hover: #ffffff;
 
   /*Form */
+  --vt-c-form-bg: #d7d7d7;
+  --vt-c-form-text: #ffffff;
     /*Label*/
     --vt-c-label-bg: var(--vt-c-black-soft);
     --vt-c-label-text: #ffffff;

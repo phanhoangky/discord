@@ -7,10 +7,10 @@
         resetForm();
       }
     "
-    :width="`30%`"
     :show="roomStore.showCreateModal"
     @submit="onSubmit"
   >
+    <!-- :width="`30%`" -->
     <form ref="form" @submit="onSubmit">
       <div class="field-group">
         <label for="name">Name</label>
@@ -76,6 +76,13 @@ form {
       border-top-left-radius: 10px;
       border-bottom-left-radius: 10px;
     }
+  }
+}
+.base-modal {
+  width: 100%;
+}
+@media only screen and (min-width: 40em) {
+  .base-modal {
   }
 }
 </style>

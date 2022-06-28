@@ -52,6 +52,7 @@
             </div>
             <span>{{ user.firstName }} {{ user.lastName }}</span>
           </section>
+          <span v-if="user.isInvited">Waiting for response</span>
           <Transition>
             <font-awesome-icon
               icon="circle-check"
@@ -80,20 +81,13 @@
 <script lang="ts">
 import type { GetUserRequest, User } from "@/stores/models/User";
 import useUserStore from "@/stores/UserStore";
-import {
-  computed,
-  defineComponent,
-  onUnmounted,
-  ref,
-  watch,
-  watchEffect,
-} from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import BaseModal from "../../common/BaseModal.vue";
 import { useForm, Field } from "vee-validate";
 import useInvitationStore from "@/stores/InvitationStore";
 import useMessageStore from "@/stores/MessageStore";
 import { storeToRefs } from "pinia";
-import { callGetUsers } from "@/stores/services/UserStoreServices";
+import { callGetUsersForInvitation } from "@/stores/services/UserStoreServices";
 
 export default defineComponent({
   setup() {
@@ -130,7 +124,9 @@ export default defineComponent({
     const { handleSubmit } = useForm();
     const selectUser = (user: User) => {
       console.log("[User Selected] >>>>", user);
-      user.isSelected = !user.isSelected;
+      if (!user.isInvited) {
+        user.isSelected = !user.isSelected;
+      }
     };
 
     const onSearchSubmit = handleSubmit(async (values) => {
@@ -152,7 +148,7 @@ export default defineComponent({
       invitationStore.$patch({
         showInviteUsersModal: true,
       });
-      const data = await callGetUsers(request);
+      const data = await callGetUsersForInvitation(request);
       totalUsers.value = data.totalCount;
       const inRoomUsers = userStore.users;
       const exceptUsers = data.results.filter((r: any) =>
@@ -168,7 +164,7 @@ export default defineComponent({
           listWrapper.scrollHeight;
         if (bottomOfWindow) {
           if (totalUsers.value > listUsers.value.length) {
-            const data = await callGetUsers(request);
+            const data = await callGetUsersForInvitation(request);
             totalUsers.value = data.totalCount;
             listUsers.value = [...listUsers.value, ...data.results];
           }

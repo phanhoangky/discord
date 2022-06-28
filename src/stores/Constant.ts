@@ -15,4 +15,6 @@ export const enum CHAT_HUB_METHOD {
   USER_LEAVE_GROUP = "UserLeaveGroup",
   SEND_MESSAGE = "OnSendMessage",
   INVITATION_ACCEPTED = "OnInvitationAccepted",
+  ON_USER_ONLINE = "OnUserOnline",
+  ON_USER_OFFLINE = "OnUserOffline",
 }

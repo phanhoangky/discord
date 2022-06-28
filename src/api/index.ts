@@ -3,6 +3,7 @@ import axios from "axios";
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 const ApiHelper = axios.create({
   baseURL: "https://localhost:44335/api",
+  // baseURL: "https://simple-discord.herokuapp.com/api",
   headers: {
     // Accept: "*/*",
     Accept: "application/json",

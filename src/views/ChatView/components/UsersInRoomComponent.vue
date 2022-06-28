@@ -3,21 +3,44 @@
     <div class="header">
       <font-awesome-icon icon="people-group"></font-awesome-icon>
     </div>
-    <TransitionGroup name="list" tag="ul">
-      <li
-        v-for="user in users"
-        :key="user.id"
-        @click="selectUser(user)"
-        class="list-item"
-        :class="{ selected: user.isSelected }"
-      >
-        <div class="image-overlay">
-          <img :src="user.photoUrl != '' ? user.photoUrl : defaultAvatarURL" />
-        </div>
-        <div class="username">{{ user.firstName }} {{ user.lastName }}</div>
-        <div class="not-read">{{ user.notReadMessages }}</div>
-      </li>
-    </TransitionGroup>
+    <section class="users-list-wrapper">
+      <span>Onlines</span>
+      <TransitionGroup name="list" tag="ul">
+        <li
+          v-for="user in onlineUsers"
+          :key="user.id"
+          @click="selectUser(user)"
+          class="list-item"
+          :class="{ selected: user.isSelected }"
+        >
+          <div class="image-overlay">
+            <img
+              :src="user.photoUrl != '' ? user.photoUrl : defaultAvatarURL"
+            />
+          </div>
+          <div class="username">{{ user.firstName }} {{ user.lastName }}</div>
+          <div class="not-read">{{ user.notReadMessages }}</div>
+        </li>
+      </TransitionGroup>
+      <span>Offlines</span>
+      <TransitionGroup name="list" tag="ul">
+        <li
+          v-for="user in offlineUsers"
+          :key="user.id"
+          @click="selectUser(user)"
+          class="list-item"
+          :class="{ selected: user.isSelected }"
+        >
+          <div class="image-overlay">
+            <img
+              :src="user.photoUrl != '' ? user.photoUrl : defaultAvatarURL"
+            />
+          </div>
+          <div class="username">{{ user.firstName }} {{ user.lastName }}</div>
+          <div class="not-read">{{ user.notReadMessages }}</div>
+        </li>
+      </TransitionGroup>
+    </section>
     <Form
       :validation-schema="schema"
       @submit="searchUserByName"
@@ -73,6 +96,15 @@ export default defineComponent({
         import.meta.url
       );
       return imgUrl.toString();
+    },
+    onlineUsers() {
+      //
+      const onlines = this.users.filter((u) => u.isOnline);
+      return onlines;
+    },
+    offlineUsers() {
+      const offlines = this.users.filter((u) => u.isOnline == false);
+      return offlines;
     },
   },
   methods: {
@@ -133,62 +165,67 @@ export default defineComponent({
     font-size: 2em;
     color: var(--vt-c-navbar-text-color);
   }
-  ul {
+  .users-list-wrapper {
     height: 100%;
     overflow-x: hidden;
     overflow-y: scroll;
-    padding: 5px;
-    padding-top: 10px;
-    li {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 1em 0;
-      transition: all 0.5s ease;
-      border-radius: 10px;
-      overflow: hidden;
-      gap: 10px;
-      position: relative;
-      color: var(--vt-c-list-item-text);
-      &.selected {
-        box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
-        transform: skewY(-5deg);
-      }
-      .not-read {
-        position: absolute;
-        right: 5px;
-        width: 25px;
-        aspect-ratio: 1 / 1;
-        background-color: var(--vt-c-red-soft);
-        box-shadow: 0px 0px 4px 4px var(--vt-c-red-soft);
-        color: var(--vt-c-white-soft);
-        border-radius: 50%;
+    // padding: 5px;
+    // padding-top: 10px;
+    ul {
+      padding: 5px;
+      padding-top: 10px;
+      li {
         display: flex;
+        justify-content: space-around;
         align-items: center;
-        justify-content: center;
-      }
-      &:hover {
-        background-color: var(--vt-c-divider-dark-2);
-      }
-      .image-overlay {
-        flex-shrink: 0;
-        width: 50px;
-        aspect-ratio: 1 / 1;
-        border-radius: 50%;
-        background-color: var(--vt-c-white-soft);
+        padding: 1em 0;
+        transition: all 0.5s ease;
+        border-radius: 10px;
         overflow: hidden;
-        img {
-          width: 100%;
+        gap: 10px;
+        position: relative;
+        color: var(--vt-c-list-item-text);
+        &.selected {
+          box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
+          transform: skewY(-5deg);
         }
-      }
+        .not-read {
+          position: absolute;
+          right: 5px;
+          width: 25px;
+          aspect-ratio: 1 / 1;
+          background-color: var(--vt-c-red-soft);
+          box-shadow: 0px 0px 4px 4px var(--vt-c-red-soft);
+          color: var(--vt-c-white-soft);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        &:hover {
+          background-color: var(--vt-c-divider-dark-2);
+        }
+        .image-overlay {
+          flex-shrink: 0;
+          width: 50px;
+          aspect-ratio: 1 / 1;
+          border-radius: 50%;
+          background-color: var(--vt-c-white-soft);
+          overflow: hidden;
+          img {
+            width: 100%;
+          }
+        }
 
-      .username {
-        flex: 4;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        .username {
+          flex: 4;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
   }
+
   form {
     flex: 1;
     input {

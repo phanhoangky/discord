@@ -17,7 +17,28 @@
     <!-- <footer class="footer">
       <slot name="footer"></slot>
     </footer> -->
-    <aside class="sidenav">
+    <div
+      class="open-menu-icon"
+      :class="{
+        active: isOpenSidebar,
+      }"
+      @click="isOpenSidebar = !isOpenSidebar"
+    >
+      <font-awesome-icon
+        v-if="!isOpenSidebar"
+        icon="caret-right"
+      ></font-awesome-icon>
+      <font-awesome-icon
+        v-if="isOpenSidebar"
+        icon="caret-left"
+      ></font-awesome-icon>
+    </div>
+    <aside
+      class="sidenav"
+      :class="{
+        active: isOpenSidebar,
+      }"
+    >
       <slot name="sidenav">
         <SideNavigation></SideNavigation>
       </slot>
@@ -26,15 +47,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, type DebuggerEvent } from "vue";
+import { defineComponent } from "vue";
 import SideNavigation from "../components/SideNavigation/SideNavigation.vue";
 import HeaderComponent from "../components/HeaderComponent.vue";
 import { mapActions } from "pinia";
 import useMessageStore from "@/stores/MessageStore";
 import { CHAT_HUB_METHOD } from "@/stores/Constant";
 import useInvitationStore from "@/stores/InvitationStore";
-import useUserStore from "@/stores/UserStore";
 import { useRoomStore } from "@/stores/RoomStore";
+import useUserStore from "@/stores/UserStore";
 
 export default defineComponent({
   setup() {
@@ -53,6 +74,9 @@ export default defineComponent({
     // });
     return {};
   },
+  data: () => ({
+    isOpenSidebar: false,
+  }),
   methods: {
     ...mapActions(useMessageStore, {
       onReceivePrivateMessage: "onReceivePrivateMessage",
@@ -66,9 +90,12 @@ export default defineComponent({
     ...mapActions(useRoomStore, {
       onOtherUserLeaveRoom: "onOtherUserLeaveRoom",
     }),
+    ...mapActions(useUserStore, {
+      onUserOffline: "onUserOffline",
+      onUserOnline: "onUserOnline",
+    }),
   },
   created() {
-    console.log("Main Layout [Created]");
     this.$chatHub.start();
     this.$chatHub.client.on(
       `${CHAT_HUB_METHOD.RECEIVE_MESSAGE}`,
@@ -93,6 +120,14 @@ export default defineComponent({
     this.$chatHub.client.on(
       `${CHAT_HUB_METHOD.INVITATION_ACCEPTED}`,
       this.onInvitationAccepted
+    );
+    this.$chatHub.client.on(
+      `${CHAT_HUB_METHOD.ON_USER_OFFLINE}`,
+      this.onUserOffline
+    );
+    this.$chatHub.client.on(
+      `${CHAT_HUB_METHOD.ON_USER_ONLINE}`,
+      this.onUserOnline
     );
   },
   beforeUnmount() {
@@ -133,19 +168,51 @@ export default defineComponent({
     background-color: var(--vt-c-divider-light-1);
     transition: all 0.4s ease;
   }
-
+  .open-menu-icon {
+    display: flex;
+    position: absolute;
+    top: calc(50%);
+    left: 0;
+    font-size: large;
+    transition: all 0.4s ease;
+    background-color: var(--vt-c-drawer-bg);
+    :first-child {
+      height: 25px;
+      aspect-ratio: 1 / 1;
+      color: var(--color-text);
+    }
+    &.active {
+      transform: translateX(150px);
+    }
+    &:hover {
+      background-color: var(--vt-c-button-hover-bg);
+      color: var(--vt-c-button-hover-text);
+      box-shadow: 0px 0px 5px 5px var(--color-text);
+    }
+  }
   .sidenav {
     grid-area: sidenav;
     padding: 0;
-    width: 0;
+    width: 150px;
     height: 100%;
     overflow: hidden;
     background-color: var(--vt-c-navbar-bg-color);
+    // background-image: url("@/assets/background.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     color: var(--vt-c-navbar-text-color);
     transition: all 0.4s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: absolute;
+    transform: translateX(-100%);
+    top: 0;
+
+    &.active {
+      transform: translateX(0);
+    }
   }
 }
 
@@ -167,12 +234,15 @@ export default defineComponent({
       "sidenav header"
       "sidenav main";
     grid-template-columns: 150px 1fr;
-
+    .open-menu-icon {
+      display: none;
+    }
     .sidenav {
       position: relative;
       width: 150px;
       padding: 0.5em;
       // height: auto;
+      transform: translateX(0);
       border-left: 1px solid var(--vt-c-black);
     }
 

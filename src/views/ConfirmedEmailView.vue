@@ -1,8 +1,18 @@
 <template>
-  <div v-if="isSucceed">Thank you for confirm email, you can log in now</div>
-  <div v-if="isSucceed == false">Some error occured</div>
-  <div v-if="isSucceed == undefined">Please wait</div>
-  <router-link to="/sign-in">Click here</router-link>
+  <div class="confirmed-email-wrapper">
+    <div class="title">
+      <font-awesome-icon
+        class="icon circle-check"
+        icon="circle-check"
+      ></font-awesome-icon>
+    </div>
+    <div v-if="isSucceed" class="result">
+      Thank you for confirm email, you can log in now
+    </div>
+    <div v-if="isSucceed == false" class="result">Some error occured</div>
+    <div v-if="isSucceed == undefined" class="result">Please wait</div>
+    <router-link to="/sign-in" class="result">Click here</router-link>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -34,4 +44,32 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.confirmed-email-wrapper {
+  width: 100%;
+  padding: 1em;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bolder;
+
+    .icon {
+      font-size: 3em;
+    }
+  }
+  .result {
+    text-align: center;
+  }
+}
+
+@media only screen and (min-width: 40em) {
+  .confirmed-email-wrapper {
+    width: 60%;
+  }
+}
+</style>

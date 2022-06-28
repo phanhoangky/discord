@@ -45,11 +45,13 @@ export const fetchFileURL = async (path: string) => {
 export const uploadFile = async (
   path: string,
   file: File,
-  metadata?: UploadMetadata
+  metadata?: UploadMetadata,
+  isLoading?: boolean,
+  isNotify?: boolean
 ) => {
   const loadingScreenStore = useLoadingScreenStore();
   const toastMessageStore = useToastMessageStore();
-  loadingScreenStore.setIsLoading(true);
+  loadingScreenStore.setIsLoading(isLoading ? isLoading : false);
   const task = await uploadBytesResumable(
     ref(firebaseStorage, path),
     file,
@@ -68,11 +70,13 @@ export const uploadFile = async (
     () => {
       console.log();
       loadingScreenStore.setIsLoading(false);
-      toastMessageStore.setToast(
-        `${MESSAGE_TYPE.SUCCESS}`,
-        "Uploaded File",
-        "Success"
-      );
+      if (isNotify) {
+        toastMessageStore.setToast(
+          `${MESSAGE_TYPE.SUCCESS}`,
+          "Uploaded File",
+          "Success"
+        );
+      }
     }
   );
 };
