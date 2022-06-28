@@ -4,11 +4,11 @@
       <font-awesome-icon icon="bell"></font-awesome-icon>
     </div> -->
     <div class="half-left">
-      <Transition>
+      <!-- <Transition>
         <div class="header__item menu-icon" @click="openSidebar">
           <font-awesome-icon icon="bars"></font-awesome-icon>
         </div>
-      </Transition>
+      </Transition> -->
     </div>
     <div class="half-right">
       <InvitationDrawer class="header__item icon"></InvitationDrawer>

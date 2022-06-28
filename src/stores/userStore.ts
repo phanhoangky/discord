@@ -73,9 +73,11 @@ const useUserStore = defineStore({
           isLoading: true,
         }
       );
-      if (data && data.id) {
-        router.push({ name: "SignIn" });
-      }
+      console.log("[Sign Up Data] >>>", data);
+
+      // if (data) {
+      router.push({ name: "ConfirmEmail" });
+      // }
     },
     logout() {
       document.cookie = "";
@@ -169,6 +171,35 @@ const useUserStore = defineStore({
         }),
       });
       return data;
+    },
+    async forgotPassword(email: string) {
+      //
+    },
+    onUserOnline(userId: string) {
+      //
+      if (this.users.some((u) => u.id == userId)) {
+        this.$patch({
+          users: this.users.map((u) => {
+            if (u.id == userId) {
+              u.isOnline = true;
+            }
+            return u;
+          }),
+        });
+      }
+    },
+    onUserOffline(userId: string) {
+      //
+      if (this.users.some((u) => u.id == userId)) {
+        this.$patch({
+          users: this.users.map((u) => {
+            if (u.id == userId) {
+              u.isOnline = false;
+            }
+            return u;
+          }),
+        });
+      }
     },
     setUser(value: any) {
       this.$patch({

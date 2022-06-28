@@ -1,10 +1,16 @@
 import type { BaseModel, BaseRequest } from "./BaseModel";
 
+export enum INVITATION_STATUS {
+  WAITING,
+  ACCEPTED,
+  DECLINED,
+}
 export interface Invitation extends BaseModel {
   senderId: string;
   receiverId: string;
   isRead: boolean;
   isAccept?: boolean;
+  status: number;
   roomId: string;
   invitationContent: string;
 }

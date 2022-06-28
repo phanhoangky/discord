@@ -17,27 +17,35 @@
         <span>{{ new Date(item.createdTime) }} </span>
       </header>
       <aside class="avatar">
-        <img
-          :src="
-            item.sender.photoUrl != '' ? item.sender.photoUrl : defaultAvatarURL
-          "
-        />
+        <div class="image-overlay">
+          <img
+            :src="
+              item.sender.photoUrl != ''
+                ? item.sender.photoUrl
+                : defaultAvatarURL
+            "
+          />
+        </div>
       </aside>
       <main class="message-content">
-        <img
-          v-if="
-            item.file?.filePath != '' &&
-            item.file?.type &&
-            item.file.type.includes('image')
-          "
-          :src="item.file?.filePath"
-        />
-        <div v-else>
-          <a :href="item.file?.filePath" target="_blank">{{
-            item.file?.name
-          }}</a>
-        </div>
-        <br />
+        <section
+          class="message-attachment"
+          v-if="item.file?.filePath != '' && item.file?.type"
+        >
+          <img
+            v-if="item.file.type.includes('image')"
+            :src="item.file?.filePath"
+          />
+          <div v-if="!item.file.type.includes('image')" class="message-file">
+            <font-awesome-icon
+              class="icon"
+              icon="file-zipper"
+            ></font-awesome-icon>
+            <a :href="item.file?.filePath" target="_blank">{{
+              item.file?.name
+            }}</a>
+          </div>
+        </section>
         {{ item.messageContent }}
       </main>
     </section>
@@ -107,23 +115,45 @@ section {
       flex-direction: column;
       align-items: center;
       padding-right: 10px;
-      overflow: hidden;
       &.avatar {
         border-radius: 10px;
-        overflow: hidden;
-      }
-      img {
-        width: 100%;
-        aspect-ratio: 1 /1;
-        border-radius: 50%;
+        .image-overlay {
+          background-color: var(--vt-c-white-mute);
+          border-radius: 50%;
+          aspect-ratio: 1 / 1;
+          img {
+            width: 100%;
+            aspect-ratio: 1 /1;
+            border-radius: 50%;
+          }
+        }
       }
     }
     main {
       grid-area: main;
-      padding: 1em 0;
+      // padding: 1em 0;
       &.message-content {
-        img {
-          max-width: 50%;
+        font-weight: bold;
+        font-size: 1.1em;
+        .message-attachment {
+          // background-color: var(--vt-c-divider-dark-1);
+          width: fit-content;
+          padding: 1em 0;
+          img {
+            max-width: 50%;
+          }
+          .message-file {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            .icon {
+              font-size: 2em;
+            }
+            a {
+              text-decoration: underline;
+              color: var(--vt-c-blue-light-2);
+            }
+          }
         }
       }
     }

@@ -13,10 +13,15 @@
       class="menu-item"
       v-for="item in rooms"
       :key="item.id"
-      :class="item.id == selectedRoom?.id ? 'active' : ''"
+      :class="{
+        active: item.id == selectedRoom?.id,
+        blink: item.notReadMessages > 0,
+      }"
       @click="selectItem(item)"
     >
-      <div class="not-read">{{ item.notReadMessages }}</div>
+      <div v-if="item.notReadMessages > 0" class="not-read">
+        {{ item.notReadMessages }}
+      </div>
       <span>{{ item.name }}</span>
     </li>
   </ul>
@@ -43,11 +48,6 @@ export default defineComponent({
     };
   },
   components: {
-    // LoadingScreen,
-    // BaseModal,
-    // Field,
-    // ErrorMessage,
-    // EditRoomModal,
     CreateRoomModal,
   },
   computed: {
@@ -76,10 +76,6 @@ export default defineComponent({
         console.log(this.$route);
         this.$router.push({ name: "home" });
       }
-      // useMessageStore().$patch({
-      //   selectedRoom: undefined,
-      //   selectedUser: undefined,
-      // });
       useMessageStore().resetSelectedRoomAndUser();
       this.setRoom(undefined);
     },
@@ -147,12 +143,10 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 5px;
-  padding-top: 1em;
+  padding: 1em 2px;
   flex: 1;
   flex-shrink: 0;
   overflow-y: scroll;
-  overflow-x: hidden;
   .add-room-btn {
     margin-bottom: 10px;
     font-size: 1.2em;
@@ -162,13 +156,12 @@ export default defineComponent({
     position: relative;
     justify-content: space-between;
     align-items: center;
-    padding: 1em;
+    padding: 10px;
     transition: all 0.5s ease;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-bottom: 5px;
     border-bottom: 1px solid var(--vt-c-white-soft);
     text-decoration: none;
-    color: inherit;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -177,9 +170,9 @@ export default defineComponent({
       width: 25px;
       border-radius: 50%;
       background-color: var(--vt-c-red-soft);
-      box-shadow: 0px 0px 4px 4px var(--vt-c-red-soft);
+      box-shadow: 0px 0px 2px 2px var(--vt-c-red-soft);
       position: absolute;
-      right: 0;
+      right: 5px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -191,14 +184,28 @@ export default defineComponent({
       box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
       transform: skewY(5deg);
     }
+    &.blink {
+      animation: blink 1s linear;
+      animation-iteration-count: infinite;
+    }
     &:hover {
       background-color: var(--vt-c-black-mute);
       color: var(--vt-c-button-hover-text);
-      border-top: 1px solid var(--vt-c-white-soft);
+      // border-top: 1px solid var(--vt-c-white-soft);
     }
   }
 }
-
+@keyframes blink {
+  0% {
+    outline: 0px solid var(--vt-c-red-soft);
+  }
+  50% {
+    outline: 5px solid var(--vt-c-red-soft);
+  }
+  100% {
+    outline: 0px solid var(--vt-c-red-soft);
+  }
+}
 @media only screen and (min-width: 40em) {
 }
 </style>

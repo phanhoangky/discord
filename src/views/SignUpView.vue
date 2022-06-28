@@ -1,5 +1,6 @@
 <template>
   <div class="form-container">
+    <header class="title custom-text-shadow">CREATE ACCOUNT</header>
     <Form class="form" @submit="onSubmit" :validation-schema="schema">
       <div class="form__field">
         <label for="email">
@@ -58,7 +59,9 @@
       <ErrorMessage name="confirmPw" class="error-message"></ErrorMessage>
       <button class="primary">Create</button>
       <hr />
-      <router-link to="/sign-in">Already have an account ?</router-link>
+      <router-link class="custom-text-shadow" to="/sign-in"
+        >Already have an account ?</router-link
+      >
     </Form>
   </div>
 </template>
@@ -96,6 +99,7 @@ export default defineComponent({
       password: yup.string().required().max(50),
       confirmPw: yup
         .string()
+        .required()
         .oneOf([yup.ref("password"), null], "Password must match"),
     });
     return {
@@ -112,6 +116,13 @@ export default defineComponent({
   border-radius: 1em;
   width: 100%;
   transition: all 0.5s ease;
+  .title {
+    text-align: center;
+    margin-bottom: 1em;
+    font-size: 2em;
+    color: var(--vt-c-blue-light-2);
+    font-weight: bolder;
+  }
   .form {
     display: flex;
     flex-direction: column;
@@ -147,10 +158,11 @@ export default defineComponent({
       margin: 1em 0;
     }
     a {
-      text-decoration: none;
+      text-decoration: underline;
       width: 100%;
       text-align: center;
-      color: var(--vt-c-blue-light-1);
+      color: var(--vt-c-blue-light-2);
+      font-weight: bold;
     }
   }
 }

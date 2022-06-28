@@ -1,5 +1,10 @@
 <template>
-  <div class="container">
+  <div class="sign-in-component-wrapper">
+    <header class="header custom-text-shadow">
+      <div class="image-overlay">
+        <img src="@/assets/dlf.pt-discord-png-47757.png" />
+      </div>
+    </header>
     <Form class="form" @submit="login" :validation-schema="schema">
       <div class="form__field">
         <label for="email">
@@ -36,7 +41,9 @@
       </button>
     </Form>
     <hr />
-    <router-link to="/forget-password">Forget your password ?</router-link>
+    <router-link class="custom-text-shadow" to="/forgot-password"
+      >Forget your password ?</router-link
+    >
   </div>
 </template>
 
@@ -45,7 +52,6 @@ import { defineComponent } from "vue";
 import { Form, Field, ErrorMessage } from "vee-validate";
 import { object, string } from "yup";
 import { mapActions } from "pinia";
-import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 import useUserStore from "@/stores/UserStore";
 export default defineComponent({
   components: {
@@ -74,12 +80,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@media only screen and (min-width: 40em) {
-  .container {
-    width: 60%;
-  }
-}
-.container {
+.sign-in-component-wrapper {
   // min-width: 300px;
   background-color: var(--vt-c-divider-dark-1);
   border-radius: 1em;
@@ -90,12 +91,23 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   a {
     text-decoration: none;
     text-align: center;
     color: var(--vt-c-blue-light-2);
     font-size: 1.2em;
+  }
+  .header {
+    display: flex;
+    padding: 1em;
+    .image-overlay {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      img {
+        width: 50%;
+      }
+    }
   }
   .form {
     width: 100%;
@@ -139,7 +151,7 @@ export default defineComponent({
 }
 
 @media only screen and (min-width: 50em) {
-  .container {
+  .sign-in-component-wrapper {
     width: 60%;
   }
 }

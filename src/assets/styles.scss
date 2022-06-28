@@ -31,6 +31,10 @@ button {
   }
 }
 
+.custom-text-shadow {
+  text-shadow: 2px 2px 5px var(--vt-c-white-soft), -2px -2px 5px var(--vt-c-white-soft);
+}
+
 .click-ani {
   transition: all 0.2s ease;
   &:hover {
@@ -60,6 +64,9 @@ button {
       // transform: translateY(-5px);
     }
   }
+  &.shadow {
+    box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
+  }
 }
 
 .error-message {
@@ -72,6 +79,7 @@ button {
 
 input[type="text"],
 input[type="date"],
+input[type="password"],
 select {
   transition: box-shadow 0.3s ease;
   border-top-right-radius: 10px;
@@ -156,6 +164,35 @@ form {
   display: flex;
   width: 100%;
   flex-direction: column;
+  fieldset {
+    &.field-group {
+      border: none;
+      width: 100%;
+      display: flex;
+      label {
+        padding: 1em;
+        width: auto;
+        &.field-label {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: var(--vt-c-label-text);
+          background-color: var(--vt-c-label-bg);
+          border-top-left-radius: 10px;
+          border-bottom-left-radius: 10px;
+        }
+      }
+      input[type="text"],
+      input[type="date"],
+      input[type="password"] {
+        width: 100%;
+        &.field-input {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+      }
+    }
+  }
   .field-group {
     // color: var(--vt-c-white);
     width: 100%;

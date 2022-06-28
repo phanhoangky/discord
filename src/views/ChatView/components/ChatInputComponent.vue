@@ -121,9 +121,9 @@ export default defineComponent({
 
     // Form
     const { handleSubmit, setFieldValue } = useForm();
-    setFieldValue("messageContent", "");
     const { value: messageContent } = useField("messageContent");
     const { value: fileMessage } = useField("fileMessage");
+    setFieldValue("messageContent", "");
 
     // Method
     const onSubmit = handleSubmit(async (values, { resetForm }) => {
