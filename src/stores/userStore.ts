@@ -172,9 +172,6 @@ const useUserStore = defineStore({
       });
       return data;
     },
-    async forgotPassword(email: string) {
-      //
-    },
     onUserOnline(userId: string) {
       //
       if (this.users.some((u) => u.id == userId)) {

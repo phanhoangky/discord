@@ -160,6 +160,18 @@ input[type="radio"] {
   }
 }
 
+@keyframes not-read-blink {
+  0% {
+    outline: 0px solid var(--vt-c-red-soft);
+  }
+  50% {
+    outline: 5px solid var(--vt-c-red-soft);
+  }
+  100% {
+    outline: 0px solid var(--vt-c-red-soft);
+  }
+}
+
 form {
   display: flex;
   width: 100%;

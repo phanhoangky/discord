@@ -44,6 +44,7 @@
 
 <script lang="ts">
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
+import { useClickOutSide } from "@/utilities";
 import { mapActions } from "pinia";
 import { defineComponent } from "vue";
 
@@ -102,6 +103,14 @@ export default defineComponent({
         this.isShow = false;
       }
     },
+  },
+  mounted() {
+    const container = document.getElementById("container");
+    if (container) {
+      useClickOutSide(container, () => {
+        this.isShow = false;
+      });
+    }
   },
 });
 </script>

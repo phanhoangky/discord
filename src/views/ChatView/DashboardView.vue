@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, nextTick, onMounted, type DebuggerEvent } from "vue";
+import { defineComponent, nextTick, onMounted } from "vue";
 import ListMessagesComponent from "./components/ListMessagesComponent.vue";
 import UsersInRoomComponent from "./components/UsersInRoomComponent.vue";
 import ChatInputComponent from "./components/ChatInputComponent.vue";
@@ -232,13 +232,14 @@ export default defineComponent({
     async mainScroll(e: UIEvent) {
       const main = document.getElementById("main-messages-container");
       if (main) {
-        console.log(
-          "[>>>>]",
-          main.scrollTop,
-          main.scrollHeight,
-          this.totalItem,
-          this.messages.length
-        );
+        // console.log(
+        //   "[>>>>]",
+        //   e,
+        //   main.scrollTop,
+        //   main.scrollHeight,
+        //   this.totalItem,
+        //   this.messages.length
+        // );
         if (main.scrollTop == 0 && this.totalItem > this.messages.length) {
           if (this.selectedRoom || this.selectedUser) {
             const data = await this.fetchMessage();

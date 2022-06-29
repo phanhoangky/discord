@@ -192,7 +192,7 @@ export default defineComponent({
         return JSON.stringify(newUser?.value) != JSON.stringify(userStore.user);
       },
       // setter
-      set(newValue) {
+      set() {
         cancelChange();
       },
     });

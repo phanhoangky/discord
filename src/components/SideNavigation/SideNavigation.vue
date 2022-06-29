@@ -185,7 +185,7 @@ export default defineComponent({
       transform: skewY(5deg);
     }
     &.blink {
-      animation: blink 1s linear;
+      animation: not-read-blink 1s linear;
       animation-iteration-count: infinite;
     }
     &:hover {
@@ -195,17 +195,7 @@ export default defineComponent({
     }
   }
 }
-@keyframes blink {
-  0% {
-    outline: 0px solid var(--vt-c-red-soft);
-  }
-  50% {
-    outline: 5px solid var(--vt-c-red-soft);
-  }
-  100% {
-    outline: 0px solid var(--vt-c-red-soft);
-  }
-}
+
 @media only screen and (min-width: 40em) {
 }
 </style>

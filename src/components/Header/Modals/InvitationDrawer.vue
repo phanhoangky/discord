@@ -75,7 +75,7 @@ export default defineComponent({
       if (this.user) {
         if (this.invitations.some((i) => i.isRead == false)) {
           let request: UpdateInvitationByUserRequest = {
-            invitations: [],
+            invitationIds: [],
             isRead: true,
             userId: this.user.id,
             isLoading: true,
@@ -85,7 +85,7 @@ export default defineComponent({
             console.log(invitation);
             if (invitation.isRead == false) {
               invitation.isRead = true;
-              request.invitations.push(invitation);
+              request.invitationIds.push(invitation.id);
             }
           });
           await this.updateInvitationsByUser(request);
@@ -97,6 +97,8 @@ export default defineComponent({
       const request: ReplyInvitationRequest = {
         invitationId: invitationId,
         isAccepted: isAccepted,
+        isLoading: true,
+        isNotify: false,
       };
       await this.reply(request);
     },

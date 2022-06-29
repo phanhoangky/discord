@@ -51,8 +51,8 @@
               />
             </div>
             <span>{{ user.firstName }} {{ user.lastName }}</span>
+            <span v-if="user.isInvited">| Waiting for response</span>
           </section>
-          <span v-if="user.isInvited">Waiting for response</span>
           <Transition>
             <font-awesome-icon
               icon="circle-check"
@@ -227,8 +227,9 @@ export default defineComponent({
     li {
       display: flex;
       gap: 5px;
+      justify-content: space-between;
       // border: 1px solid black;
-      // padding: 5px;
+      padding: 5px;
       align-items: center;
       // box-shadow: 0px 0px 1px 1px var(--vt-c-blue-light-2);
       height: 50px;
@@ -242,6 +243,8 @@ export default defineComponent({
         display: flex;
         align-items: center;
         position: relative;
+        gap: 10px;
+        justify-content: space-around;
         .image-overlay {
           height: 100%;
           border-radius: 50%;

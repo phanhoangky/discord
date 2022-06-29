@@ -41,6 +41,6 @@ export interface UpdateInvitationRequest extends BaseRequest {
 
 export interface UpdateInvitationByUserRequest extends BaseRequest {
   userId: string;
-  invitations: Invitation[];
+  invitationIds: string[];
   isRead: boolean;
 }

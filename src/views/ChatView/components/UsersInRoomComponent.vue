@@ -4,7 +4,7 @@
       <font-awesome-icon icon="people-group"></font-awesome-icon>
     </div>
     <section class="users-list-wrapper">
-      <span>Onlines</span>
+      <h3>ONLINES ({{ onlineUsers.length }})</h3>
       <TransitionGroup name="list" tag="ul">
         <li
           v-for="user in onlineUsers"
@@ -22,14 +22,17 @@
           <div class="not-read">{{ user.notReadMessages }}</div>
         </li>
       </TransitionGroup>
-      <span>Offlines</span>
+      <h3>OFFLINES ({{ offlineUsers.length }})</h3>
       <TransitionGroup name="list" tag="ul">
         <li
           v-for="user in offlineUsers"
           :key="user.id"
           @click="selectUser(user)"
           class="list-item"
-          :class="{ selected: user.isSelected }"
+          :class="{
+            selected: user.isSelected,
+            blink: user.notReadMessages > 0,
+          }"
         >
           <div class="image-overlay">
             <img
@@ -37,7 +40,11 @@
             />
           </div>
           <div class="username">{{ user.firstName }} {{ user.lastName }}</div>
-          <div class="not-read">{{ user.notReadMessages }}</div>
+          <Transition>
+            <div v-if="user.notReadMessages > 0" class="not-read">
+              {{ user.notReadMessages }}
+            </div>
+          </Transition>
         </li>
       </TransitionGroup>
     </section>
@@ -136,14 +143,16 @@ export default defineComponent({
       }
       this.setSelectedUser(item);
       this.setRoom(undefined);
-      this.users = this.users.map((u) => {
-        if (u.id == item.id) {
-          u.isSelected = true;
-        }
-        if (u.id != item.id) {
-          u.isSelected = false;
-        }
-        return u;
+      useUserStore().$patch({
+        users: this.users.map((u) => {
+          if (u.id == item.id) {
+            u.isSelected = true;
+          }
+          if (u.id != item.id) {
+            u.isSelected = false;
+          }
+          return u;
+        }),
       });
     },
   },
@@ -187,7 +196,13 @@ export default defineComponent({
         color: var(--vt-c-list-item-text);
         &.selected {
           box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
+          background-color: var(--vt-c-button-hover-bg);
+          color: var(--vt-c-button-hover-text);
           transform: skewY(-5deg);
+        }
+        &.blink {
+          animation: not-read-blink 1s linear;
+          animation-iteration-count: infinite;
         }
         .not-read {
           position: absolute;
