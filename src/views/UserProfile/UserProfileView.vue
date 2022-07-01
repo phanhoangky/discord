@@ -417,6 +417,7 @@ export default defineComponent({
       padding: 10px;
       gap: 10px;
       background-color: var(--vt-c-header-bg-color);
+      color: var(--vt-c-header-text-color);
     }
   }
 }

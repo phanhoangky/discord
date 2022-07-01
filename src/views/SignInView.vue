@@ -11,7 +11,7 @@
           <font-awesome-icon icon="user" />
           <!-- <span class="hidden">Username</span> -->
         </label>
-        <Field name="email" id="email" placeholder="Email"></Field>
+        <Field type="text" name="email" id="email" placeholder="Email"></Field>
       </div>
       <ErrorMessage name="email" class="error-message"></ErrorMessage>
       <div class="form__field">

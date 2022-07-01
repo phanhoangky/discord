@@ -20,10 +20,10 @@ export const useClickOutSide = (
   if (element) {
     //
     onMounted(() => {
-      element.addEventListener("click", onClickOutSide);
+      window.addEventListener("click", onClickOutSide);
     });
     onUnmounted(() => {
-      element.removeEventListener("click", onClickOutSide);
+      window.removeEventListener("click", onClickOutSide);
     });
   }
 };

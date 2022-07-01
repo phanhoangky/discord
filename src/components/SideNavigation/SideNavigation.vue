@@ -189,8 +189,8 @@ export default defineComponent({
       animation-iteration-count: infinite;
     }
     &:hover {
-      background-color: var(--vt-c-black-mute);
-      color: var(--vt-c-button-hover-text);
+      background-color: var(--vt-c-navbar-hover-bg);
+      color: var(--vt-c-navbar-hover-text);
       // border-top: 1px solid var(--vt-c-white-soft);
     }
   }

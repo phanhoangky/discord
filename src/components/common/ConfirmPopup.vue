@@ -46,7 +46,7 @@
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 import { useClickOutSide } from "@/utilities";
 import { mapActions } from "pinia";
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 
 export default defineComponent({
   props: {
@@ -81,10 +81,22 @@ export default defineComponent({
   },
   // emits: ["confirm"],
   setup() {
-    return {};
+    const isShow = ref(false);
+
+    onMounted(() => {
+      const container = document.getElementById("container");
+      if (container) {
+        useClickOutSide(container, () => {
+          isShow.value = false;
+        });
+      }
+    });
+    return {
+      isShow,
+    };
   },
   data: () => ({
-    isShow: false,
+    // isShow: false,
   }),
   computed: {},
   methods: {
@@ -104,14 +116,14 @@ export default defineComponent({
       }
     },
   },
-  mounted() {
-    const container = document.getElementById("container");
-    if (container) {
-      useClickOutSide(container, () => {
-        this.isShow = false;
-      });
-    }
-  },
+  // mounted() {
+  //   const container = document.getElementById("container");
+  //   if (container) {
+  //     useClickOutSide(container, () => {
+  //       this.isShow = false;
+  //     });
+  //   }
+  // },
 });
 </script>
 
