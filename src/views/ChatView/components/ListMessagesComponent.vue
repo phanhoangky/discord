@@ -67,7 +67,6 @@ export default defineComponent({
   setup() {
     //Store
     const messageStore = useMessageStore();
-    const userStore = useUserStore();
     //State
     const isLoading = ref(false);
 

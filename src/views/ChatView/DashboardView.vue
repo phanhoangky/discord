@@ -229,7 +229,7 @@ export default defineComponent({
     ...mapActions(useRoomStore, {
       leave: "leaveRoom",
     }),
-    async mainScroll(e: UIEvent) {
+    async mainScroll() {
       const main = document.getElementById("main-messages-container");
       if (main) {
         // console.log(

@@ -151,7 +151,7 @@ export default defineComponent({
       const data = await callGetUsersForInvitation(request);
       totalUsers.value = data.totalCount;
       const inRoomUsers = userStore.users;
-      const exceptUsers = data.results.filter((r: any) =>
+      const exceptUsers = data.results.filter((r: User) =>
         inRoomUsers.every((u) => u.id != r.id)
       );
       listUsers.value = [...listUsers.value, ...exceptUsers];
@@ -172,12 +172,8 @@ export default defineComponent({
       }
     };
     // Watch
-    // watch(request, async (oldValue, newValue) => {
-    //   //
-    //   const { data } = await callGetUsers(newValue);
-    //   listUsers.value = data;
-    // });
-    watch(showInviteUsersModal, (newValue, oldValue) => {
+
+    watch(showInviteUsersModal, (newValue) => {
       if (newValue == false) {
         listUsers.value = [];
       }

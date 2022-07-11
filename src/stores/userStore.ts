@@ -86,7 +86,7 @@ const useUserStore = defineStore({
       });
       router.push("/sign-in");
     },
-    async fetchUsersInRoom(params?: any) {
+    async fetchUsersInRoom(params?) {
       const request: GetUserRequest = {
         currentItemsCount: this.user ? this.users.length : 0,
         currentPage: 0,
@@ -109,7 +109,7 @@ const useUserStore = defineStore({
       return data;
     },
 
-    async fetchUsers(params?: any) {
+    async fetchUsers(params?) {
       const request: GetUserRequest = {
         currentItemsCount: this.users ? this.users.length : 0,
         currentPage: 0,
@@ -198,7 +198,7 @@ const useUserStore = defineStore({
         });
       }
     },
-    setUser(value: any) {
+    setUser(value) {
       this.$patch({
         user: { ...this.user, ...value },
       });

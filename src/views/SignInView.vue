@@ -71,7 +71,7 @@ export default defineComponent({
     ...mapActions(useUserStore, {
       signIn: "SignIn",
     }),
-    async login(values: any) {
+    async login(values) {
       await this.signIn(values.email, values.password);
       console.log(values);
     },

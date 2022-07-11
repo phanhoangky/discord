@@ -59,7 +59,7 @@ export const uploadFile = async (
   );
   task.task.on(
     "state_changed",
-    (snapshot) => {
+    () => {
       // const progess = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
     },
     (error) => {

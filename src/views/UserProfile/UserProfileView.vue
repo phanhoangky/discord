@@ -211,7 +211,7 @@ export default defineComponent({
       //   const newUser = ref({ ...user });
       // }
     };
-    const previewImage = async (event: any) => {
+    const previewImage = async (event) => {
       const file = event.target.files[0];
       const src = URL.createObjectURL(file);
       const imgElement = document.getElementById(

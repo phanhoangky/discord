@@ -35,10 +35,10 @@ export const useRoomStore = defineStore({
     setShowCreateModal(value: boolean) {
       this.showCreateModal = value;
     },
-    setCreateRoomModel(values: any) {
+    setCreateRoomModel(values) {
       this.createRoomModel = { ...this.createRoomModel, ...values };
     },
-    setSelectedRoom(values: any) {
+    setSelectedRoom(values) {
       // this.selectedRoom = values;
       this.$patch({
         selectedRoom: values,
@@ -56,7 +56,7 @@ export const useRoomStore = defineStore({
       // }
       return data;
     },
-    async createRoom(values: any) {
+    async createRoom(values) {
       const request = {
         ...values,
         isLoading: true,
@@ -64,7 +64,7 @@ export const useRoomStore = defineStore({
       await ApiHelper.post(`${API_URL.ROOM}`, request);
       await this.fetchRooms();
     },
-    async editRoom(values: any) {
+    async editRoom(values) {
       const request = {
         ...values,
         isLoading: true,
@@ -97,7 +97,7 @@ export const useRoomStore = defineStore({
         rooms: this.rooms.map((r) => {
           if (r.id == data.id) {
             const notRead = data?.roomUser?.MessageRecipients.filter(
-              (e: any) => e.isRead == false
+              (e) => e.isRead == false
             );
             r.notReadMessages = notRead.length;
           }

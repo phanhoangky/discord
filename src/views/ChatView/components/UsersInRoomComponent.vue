@@ -127,7 +127,7 @@ export default defineComponent({
       setRoom: "setSelectedRoom",
     }),
 
-    async searchUserByName(values: any) {
+    async searchUserByName(values) {
       // console.log(values, this.users);
       if (this.selectedRoom) {
         await this.fetchUsersInRoom(values);

@@ -4,7 +4,6 @@ import {
   createWebHistory,
   type RouteRecordRaw,
 } from "vue-router";
-import JWT from "jwt-decode";
 import useMessageStore from "@/stores/MessageStore";
 const routes: RouteRecordRaw[] = [
   {

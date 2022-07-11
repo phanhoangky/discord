@@ -5,7 +5,7 @@ import type {
   UpdateNotReadMessageOfUser,
 } from "../models/User";
 
-export const callGetUsers = async (request?: any) => {
+export const callGetUsers = async (request?) => {
   const base: GetUserRequest = {
     currentItemsCount: 0,
     currentPage: 0,
@@ -19,7 +19,7 @@ export const callGetUsers = async (request?: any) => {
   return data;
 };
 
-export const callGetUserByRoom = async (request?: any, roomId?: string) => {
+export const callGetUserByRoom = async (request?, roomId?: string) => {
   const base: GetUserRequest = {
     currentItemsCount: 0,
     currentPage: 0,
@@ -35,7 +35,7 @@ export const callGetUserByRoom = async (request?: any, roomId?: string) => {
   return data;
 };
 
-export const callGetUsersForInvitation = async (request?: any) => {
+export const callGetUsersForInvitation = async (request?) => {
   const base: GetUserRequest = {
     isInfiniteScroll: true,
     isLoading: true,
@@ -50,7 +50,7 @@ export const callGetUsersForInvitation = async (request?: any) => {
   return data;
 };
 
-export const callUpdateNotReadMessageOfUser = async (request?: any) => {
+export const callUpdateNotReadMessageOfUser = async (request?) => {
   //
   const baseRequest: UpdateNotReadMessageOfUser = {
     ...request,

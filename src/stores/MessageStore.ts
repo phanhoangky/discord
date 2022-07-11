@@ -67,7 +67,6 @@ const useMessageStore = defineStore({
           }
         }
         const temp = [...data.results, ...this.messages];
-        console.log("[Fetch Message] >>>>", temp, data);
         this.totalItem = data.totalCount;
         this.$patch({
           messages: temp,
@@ -128,7 +127,7 @@ const useMessageStore = defineStore({
         totalItem: 0,
       });
     },
-    async appendToMessageList(message: any) {
+    async appendToMessageList(message) {
       const newMesasge: Message = {
         ...message,
       };
@@ -149,7 +148,7 @@ const useMessageStore = defineStore({
         messages: [...this.messages, newMesasge],
       });
     },
-    async onSendMessage(message: any) {
+    async onSendMessage(message) {
       const userStore = useUserStore();
       const isSender = userStore.user?.id == message.senderId;
       if (isSender) {
@@ -157,7 +156,7 @@ const useMessageStore = defineStore({
       }
     },
 
-    async onReceivePrivateMessage(values: any) {
+    async onReceivePrivateMessage(values) {
       const userStore = useUserStore();
       const source = userStore.users;
 
@@ -198,7 +197,7 @@ const useMessageStore = defineStore({
       }
     },
 
-    async receiveGroupMessage(values: any) {
+    async receiveGroupMessage(values) {
       console.log("[Store Receive receiveGroupMessage]>>>", values);
       const rooms = useRoomStore().rooms;
       const userStore = useUserStore();
@@ -249,7 +248,7 @@ const useMessageStore = defineStore({
       }
     },
 
-    async updateMessageRecipient(param: any) {
+    async updateMessageRecipient(param) {
       const request: UpdateMessageRecipientRequest = {
         isLoading: false,
         ...param,
