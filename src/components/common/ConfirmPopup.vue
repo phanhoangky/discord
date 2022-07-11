@@ -44,9 +44,8 @@
 
 <script lang="ts">
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
-import { useClickOutSide } from "@/utilities";
 import { mapActions } from "pinia";
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   props: {
@@ -83,14 +82,6 @@ export default defineComponent({
   setup() {
     const isShow = ref(false);
 
-    onMounted(() => {
-      const container = document.getElementById("container");
-      if (container) {
-        useClickOutSide(container, () => {
-          isShow.value = false;
-        });
-      }
-    });
     return {
       isShow,
     };
@@ -181,9 +172,7 @@ export default defineComponent({
       }
     }
   }
-  .visible {
-    // visibility: visible;
-  }
+
   // &:hover .confirm__popup {
   //   visibility: visible;
   // }

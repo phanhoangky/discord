@@ -141,7 +141,7 @@ export default defineComponent({
       removeSelectedFile();
     });
 
-    const readFile = async (event) => {
+    const readFile = async (event: any) => {
       if (event) {
         const selectedFile: File = event.target.files[0];
         console.log(selectedFile, 50 * (1000 * 1000));
@@ -187,7 +187,7 @@ export default defineComponent({
       console.log("[Remove file] >>>>", file.value);
     };
 
-    const selectEmoji = (e) => {
+    const selectEmoji = (e: any) => {
       console.log(e);
       messageContent.value += e.i;
     };

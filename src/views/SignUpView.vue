@@ -87,7 +87,7 @@ export default defineComponent({
     ...mapActions(useLoadingScreenStore, {
       setIsLoading: "setIsLoading",
     }),
-    async onSubmit(values) {
+    async onSubmit(values: any) {
       await this.signUp(values);
     },
   },

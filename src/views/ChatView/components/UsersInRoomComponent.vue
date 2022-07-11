@@ -48,18 +48,10 @@
         </li>
       </TransitionGroup>
     </section>
-    <Form
-      :validation-schema="schema"
-      @submit="searchUserByName"
-      v-slot="{ resetForm }"
-      ref="form"
-    >
-      <Field
-        name="username"
-        type="text"
-        placeholder="....Username"
-        @focusout="resetForm"
-      ></Field>
+    <Form :validation-schema="schema" @submit="searchUserByName" ref="form">
+      <!-- v-slot="{ resetForm }" -->
+      <Field name="username" type="text" placeholder="....Username"></Field>
+      <!-- @focusout="resetForm" -->
     </Form>
   </div>
 </template>
@@ -127,7 +119,7 @@ export default defineComponent({
       setRoom: "setSelectedRoom",
     }),
 
-    async searchUserByName(values) {
+    async searchUserByName(values: any) {
       // console.log(values, this.users);
       if (this.selectedRoom) {
         await this.fetchUsersInRoom(values);
