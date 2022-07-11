@@ -21,7 +21,8 @@
       ></font-awesome-icon>
     </header>
     <div class="confirm-content">
-      Confirm Email has been sent to your email, please check it
+      <span>Confirm Email has been sent to your email, please check it</span>
+      <span>If you don't see email, try to find it in spam email</span>
     </div>
   </div>
 </template>
