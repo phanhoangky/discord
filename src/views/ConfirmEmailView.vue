@@ -20,8 +20,9 @@
         icon="envelope-circle-check"
       ></font-awesome-icon>
     </header>
-    <div class="confirm-content">
+    <div class="confirm-content custom-text-shadow">
       <span>Confirm Email has been sent to your email, please check it</span>
+      <br />
       <span>If you don't see email, try to find it in spam email</span>
     </div>
   </div>
@@ -41,17 +42,14 @@
     justify-content: space-evenly;
     font-weight: bolder;
     .icon {
-      color: var(--color-text);
+      color: var(--vt-c-white);
       font-size: 3em;
     }
   }
   .confirm-content {
     text-align: center;
     font-size: large;
-    color: var(--vt-c-blue-light-2);
-    text-shadow: 2px 2px 5px var(--vt-c-blue-light-2),
-      2px 2px 5px var(--vt-c-black-mute), -2px -2px 5px var(--vt-c-black-mute),
-      2px -2px 5px var(--vt-c-black-mute);
+    color: var(--vt-c-white);
   }
 }
 @media only screen and (min-width: 40em) {

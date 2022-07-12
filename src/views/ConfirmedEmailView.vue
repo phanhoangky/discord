@@ -11,7 +11,9 @@
     </div>
     <div v-if="isSucceed == false" class="result">Some error occured</div>
     <div v-if="isSucceed == undefined" class="result">Please wait</div>
-    <router-link to="/sign-in" class="result">Click here</router-link>
+    <router-link class="custom-text-shadow result" to="/sign-in"
+      >Back to Login</router-link
+    >
   </div>
 </template>
 
@@ -64,6 +66,10 @@ onMounted(async () => {
   }
   .result {
     text-align: center;
+    font-weight: bold;
+  }
+  a {
+    color: var(--vt-c-white);
   }
 }
 

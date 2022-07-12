@@ -41,9 +41,9 @@
       </button>
     </Form>
     <hr />
-    <router-link class="custom-text-shadow" to="/forgot-password"
-      >Forget your password ?</router-link
-    >
+    <router-link class="custom-text-shadow" to="/forgot-password">
+      Forget your password ?
+    </router-link>
   </div>
 </template>
 
@@ -94,7 +94,7 @@ export default defineComponent({
   a {
     text-decoration: none;
     text-align: center;
-    color: var(--vt-c-blue-light-2);
+    color: var(--vt-c-white);
     font-size: 1.2em;
   }
   .header {

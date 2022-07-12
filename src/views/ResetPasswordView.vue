@@ -32,6 +32,9 @@
         <button type="submit" class="click-ani primary">Submit</button>
       </form>
     </section>
+    <router-link class="custom-text-shadow" to="/sign-in"
+      >Back to Login</router-link
+    >
   </div>
 </template>
 
@@ -92,7 +95,7 @@ const onSubmit = handleSubmit(async (values) => {
     text-align: center;
     color: var(--vt-c-blue-light-2);
     margin-bottom: 1em;
-    text-shadow: 0px 0px 10px var(--vt-c-blue-light-2);
+    text-shadow: 0px 0px 10px var(--vt-c-white);
     font-weight: bolder;
   }
   section {
@@ -108,6 +111,9 @@ const onSubmit = handleSubmit(async (values) => {
         }
       }
     }
+  }
+  a {
+    color: var(--vt-c-white);
   }
 }
 @media only screen and (min-width: 40em) {

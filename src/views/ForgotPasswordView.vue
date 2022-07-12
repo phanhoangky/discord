@@ -22,7 +22,8 @@
       >Back to login</router-link
     >
     <div class="verify-link-notify" v-if="isShow">
-      Verify link has been sent to your mail, please check it to confirm
+      Verify link has been sent to your mail, please check it to confirm (if you
+      don't see email, try to check in spam folder)
     </div>
   </div>
 </template>
@@ -93,7 +94,7 @@ const onSubmit = handleSubmit(async (values) => {
   }
   a {
     text-decoration: underline;
-    color: var(--vt-c-blue-light-2);
+    color: var(--vt-c-white);
   }
 }
 
