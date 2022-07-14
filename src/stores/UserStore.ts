@@ -60,7 +60,10 @@ const useUserStore = defineStore({
       document.cookie = data.token;
       this.user = {
         ...data.user,
-        dateOfBirth: moment(data.user.dateOfBirth).format("YYYY-MM-DD"),
+        dateOfBirth: data.user.dateOfBirth
+          ? moment(data.user.dateOfBirth).format("YYYY-MM-DD")
+          : moment(new Date()).format("YYYY-MM-DD"),
+        phoneNumber: data.user.phoneNumber ? data.user.phoneNumber : "",
       };
       router.push({ name: "home" });
     },
@@ -94,6 +97,7 @@ const useUserStore = defineStore({
         isPaging: false,
         itemsPerPage: 10,
         isLoading: true,
+        isNotify: false,
         ...params,
       };
       const messageStore = useMessageStore();

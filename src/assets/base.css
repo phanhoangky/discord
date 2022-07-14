@@ -96,7 +96,7 @@
   --vt-c-list-item-bg: var(--vt-c-white-soft);
   --vt-c-list-item-text: var(--vt-c-black-soft);
   --vt-c-list-item-bg-hover: var(--vt-c-divider-dark-1);
-
+  --vt-c-list-item-text-hover: var(--vt-c-white);
   /*Input */
   --vt-c-input-bg: var(--vt-c-white-soft);
   --vt-c-input-text: var(--vt-c-black-soft);
@@ -145,7 +145,7 @@ html.dark-theme {
   --color-border: var(--vt-c-divider-dark-2);
   --color-border-hover: var(--vt-c-divider-dark-1);
   --color-heading: var(--vt-c-text-dark-1);
-  --color-text: var(--vt-c-text-dark-2);
+  --color-text: var(--vt-c-white-mute);
 
   /* Button */
   --vt-c-button-bg: var(--vt-c-black-secondary);
@@ -154,6 +154,7 @@ html.dark-theme {
   --vt-c-button-hover-text: var(--vt-c-black-soft);
 
   /*Text*/
+  --vt-c-text-primary: var(--vt-c-white-soft);
   --vt-c-text-error: #ee1c1c;
   --vt-c-text-success: #0fdb89;
 
@@ -184,7 +185,8 @@ html.dark-theme {
   /* List item */
   --vt-c-list-item-bg: #2f2e2e;
   --vt-c-list-item-text: var(--vt-c-white-soft);
-  --vt-c-list-item-bg-hover: rgba(84, 84, 84, 0.65);
+  --vt-c-list-item-bg-hover: var(--vt-c-white-soft);
+  --vt-c-list-item-text-hover: var(--vt-c-black-mute);
 
   /*Input */
   --vt-c-input-bg: var(--vt-c-black-light);

@@ -170,6 +170,7 @@ import * as yup from "yup";
 import type { UpdateUserProfileRequest } from "@/stores/models/User";
 import { onBeforeRouteLeave } from "vue-router";
 import BaseModal from "../../components/common/BaseModal.vue";
+import moment from "moment";
 
 export default defineComponent({
   setup() {
@@ -181,14 +182,24 @@ export default defineComponent({
     const showDiscardChangeModal = ref(false);
     const schema = yup.object({
       fullname: yup.string().required().max(50),
-      phoneNumber: yup.string().required().min(9),
+      phoneNumber: yup
+        .string()
+        .notRequired()
+        .nullable(true)
+        .matches(/([0-9]{10})/, "Phone Number must have 10 number"),
+      dateOfBirth: yup
+        .date()
+        .notRequired()
+        .nullable(true)
+        .max(moment().format("YYYY-MM-DD")),
     });
     const routeTo = ref("");
     //Computed
     const isChanged = computed({
       // getter
       get() {
-        console.log("[Compare]>>>", newUser.value, userStore.user);
+        console.log(newUser);
+
         return JSON.stringify(newUser?.value) != JSON.stringify(userStore.user);
       },
       // setter
@@ -203,13 +214,6 @@ export default defineComponent({
     //Method
     const cancelChange = () => {
       newUser.value = { ...user };
-      // const imgElement = document.getElementById(
-      //   "image-preview"
-      // ) as HTMLImageElement;
-
-      // if (imgElement) {
-      //   const newUser = ref({ ...user });
-      // }
     };
     const previewImage = async (event) => {
       const file = event.target.files[0];
@@ -218,7 +222,6 @@ export default defineComponent({
         "image-preview"
       ) as HTMLImageElement;
 
-      console.log("[Get File >>>]", event.target.files, imgElement);
       if (imgElement) {
         imgElement.src = src;
         newUser.value.file = file;

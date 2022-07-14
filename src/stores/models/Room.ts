@@ -23,3 +23,8 @@ export interface UpdateNotReadMessageOfRoomRequest extends BaseRequest {
   roomId: string;
   userId: string;
 }
+
+export interface KickUserRequest extends BaseRequest {
+  roomId: string;
+  userId: string;
+}

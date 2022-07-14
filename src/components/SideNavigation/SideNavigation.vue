@@ -1,10 +1,11 @@
 <template>
   <div class="logo" @click="reset">
-    <img src="@/assets/logo.svg" />
+    <img src="@/assets/dlf.pt-discord-png-47757.png" />
   </div>
   <div class="function-button-group">
     <button class="add-room-btn click-ani" @click="setShowCreateModal(true)">
       <font-awesome-icon icon="plus-square"></font-awesome-icon>
+      <span> NEW ROOM</span>
     </button>
   </div>
   <font-awesome-icon icon="campground" class="group-header"></font-awesome-icon>
@@ -86,13 +87,13 @@ export default defineComponent({
       if (!this.selectedRoom || this.selectedRoom != item) {
         // setSelectedUser(undefined);
         this.update(item);
+        this.setSelectedRoom(item);
       }
     },
     async update(item: Room) {
       const room = await this.updateNotReadMessageOfRoomByUser(item.id);
       if (room) {
         this.setRoom(room);
-        this.setSelectedRoom(item);
       }
     },
   },
@@ -150,6 +151,7 @@ export default defineComponent({
   .add-room-btn {
     margin-bottom: 10px;
     font-size: 1.2em;
+    font-weight: bold;
   }
   .menu-item {
     display: flex;

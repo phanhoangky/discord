@@ -60,12 +60,12 @@
           </Transition>
           <!-- </div> -->
         </div>
-        <input
+        <textarea
           placeholder="Message ........."
           type="text"
           name="messageContent"
           v-model="messageContent"
-        />
+        ></textarea>
       </div>
       <div class="other__func">
         <font-awesome-icon
@@ -121,7 +121,7 @@ export default defineComponent({
 
     // Form
     const { handleSubmit, setFieldValue } = useForm();
-    const { value: messageContent } = useField("messageContent");
+    const { value: messageContent } = useField<string>("messageContent");
     const { value: fileMessage } = useField("fileMessage");
     setFieldValue("messageContent", "");
 
@@ -284,14 +284,20 @@ export default defineComponent({
           transform: translateY(-50px);
         }
       }
-      input {
+      input,
+      textarea {
         padding: 10px;
         border-radius: 0;
         background-color: var(--vt-c-divider-dark-1);
         width: 100%;
-        height: 100%;
         color: var(--vt-c-white);
         word-break: break-word;
+      }
+      input {
+        height: 100%;
+      }
+      textarea {
+        height: fit-content;
       }
     }
     .other__func {

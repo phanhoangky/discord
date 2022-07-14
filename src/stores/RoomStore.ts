@@ -7,6 +7,7 @@ import type { User } from "./models/User";
 import useMessageStore from "./MessageStore";
 import {
   callGetRoomById,
+  callKickUser,
   updateNotReadMessageOfRoom,
 } from "./services/RoomStoreServices";
 
@@ -170,6 +171,14 @@ export const useRoomStore = defineStore({
           });
         }
       }
+    },
+
+    async kickUserFromRoom(user: User, roomId: string) {
+      //
+      const data = await callKickUser({
+        roomId,
+        userId: user.id,
+      });
     },
   },
 });

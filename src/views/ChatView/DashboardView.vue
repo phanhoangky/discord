@@ -232,14 +232,6 @@ export default defineComponent({
     async mainScroll() {
       const main = document.getElementById("main-messages-container");
       if (main) {
-        // console.log(
-        //   "[>>>>]",
-        //   e,
-        //   main.scrollTop,
-        //   main.scrollHeight,
-        //   this.totalItem,
-        //   this.messages.length
-        // );
         if (main.scrollTop == 0 && this.totalItem > this.messages.length) {
           if (this.selectedRoom || this.selectedUser) {
             const data = await this.fetchMessage();
@@ -353,6 +345,7 @@ export default defineComponent({
 
   footer {
     grid-area: footer;
+    height: fit-content;
   }
 }
 
@@ -378,7 +371,7 @@ export default defineComponent({
       "main sidebar"
       "footer sidebar";
     grid-template-columns: 1fr 200px;
-    grid-template-rows: 50px 1fr 50px;
+    grid-template-rows: 50px 1fr auto;
 
     aside {
       &.sidebar {

@@ -1,7 +1,9 @@
 export const enum API_URL {
-  BASE_URL = "https://localhost:44335",
+  // BASE_URL = "https://localhost:44335",
+  BASE_URL = "https://simple-discord.herokuapp.com",
   AUTHENTICATE = "auth",
   ROOM = "room",
+  ROOM_USER = "room-user",
   USER = "user",
   MESSAGE = "message",
   INVITATION = "invitation",

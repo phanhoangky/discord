@@ -99,7 +99,7 @@ export default defineComponent({
       password: yup.string().required().max(50),
       confirmPw: yup
         .string()
-        .required()
+        .required("Confirm Password is a required field")
         .oneOf([yup.ref("password"), null], "Password must match"),
     });
     return {

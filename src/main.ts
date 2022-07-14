@@ -24,8 +24,8 @@ app.mixin({
   //   console.log("[Created]:", this.$route);
   // },
 });
-app.config.errorHandler = (err, vm, infor) => {
-  //
-  console.log("[Main Catch Error ]>>>", err, vm, infor);
-};
+// app.config.errorHandler = (err, vm, infor) => {
+//   //
+//   console.log("[Main Catch Error ]>>>", err, vm, infor);
+// };
 app.mount("#app");
