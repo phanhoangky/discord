@@ -69,14 +69,10 @@ const useUserStore = defineStore({
     },
 
     async SignUp(model: SignUpModel) {
-      const { data } = await ApiHelper.post(
-        `${API_URL.AUTHENTICATE}/register`,
-        {
-          ...model,
-          isLoading: true,
-        }
-      );
-      console.log("[Sign Up Data] >>>", data);
+      await ApiHelper.post(`${API_URL.AUTHENTICATE}/register`, {
+        ...model,
+        isLoading: true,
+      });
 
       // if (data) {
       router.push({ name: "ConfirmEmail" });
@@ -105,7 +101,7 @@ const useUserStore = defineStore({
         request,
         messageStore.selectedRoom?.id
       );
-      console.log("[Fetch UserInRoom] >>>>", data);
+      // console.log("[Fetch UserInRoom] >>>>", data);
 
       this.$patch({
         users: data.results,

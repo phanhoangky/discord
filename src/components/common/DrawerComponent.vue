@@ -34,7 +34,7 @@ export default defineComponent({
   props: {
     width: {
       type: String,
-      required: true,
+      required: false,
     },
     open: {
       type: Boolean,
@@ -44,8 +44,13 @@ export default defineComponent({
   computed: {
     drawerStyle() {
       const translate = this.$props.open ? `translateX(0)` : `translateX(100%)`;
+      if (this.$props.width) {
+        return {
+          width: this.$props.width,
+          transform: translate,
+        };
+      }
       return {
-        width: this.$props.width,
         transform: translate,
       };
     },
@@ -74,7 +79,7 @@ export default defineComponent({
     position: absolute;
     right: 0;
     top: 0;
-    width: 300px;
+    width: 100%;
     // transform: translateX(300px);
     height: 100vh;
     max-height: 100vh;
@@ -106,6 +111,13 @@ export default defineComponent({
     footer {
       height: 50px;
       border-top: 1px solid black;
+    }
+  }
+}
+@media only screen and (min-width: 40em) {
+  .drawer-backdrop {
+    .drawer {
+      width: 300px;
     }
   }
 }

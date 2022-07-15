@@ -197,7 +197,7 @@ const useMessageStore = defineStore({
       }
     },
 
-    async receiveGroupMessage(values) {
+    async onReceiveGroupMessage(values) {
       console.log("[Store Receive receiveGroupMessage]>>>", values);
       const rooms = useRoomStore().rooms;
       const userStore = useUserStore();

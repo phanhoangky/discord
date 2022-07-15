@@ -2,8 +2,8 @@ import { MESSAGE_TYPE, useToastMessageStore } from "./../stores/ToastMessage";
 import axios from "axios";
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 const ApiHelper = axios.create({
-  baseURL: "https://localhost:44335/api",
-  // baseURL: "https://simple-discord.herokuapp.com/api",
+  // baseURL: "https://localhost:44335/api",
+  baseURL: "https://simple-discord.herokuapp.com/api",
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",

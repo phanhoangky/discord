@@ -4,8 +4,27 @@
       <font-awesome-icon icon="people-group"></font-awesome-icon>
     </div>
     <section class="users-list-wrapper">
-      <h3>ONLINES ({{ onlineUsers.length }})</h3>
-      <TransitionGroup name="list" tag="ul">
+      <div
+        class="user-list-header"
+        @click="listOnlineUsersCollapsed = !listOnlineUsersCollapsed"
+      >
+        <span>ONLINES ({{ onlineUsers.length }})</span>
+        <font-awesome-icon
+          icon="caret-up"
+          class="list-user-collapsed-icon"
+          :class="{
+            collapsed: listOnlineUsersCollapsed,
+          }"
+        ></font-awesome-icon>
+      </div>
+      <TransitionGroup
+        name="list"
+        tag="ul"
+        class="list"
+        :class="{
+          collapsed: listOnlineUsersCollapsed,
+        }"
+      >
         <li
           v-for="user in onlineUsers"
           :key="user.id"
@@ -22,8 +41,27 @@
           <div class="not-read">{{ user.notReadMessages }}</div>
         </li>
       </TransitionGroup>
-      <h3>OFFLINES ({{ offlineUsers.length }})</h3>
-      <TransitionGroup name="list" tag="ul">
+      <div
+        class="user-list-header"
+        @click="listOfflineUsersCollapsed = !listOfflineUsersCollapsed"
+      >
+        <span>OFFLINES ({{ offlineUsers.length }})</span>
+        <font-awesome-icon
+          icon="caret-up"
+          class="list-user-collapsed-icon"
+          :class="{
+            collapsed: listOfflineUsersCollapsed,
+          }"
+        ></font-awesome-icon>
+      </div>
+      <TransitionGroup
+        name="list"
+        tag="ul"
+        class="list"
+        :class="{
+          collapsed: listOfflineUsersCollapsed,
+        }"
+      >
         <li
           v-for="user in offlineUsers"
           :key="user.id"
@@ -79,6 +117,8 @@ export default defineComponent({
   },
   data: () => ({
     totalCount: 0,
+    listOnlineUsersCollapsed: false,
+    listOfflineUsersCollapsed: false,
   }),
   computed: {
     ...mapState(useUserStore, {
@@ -172,10 +212,40 @@ export default defineComponent({
     overflow-y: scroll;
     // padding: 5px;
     // padding-top: 10px;
-    ul {
+    .user-list-header {
+      padding: 5px;
+      color: var(--color-text);
+      background-color: var(--color-background-mute);
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      &:hover {
+        cursor: pointer;
+        background-color: var(--vt-c-list-item-bg-hover);
+        color: var(--vt-c-list-item-text-hover);
+      }
+      span {
+        font-weight: bold;
+      }
+      .list-user-collapsed-icon {
+        font-size: 2em;
+        transition: transform 0.3s ease;
+        &.collapsed {
+          transform: rotateX(180deg);
+        }
+      }
+    }
+    .list {
       padding: 5px;
       padding-top: 10px;
-      li {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+      &.collapsed {
+        max-height: 100%;
+      }
+      .list-item {
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -186,6 +256,7 @@ export default defineComponent({
         gap: 10px;
         position: relative;
         color: var(--vt-c-list-item-text);
+
         &.selected {
           box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
           background-color: var(--vt-c-button-hover-bg);
@@ -196,6 +267,7 @@ export default defineComponent({
           animation: not-read-blink 1s linear;
           animation-iteration-count: infinite;
         }
+
         .not-read {
           position: absolute;
           right: 5px;

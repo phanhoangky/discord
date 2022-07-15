@@ -65,6 +65,7 @@
           type="text"
           name="messageContent"
           v-model="messageContent"
+          @keypress.enter="onSubmit"
         ></textarea>
       </div>
       <div class="other__func">
@@ -132,13 +133,14 @@ export default defineComponent({
         ? refFile(`${userStore.user?.id}/${file.name}`)
         : undefined;
       console.log("[Submit Message]", values, file);
+      resetForm();
+      removeSelectedFile();
+      setFieldValue("messageContent", "");
       await messageStore.sendMessage(
         file,
         values.messageContent,
         firebaseRef?.fullPath
       );
-      resetForm();
-      removeSelectedFile();
     });
 
     const readFile = async (event: any) => {
@@ -238,6 +240,7 @@ export default defineComponent({
       .preview-file {
         width: fit-content;
         height: fit-content;
+        max-width: 50%;
         position: absolute;
         overflow: visible;
         bottom: calc(100% + 10px);
@@ -280,6 +283,7 @@ export default defineComponent({
         img {
           object-fit: contain;
           max-height: 200px;
+          max-width: 50%;
           opacity: 0;
           transform: translateY(-50px);
         }

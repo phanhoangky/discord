@@ -39,6 +39,7 @@ import {
   faCaretRight,
   faCaretLeft,
   faUserXmark,
+  faCaretUp,
 } from "@fortawesome/free-solid-svg-icons";
 
 /* import font awesome icon component */
@@ -78,5 +79,6 @@ library.add(faBoxArchive);
 library.add(faCaretRight);
 library.add(faCaretLeft);
 library.add(faUserXmark);
+library.add(faCaretUp);
 
 export default FontAwesomeIcon;

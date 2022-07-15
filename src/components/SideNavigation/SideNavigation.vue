@@ -9,23 +9,77 @@
     </button>
   </div>
   <font-awesome-icon icon="campground" class="group-header"></font-awesome-icon>
-  <ul class="menu-container">
-    <li
-      class="menu-item"
-      v-for="item in rooms"
-      :key="item.id"
+  <section class="menu-container">
+    <div class="menu-header" @click="myRoomsCollapsed = !myRoomsCollapsed">
+      <span>MY ROOMS</span>
+      <font-awesome-icon
+        icon="caret-up"
+        class="menu-collapse-icon"
+        :class="{
+          collapsed: myRoomsCollapsed,
+        }"
+      ></font-awesome-icon>
+    </div>
+    <TransitionGroup
+      tag="ul"
+      class="menu"
       :class="{
-        active: item.id == selectedRoom?.id,
-        blink: item.notReadMessages > 0,
+        collapsed: myRoomsCollapsed,
       }"
-      @click="selectItem(item)"
     >
-      <div v-if="item.notReadMessages > 0" class="not-read">
-        {{ item.notReadMessages }}
-      </div>
-      <span>{{ item.name }}</span>
-    </li>
-  </ul>
+      <li
+        class="menu-item"
+        v-for="item in myRooms"
+        :key="item.id"
+        :class="{
+          active: item.id == selectedRoom?.id,
+          blink: item.notReadMessages > 0,
+        }"
+        @click="selectItem(item)"
+      >
+        <div v-if="item.notReadMessages > 0" class="not-read">
+          {{ item.notReadMessages }}
+        </div>
+        <span>{{ item.name }}</span>
+      </li>
+    </TransitionGroup>
+    <div
+      class="menu-header"
+      @click="otherRoomsCollapsed = !otherRoomsCollapsed"
+    >
+      <span>OTHER ROOMS</span>
+      <font-awesome-icon
+        icon="caret-up"
+        class="menu-collapse-icon"
+        :class="{
+          collapsed: otherRoomsCollapsed,
+        }"
+      ></font-awesome-icon>
+    </div>
+    <TransitionGroup
+      tag="ul"
+      class="menu"
+      :class="{
+        collapsed: otherRoomsCollapsed,
+      }"
+    >
+      <li
+        class="menu-item"
+        v-for="item in otherRooms"
+        :key="item.id"
+        :class="{
+          active: item.id == selectedRoom?.id,
+          blink: item.notReadMessages > 0,
+        }"
+        @click="selectItem(item)"
+      >
+        <div v-if="item.notReadMessages > 0" class="not-read">
+          {{ item.notReadMessages }}
+        </div>
+        <span>{{ item.name }}</span>
+      </li>
+    </TransitionGroup>
+  </section>
   <CreateRoomModal></CreateRoomModal>
   <!-- <EditRoomModal></EditRoomModal> -->
 </template>
@@ -38,6 +92,8 @@ import { object, string } from "yup";
 import CreateRoomModal from "./Modal/CreateRoomModal.vue";
 import useMessageStore from "@/stores/MessageStore";
 import type { Room } from "@/stores/models/Room";
+import useUserStore from "@/stores/UserStore";
+
 export default defineComponent({
   setup() {
     const schema = object({
@@ -48,6 +104,10 @@ export default defineComponent({
       schema,
     };
   },
+  data: () => ({
+    myRoomsCollapsed: false,
+    otherRoomsCollapsed: false,
+  }),
   components: {
     CreateRoomModal,
   },
@@ -55,9 +115,24 @@ export default defineComponent({
     ...mapState(useRoomStore, {
       rooms: "rooms",
     }),
+    ...mapState(useUserStore, {
+      user: "user",
+    }),
     ...mapState(useMessageStore, {
       selectedRoom: "selectedRoom",
     }),
+    myRooms() {
+      if (this.user && this.rooms) {
+        return this.rooms.filter((r) => r.creatorId == this.user?.id);
+      }
+      return [];
+    },
+    otherRooms() {
+      if (this.user && this.rooms) {
+        return this.rooms.filter((r) => r.creatorId != this.user?.id);
+      }
+      return [];
+    },
   },
   methods: {
     ...mapActions(useRoomStore, {
@@ -148,53 +223,92 @@ export default defineComponent({
   flex: 1;
   flex-shrink: 0;
   overflow-y: scroll;
-  .add-room-btn {
-    margin-bottom: 10px;
-    font-size: 1.2em;
-    font-weight: bold;
-  }
-  .menu-item {
+  transition: all 0.3s ease;
+  .menu-header {
+    font-weight: bolder;
     display: flex;
-    position: relative;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    transition: all 0.5s ease;
+    transition: all 0.3s ease;
+    padding: 8px;
     border-radius: 5px;
-    margin-bottom: 5px;
-    border-bottom: 1px solid var(--vt-c-white-soft);
-    text-decoration: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    .not-read {
-      aspect-ratio: 1 / 1;
-      width: 25px;
-      border-radius: 50%;
-      background-color: var(--vt-c-red-soft);
-      box-shadow: 0px 0px 2px 2px var(--vt-c-red-soft);
-      position: absolute;
-      right: 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--vt-c-white-soft);
-    }
-    &.active {
-      background-color: var(--vt-c-button-hover-bg);
-      color: var(--vt-c-button-hover-text);
-      box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
-      transform: skewY(5deg);
-    }
-    &.blink {
-      animation: not-read-blink 1s linear;
-      animation-iteration-count: infinite;
-    }
     &:hover {
       background-color: var(--vt-c-navbar-hover-bg);
       color: var(--vt-c-navbar-hover-text);
       // border-top: 1px solid var(--vt-c-white-soft);
     }
+    span {
+      font-weight: bold;
+    }
+    .menu-collapse-icon {
+      font-size: 2em;
+      // color: var(--color-text);
+      transition: all 0.3s ease;
+      &.collapsed {
+        transform: rotateX(180deg);
+      }
+    }
+  }
+  .menu {
+    overflow: hidden;
+    max-height: 0px;
+    transition: max-height 0.5s ease;
+    height: auto;
+
+    &.collapsed {
+      max-height: 100%;
+    }
+    .menu-item {
+      display: flex;
+      position: relative;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      margin: 5px 0;
+      transition: all 0.3s ease;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      border-bottom: 1px solid var(--vt-c-white-soft);
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background-color: var(--color-background-soft);
+      .not-read {
+        aspect-ratio: 1 / 1;
+        width: 25px;
+        border-radius: 50%;
+        background-color: var(--vt-c-red-soft);
+        box-shadow: 0px 0px 2px 2px var(--vt-c-red-soft);
+        position: absolute;
+        right: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--vt-c-white-soft);
+      }
+      &.active {
+        background-color: var(--vt-c-button-hover-bg);
+        color: var(--vt-c-button-hover-text);
+        box-shadow: 0px 0px 5px 5px var(--vt-c-blue-light-2);
+        transform: skewY(5deg);
+      }
+      &.blink {
+        animation: not-read-blink 1s linear;
+        animation-iteration-count: infinite;
+      }
+      &:hover {
+        background-color: var(--vt-c-navbar-hover-bg);
+        color: var(--vt-c-navbar-hover-text);
+        // border-top: 1px solid var(--vt-c-white-soft);
+      }
+    }
+  }
+
+  .add-room-btn {
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
   }
 }
 

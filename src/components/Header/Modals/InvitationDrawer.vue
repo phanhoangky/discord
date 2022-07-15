@@ -1,12 +1,12 @@
 <template>
   <div @click.stop="openDrawer" class="icon">
-    <DrawerComponent :width="`300px`" :open="open" @close="open = false">
+    <DrawerComponent :open="open" @close="open = false">
       <TransitionGroup name="list" tag="ul">
         <InvitationItem
           v-for="item in invitationStore.invitations"
           :key="item.id"
           :content="item.invitationContent"
-          :photo-url="item.senderId"
+          :photo-url="item.sender.photoUrl"
           @agree="onReply(item.id, true)"
           @decline="onReply(item.id, false)"
         ></InvitationItem>

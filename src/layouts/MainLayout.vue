@@ -80,7 +80,7 @@ export default defineComponent({
   methods: {
     ...mapActions(useMessageStore, {
       onReceivePrivateMessage: "onReceivePrivateMessage",
-      receiveGroupMessage: "receiveGroupMessage",
+      onReceiveGroupMessage: "onReceiveGroupMessage",
       onSendMessage: "onSendMessage",
     }),
     ...mapActions(useInvitationStore, {
@@ -111,7 +111,7 @@ export default defineComponent({
     );
     this.$chatHub.client.on(
       `${CHAT_HUB_METHOD.RECEIVE_GROUP_MESSAGE}`,
-      this.receiveGroupMessage
+      this.onReceiveGroupMessage
     );
     this.$chatHub.client.on(
       `${CHAT_HUB_METHOD.USER_LEAVE_GROUP}`,
@@ -182,7 +182,7 @@ export default defineComponent({
       color: var(--color-text);
     }
     &.active {
-      transform: translateX(150px);
+      transform: translateX(200px);
     }
     &:hover {
       background-color: var(--vt-c-button-hover-bg);
@@ -233,13 +233,13 @@ export default defineComponent({
     grid-template-areas:
       "sidenav header"
       "sidenav main";
-    grid-template-columns: 150px 1fr;
+    grid-template-columns: 200px 1fr;
     .open-menu-icon {
       display: none;
     }
     .sidenav {
       position: relative;
-      width: 150px;
+      width: 200px;
       padding: 0.5em;
       // height: auto;
       transform: translateX(0);

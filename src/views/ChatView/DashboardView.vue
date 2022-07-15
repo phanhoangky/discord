@@ -165,7 +165,7 @@ export default defineComponent({
         }
         if (
           (name == "onReceivePrivateMessage" && store.selectedUser) ||
-          (name == "receiveGroupMessage" && store.selectedRoom) ||
+          (name == "onReceiveGroupMessage" && store.selectedRoom) ||
           name == "onSendMessage"
         ) {
           nextTick(() => {

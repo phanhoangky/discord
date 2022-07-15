@@ -4,18 +4,23 @@
       <h3>{{ content }}</h3>
     </header>
     <aside>
-      <img :src="photoUrl != '' ? photoUrl : defaultAvatarURL()" />
+      <div class="image-wrapper">
+        <img :src="photoUrl != '' ? photoUrl : defaultAvatarURL" />
+      </div>
     </aside>
     <main>
-      <button class="click-ani" @click.stop="$emit('agree')">Accept</button>
-      <button class="click-ani" @click.stop="$emit('decline')">Decline</button>
+      <button class="click-ani primary" @click.stop="$emit('agree')">
+        Accept
+      </button>
+      <button class="click-ani cancel" @click.stop="$emit('decline')">
+        Decline
+      </button>
     </main>
   </section>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { defaultAvatarURL } from "@/stores/Constant";
 export default defineComponent({
   props: {
     content: {
@@ -29,9 +34,13 @@ export default defineComponent({
   },
   emits: ["agree", "decline"],
   setup() {
-    return {
-      defaultAvatarURL,
-    };
+    return {};
+  },
+  computed: {
+    defaultAvatarURL() {
+      const url = new URL("../../assets/defaultuser.png", import.meta.url);
+      return url.toString();
+    },
   },
 });
 </script>
@@ -53,7 +62,8 @@ export default defineComponent({
   outline: none;
   &:hover {
     background-color: var(--vt-c-list-item-bg-hover);
-    transform: skew(5deg);
+    color: var(--vt-c-list-item-text-hover);
+    // transform: skew(5deg);
   }
   header {
     grid-area: header;
@@ -68,8 +78,15 @@ export default defineComponent({
     display: flex;
     align-items: center;
     justify-content: center;
-    img {
+    .image-wrapper {
+      background-color: var(--color-background);
       aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      img {
+        aspect-ratio: 1 / 1;
+        width: 100%;
+        border-radius: 50%;
+      }
     }
   }
 }

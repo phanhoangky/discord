@@ -98,7 +98,7 @@ export default defineComponent({
     //State
     const listUsers = ref([] as User[]);
     const { showInviteUsersModal } = storeToRefs(invitationStore);
-    let request = ref({
+    let request = ref<GetUserRequest>({
       currentItemsCount: listUsers.value.length,
       currentPage: 0,
       isInfiniteScroll: true,
@@ -106,7 +106,7 @@ export default defineComponent({
       isPaging: true,
       itemsPerPage: 10,
       searchName: "",
-    } as GetUserRequest);
+    });
     let totalUsers = ref(0);
     //Conmputed
     // const listUsers = computed(() => {

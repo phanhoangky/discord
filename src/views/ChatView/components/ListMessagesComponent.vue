@@ -72,13 +72,15 @@ export default defineComponent({
 
     //Watchers for the message loading
     messageStore.$onAction(({ name }) => {
+      console.log("Watchers for the message loading >>>", name);
+
       if (name == "sendMessage") {
         isLoading.value = true;
         // after(() => {
         //   isLoading.value = false;
         // });
       }
-      if (name == "onSendMessage" || name == "onReceivePrivateMessage") {
+      if (name == "onSendMessage" || name == "onReceiveGroupMessage") {
         isLoading.value = false;
       }
     });

@@ -1,4 +1,5 @@
 import type { BaseModel, BaseRequest } from "./BaseModel";
+import type { User } from "./User";
 
 export enum INVITATION_STATUS {
   WAITING,
@@ -7,6 +8,7 @@ export enum INVITATION_STATUS {
 }
 export interface Invitation extends BaseModel {
   senderId: string;
+  sender: User;
   receiverId: string;
   isRead: boolean;
   isAccept?: boolean;
