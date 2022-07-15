@@ -22,10 +22,10 @@ export async function updateNotReadMessageOfRoom(
 
 export async function callKickUser(request: KickUserRequest) {
   const base: KickUserRequest = {
-    ...request,
     isLoading: true,
     isNotify: true,
+    ...request,
   };
-  const { data } = await ApiHelper.put(`${API_URL.ROOM_USER}/kick`, base);
+  const { data } = await ApiHelper.put(`${API_URL.ROOM_USER}/kick-user`, base);
   return data;
 }

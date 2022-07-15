@@ -36,8 +36,8 @@
               </div>
             </section>
             <section class="right">
-              <button class="cancel">
-                <font-awesome-icon icon="gear"></font-awesome-icon>
+              <button class="cancel" @click.stop="openKickUserModal(user)">
+                <font-awesome-icon icon="user-xmark"></font-awesome-icon>
               </button>
             </section>
           </li>
@@ -66,6 +66,11 @@
       <button class="submit-btn primary" @click="onSubmit">Edit</button>
     </template>
   </BaseModal>
+  <ConfirmKickUserModal
+    :show="showKickUserModal"
+    :user="selectedUser"
+    @close="showKickUserModal = false"
+  ></ConfirmKickUserModal>
   <button
     class="click-ani"
     v-if="selectedRoom"
@@ -85,6 +90,7 @@ import * as yup from "yup";
 import ConfirmPopup from "../../common/ConfirmPopup.vue";
 import useUserStore from "@/stores/UserStore";
 import type { User } from "@/stores/models/User";
+import ConfirmKickUserModal from "../../../views/ChatView/components/ConfirmKickUserModal.vue";
 export default defineComponent({
   setup() {
     //Store
@@ -127,7 +133,10 @@ export default defineComponent({
         roomStore.setShowEditModal(false);
       }
     };
-
+    const openKickUserModal = (user: User) => {
+      selectedUser.value = user;
+      showKickUserModal.value = true;
+    };
     //Subscribe
     roomStore.$subscribe((mutation, state) => {
       if (state.showEditModal == true) {
@@ -142,6 +151,7 @@ export default defineComponent({
       selectedUser,
       onSubmit,
       deleteRoom,
+      openKickUserModal,
       defaultAvatarURL,
       name,
       nameError,
@@ -153,6 +163,7 @@ export default defineComponent({
     // Field,
     // ErrorMessage,
     ConfirmPopup,
+    ConfirmKickUserModal,
   },
   computed: {
     ...mapState(useRoomStore, {
@@ -212,6 +223,7 @@ export default defineComponent({
       color: var(--color-text);
     }
     .list-users {
+      width: 100%;
       .user-item {
         display: flex;
         justify-content: space-between;
@@ -220,6 +232,7 @@ export default defineComponent({
         padding: 5px;
         border-radius: 5px;
         transition: all 0.3s ease;
+        width: 100%;
         &:hover {
           background-color: var(--vt-c-list-item-bg-hover);
           color: var(--vt-c-list-item-text-hover);
@@ -228,14 +241,16 @@ export default defineComponent({
           flex: 1;
           flex-shrink: 0;
           display: flex;
-          height: 100%;
           align-items: center;
           .user-avatar {
             flex: 1;
             border-radius: 50%;
+            max-height: 50px;
+            max-width: 50px;
+            aspect-ratio: 1 / 1;
             background-color: var(--color-background-mute);
             img {
-              height: 100%;
+              width: 100%;
               aspect-ratio: 1 / 1;
               border-radius: 50%;
             }

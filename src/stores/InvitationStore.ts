@@ -29,8 +29,12 @@ const useInvitationStore = defineStore({
   actions: {
     async sendInvitations(request: SendInvitationRequest) {
       console.log(request);
-
-      await ApiHelper.post(`${API_URL.INVITATION}`, request);
+      const base: SendInvitationRequest = {
+        ...request,
+        isLoading: true,
+        isNotify: true,
+      };
+      await ApiHelper.post(`${API_URL.INVITATION}`, base);
     },
 
     async fetchInvitationByUser() {
@@ -49,10 +53,12 @@ const useInvitationStore = defineStore({
     },
 
     async replyInvitation(request: ReplyInvitationRequest) {
-      await ApiHelper.put(`${API_URL.INVITATION}/reply`, {
-        invitationId: request.invitationId,
-        isAccepted: request.isAccepted,
-      } as ReplyInvitationRequest);
+      const baseRequest: ReplyInvitationRequest = {
+        ...request,
+        isLoading: true,
+        isNotify: true,
+      };
+      await ApiHelper.put(`${API_URL.INVITATION}/reply`, baseRequest);
       this.invitations = this.invitations.filter(
         (i) => i.id != request.invitationId
       );
@@ -68,10 +74,23 @@ const useInvitationStore = defineStore({
     },
 
     async updateIsReadInvitations(request: UpdateInvitationRequest) {
-      await ApiHelper.put(`${API_URL.INVITATION}`, request);
+      const baseRequest: UpdateInvitationRequest = {
+        ...request,
+        isLoading: true,
+        isNotify: false,
+      };
+      await ApiHelper.put(`${API_URL.INVITATION}`, baseRequest);
     },
     async updateInvitationsByUser(request: UpdateInvitationByUserRequest) {
-      await ApiHelper.put(`${API_URL.INVITATION}/${request.userId}`, request);
+      const baseRequest: UpdateInvitationByUserRequest = {
+        ...request,
+        isLoading: true,
+        isNotify: false,
+      };
+      await ApiHelper.put(
+        `${API_URL.INVITATION}/${request.userId}`,
+        baseRequest
+      );
     },
 
     async onInvitationAccepted(user: User, roomId: string) {

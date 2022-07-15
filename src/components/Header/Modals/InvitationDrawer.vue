@@ -6,6 +6,7 @@
           v-for="item in invitationStore.invitations"
           :key="item.id"
           :content="item.invitationContent"
+          :photo-url="item.senderId"
           @agree="onReply(item.id, true)"
           @decline="onReply(item.id, false)"
         ></InvitationItem>
@@ -30,11 +31,6 @@ import useUserStore from "@/stores/UserStore";
 export default defineComponent({
   setup() {
     const invitationStore = useInvitationStore();
-    // invitationStore.$subscribe(async (mutation, state) => {
-    //   if (mutation.events.key == `invitations`) {
-    //     await invitationStore.fetchInvitationByUser();
-    //   }
-    // });
     let newInvitation = computed(() => {
       const total = invitationStore.invitations.filter(
         (e) => e.isRead == false

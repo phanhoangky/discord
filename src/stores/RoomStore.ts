@@ -1,4 +1,4 @@
-import type { CreateRoomModel, Room } from "./models/Room";
+import type { CreateRoomModel, KickUserRequest, Room } from "./models/Room";
 import { defineStore } from "pinia";
 import ApiHelper from "@/api";
 import { API_URL } from "./Constant";
@@ -175,9 +175,17 @@ export const useRoomStore = defineStore({
 
     async kickUserFromRoom(user: User, roomId: string) {
       //
-      const data = await callKickUser({
+      const request: KickUserRequest = {
         roomId,
         userId: user.id,
+        isLoading: true,
+        isNotify: true,
+      };
+      const data = await callKickUser(request);
+      const userStore = useUserStore();
+      await userStore.fetchUsersInRoom({
+        isLoading: true,
+        isNotify: false,
       });
     },
   },

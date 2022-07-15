@@ -4,7 +4,7 @@
       <h3>{{ content }}</h3>
     </header>
     <aside>
-      <img src="@/assets/logo.svg" />
+      <img :src="photoUrl != '' ? photoUrl : defaultAvatarURL()" />
     </aside>
     <main>
       <button class="click-ani" @click.stop="$emit('agree')">Accept</button>
@@ -15,17 +15,23 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-
+import { defaultAvatarURL } from "@/stores/Constant";
 export default defineComponent({
   props: {
     content: {
       type: String,
       required: true,
     },
+    photoUrl: {
+      type: String,
+      required: true,
+    },
   },
   emits: ["agree", "decline"],
   setup() {
-    return {};
+    return {
+      defaultAvatarURL,
+    };
   },
 });
 </script>

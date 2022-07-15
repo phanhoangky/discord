@@ -1,6 +1,6 @@
 export const enum API_URL {
-  // BASE_URL = "https://localhost:44335",
-  BASE_URL = "https://simple-discord.herokuapp.com",
+  BASE_URL = "https://localhost:44335",
+  // BASE_URL = "https://simple-discord.herokuapp.com",
   AUTHENTICATE = "auth",
   ROOM = "room",
   ROOM_USER = "room-user",
@@ -20,3 +20,8 @@ export const enum CHAT_HUB_METHOD {
   ON_USER_ONLINE = "OnUserOnline",
   ON_USER_OFFLINE = "OnUserOffline",
 }
+
+export const defaultAvatarURL = () => {
+  const imgUrl = new URL("../../../assets/defaultuser.png", import.meta.url);
+  return imgUrl.toString();
+};
