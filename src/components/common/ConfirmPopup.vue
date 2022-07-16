@@ -4,7 +4,7 @@
       <slot> </slot>
     </div>
     <Transition name="fade">
-      <div
+      <!-- <div
         class="confirm__popup"
         id="confirmPopup"
         :class="{
@@ -37,7 +37,27 @@
             <font-awesome-icon icon="circle-check"></font-awesome-icon>
           </button>
         </footer>
-      </div>
+      </div> -->
+      <ConfirmPopupComponent
+        :title="title"
+        class="confirm__popup"
+        id="confirmPopup"
+        :class="{
+          visible: isShow,
+          below: below,
+          'align-with-right-border': alignRight,
+          center: center,
+        }"
+        :style="{
+          width: width ? width : '200px',
+        }"
+        ref="popup"
+        @close="isShow = false"
+        v-if="isShow"
+        :confirm="confirm"
+        :confirm-async="confirmAsync"
+      >
+      </ConfirmPopupComponent>
     </Transition>
   </div>
 </template>
@@ -46,6 +66,7 @@
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 import { mapActions } from "pinia";
 import { defineComponent, nextTick, ref, watch } from "vue";
+import ConfirmPopupComponent from "./ConfirmPopupComponent.vue";
 
 export default defineComponent({
   props: {
@@ -81,32 +102,7 @@ export default defineComponent({
   // emits: ["confirm"],
   setup() {
     const isShow = ref(false);
-
     //Method
-    const clickOutSide = (event) => {
-      //
-      const popup = document.getElementById("confirmPopup");
-      console.log("[Click out side ]>>>", popup, event.target);
-
-      if (popup) {
-        console.log("[Condition ]>>>", !popup.contains(event.target));
-        if (!popup.contains(event.target)) {
-          isShow.value = false;
-        }
-      }
-    };
-    //Watcher
-    // watch(isShow, (newValue) => {
-    //   //
-    //   if (newValue) {
-    //     console.log("[Watch Show Confirm]", newValue);
-
-    //     console.log("[Add Event Click]", newValue);
-    //     window.addEventListener("click", clickOutSide);
-    //   } else {
-    //      window.removeEventListener("click", clickOutSide);
-    //   }
-    // });
     return {
       isShow,
     };
@@ -132,14 +128,7 @@ export default defineComponent({
       }
     },
   },
-  // mounted() {
-  //   const container = document.getElementById("container");
-  //   if (container) {
-  //     useClickOutSide(container, () => {
-  //       this.isShow = false;
-  //     });
-  //   }
-  // },
+  components: { ConfirmPopupComponent },
 });
 </script>
 
