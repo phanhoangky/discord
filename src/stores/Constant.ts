@@ -19,6 +19,7 @@ export const enum CHAT_HUB_METHOD {
   INVITATION_ACCEPTED = "OnInvitationAccepted",
   ON_USER_ONLINE = "OnUserOnline",
   ON_USER_OFFLINE = "OnUserOffline",
+  KICK_USER_FROM_ROOM = "KickUserFromRoom",
 }
 
 export const defaultAvatarURL = () => {

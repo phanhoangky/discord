@@ -42,7 +42,10 @@ export const useRoomStore = defineStore({
     setSelectedRoom(values) {
       // this.selectedRoom = values;
       this.$patch({
-        selectedRoom: values,
+        selectedRoom: {
+          ...this.selectedRoom,
+          ...values,
+        },
       });
     },
     async fetchRooms() {
@@ -181,12 +184,53 @@ export const useRoomStore = defineStore({
         isLoading: true,
         isNotify: true,
       };
-      const data = await callKickUser(request);
+      await callKickUser(request);
       const userStore = useUserStore();
       await userStore.fetchUsersInRoom({
         isLoading: true,
         isNotify: false,
       });
+    },
+
+    async onKickUserFromRoom(userId: string, roomId: string) {
+      //
+      const { user } = useUserStore();
+      if (!user) {
+        throw new Error("Unauthorized");
+      }
+
+      // If user is currently in room
+      if (user.id == userId && this.selectedRoom?.id == roomId) {
+        useMessageStore().$patch({
+          selectedRoom: undefined,
+          selectedUser: undefined,
+        });
+
+        this.setSelectedRoom(undefined);
+
+        this.$patch({
+          rooms: this.rooms.filter((r) => r.id != roomId),
+        });
+      }
+
+      // If user is not currently in room
+      if (
+        user.id == userId &&
+        (this.selectedRoom?.id != roomId || !this.selectedRoom)
+      ) {
+        //
+        this.$patch({
+          rooms: this.rooms.filter((r) => r.id != roomId),
+        });
+      }
+
+      // If user is not kicked user and user is currently in room
+      if (user.id != userId && this.selectedRoom?.id == roomId) {
+        const userStore = useUserStore();
+        userStore.$patch({
+          users: userStore.users.filter((u) => u.id != userId),
+        });
+      }
     },
   },
 });

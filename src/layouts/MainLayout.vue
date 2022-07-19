@@ -89,6 +89,7 @@ export default defineComponent({
     }),
     ...mapActions(useRoomStore, {
       onOtherUserLeaveRoom: "onOtherUserLeaveRoom",
+      onKickUserFromRoom: "onKickUserFromRoom",
     }),
     ...mapActions(useUserStore, {
       onUserOffline: "onUserOffline",
@@ -128,6 +129,10 @@ export default defineComponent({
     this.$chatHub.client.on(
       `${CHAT_HUB_METHOD.ON_USER_ONLINE}`,
       this.onUserOnline
+    );
+    this.$chatHub.client.on(
+      `${CHAT_HUB_METHOD.KICK_USER_FROM_ROOM}`,
+      this.onKickUserFromRoom
     );
   },
   beforeUnmount() {
