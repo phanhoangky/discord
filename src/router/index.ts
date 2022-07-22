@@ -5,6 +5,8 @@ import {
   type RouteRecordRaw,
 } from "vue-router";
 import useMessageStore from "@/stores/MessageStore";
+import JWT from "jwt-decode";
+import { useRoomStore } from "@/stores/RoomStore";
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
@@ -39,9 +41,13 @@ const routes: RouteRecordRaw[] = [
     },
     beforeEnter: () => {
       const messageStore = useMessageStore();
+      const roomStore = useRoomStore();
       messageStore.$patch({
         selectedUser: undefined,
         messages: [],
+        selectedRoom: undefined,
+      });
+      roomStore.$patch({
         selectedRoom: undefined,
       });
     },
@@ -92,41 +98,52 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
+  // console.log("Next >>>>", to, from);
   const store = useUserStore();
   // console.log(store.user);
-
+  const anonymous: string[] = [
+    "SignUp",
+    "SignIn",
+    "ForgotPassword",
+    "ResetPassword",
+    "ConfirmedEmail",
+    "ConfirmEmail",
+  ];
   if (!store.user) {
-    // console.log("[Cookie]", document.cookie);
-    // if (document.cookie) {
-    //   const jwt: any = JWT(document.cookie);
-    //   if (jwt && jwt.actort) {
-    //     const actor = JSON.parse(jwt?.actort);
-    //     console.log(actor, store.user);
-    //     store.setUser(actor);
-    //     next();
-    //   }
-    // } else {
-    //   const anonymous: string[] = ["SignUp", "SignIn"];
-    //   if (to.name && !anonymous.includes(to.name.toString())) {
-    //     console.log("[Push Login]");
-    //     router.push("sign-in");
-    //   }
-    // }
-    const anonymous: string[] = [
-      "SignUp",
-      "SignIn",
-      "ForgotPassword",
-      "ResetPassword",
-      "ConfirmedEmail",
-      "ConfirmEmail",
-    ];
-    if (to.name && !anonymous.includes(to.name.toString())) {
-      console.log("[Push Login]");
-      router.push("sign-in");
-    }
-  }
-  console.log("Next >>>>", to, from);
+    const tokens = document.cookie.split(";");
+    const jwt = tokens.splice(0, tokens.length - 1);
+    if (tokens.length > 0) {
+      const token: any = JWT(tokens[0]);
 
-  next();
+      if (
+        token &&
+        token[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata"
+        ]
+      ) {
+        const actor = JSON.parse(
+          token[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata"
+          ]
+        );
+        store.setUser(actor);
+        next();
+      } else {
+        next({ name: "SignIn" });
+      }
+    } else {
+      if (
+        jwt.length == 0 &&
+        to.name &&
+        !anonymous.includes(to.name.toString())
+      ) {
+        next({ name: "SignIn" });
+      } else {
+        next();
+      }
+    }
+  } else {
+    next();
+  }
 });
 export default router;

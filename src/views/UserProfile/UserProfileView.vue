@@ -26,116 +26,123 @@
           >
         </section>
         <section class="user-infor">
-          <Form :validation-schema="schema">
-            <div class="user-infor-item flex-horizontal">
-              <div class="field-group">
+          <Form
+            :validation-schema="schema"
+            @submit="onSubmit"
+            id="user-profile-form"
+            ref="userProfileForm"
+          >
+            <div class="form-fields">
+              <div class="user-infor-item flex-horizontal">
+                <div class="field-group">
+                  <label class="field-label">
+                    <font-awesome-icon icon="l"></font-awesome-icon>
+                  </label>
+                  <Field
+                    name="lastname"
+                    type="text"
+                    disabled
+                    v-model="user!.lastName"
+                  />
+                  <ErrorMessage
+                    name="lastname"
+                    class="error-message"
+                  ></ErrorMessage>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">
+                    <font-awesome-icon icon="f"></font-awesome-icon>
+                  </label>
+                  <Field
+                    name="firstname"
+                    type="text"
+                    disabled
+                    v-model="user!.firstName"
+                  />
+                  <ErrorMessage
+                    name="firstname"
+                    class="error-message"
+                  ></ErrorMessage>
+                </div>
+              </div>
+              <div class="user-infor-item">
                 <label class="field-label">
-                  <font-awesome-icon icon="l"></font-awesome-icon>
+                  <font-awesome-icon icon="envelope"></font-awesome-icon>
+                </label>
+                <Field type="text" name="email" disabled :value="user?.email" />
+              </div>
+              <div class="user-infor-item">
+                <label class="field-label">
+                  <font-awesome-icon icon="mobile"></font-awesome-icon>
                 </label>
                 <Field
-                  name="lastname"
                   type="text"
-                  disabled
-                  v-model="user!.lastName"
+                  name="phoneNumber"
+                  v-model="newUser.phoneNumber"
                 />
-                <ErrorMessage
-                  name="lastname"
-                  class="error-message"
-                ></ErrorMessage>
               </div>
-              <div class="field-group">
-                <label class="field-label">
-                  <font-awesome-icon icon="f"></font-awesome-icon>
-                </label>
-                <Field
-                  name="firstname"
-                  type="text"
-                  disabled
-                  v-model="user!.firstName"
-                />
-                <ErrorMessage
-                  name="firstname"
-                  class="error-message"
-                ></ErrorMessage>
-              </div>
-            </div>
-            <div class="user-infor-item">
-              <label class="field-label">
-                <font-awesome-icon icon="envelope"></font-awesome-icon>
-              </label>
-              <Field type="text" name="email" disabled :value="user?.email" />
-            </div>
-            <div class="user-infor-item">
-              <label class="field-label">
-                <font-awesome-icon icon="mobile"></font-awesome-icon>
-              </label>
-              <Field
-                type="text"
+              <ErrorMessage
                 name="phoneNumber"
-                v-model="newUser.phoneNumber"
-              />
-            </div>
-            <ErrorMessage
-              name="phoneNumber"
-              class="error-message"
-            ></ErrorMessage>
-            <div class="user-infor-item">
-              <label class="field-label">
-                <font-awesome-icon icon="cake-candles"></font-awesome-icon>
-              </label>
-              <Field
-                type="date"
+                class="error-message"
+              ></ErrorMessage>
+              <div class="user-infor-item">
+                <label class="field-label">
+                  <font-awesome-icon icon="cake-candles"></font-awesome-icon>
+                </label>
+                <Field
+                  type="date"
+                  name="dateOfBirth"
+                  v-model="newUser.dateOfBirth"
+                />
+              </div>
+              <ErrorMessage
                 name="dateOfBirth"
-                v-model="newUser.dateOfBirth"
-              />
-            </div>
-            <ErrorMessage
-              name="dateOfBirth"
-              class="error-message"
-            ></ErrorMessage>
-            <div class="user-infor-item">
-              <label class="field-label">
-                <font-awesome-icon icon="venus-mars"></font-awesome-icon>
-              </label>
-              <div class="radio-group">
-                <div class="radio-group-item">
-                  <Field
-                    label="Male"
-                    id="male"
-                    type="radio"
-                    class="custom-radio"
-                    name="gender"
-                    :value="`Male`"
-                    v-model="newUser.gender"
-                  />
-                  <label for="male"> Male </label>
-                </div>
-                <div class="radio-group-item">
-                  <Field
-                    label="Female"
-                    id="female"
-                    class="custom-radio"
-                    type="radio"
-                    name="gender"
-                    :value="`Female`"
-                    v-model="newUser.gender"
-                  />
-                  <label for="female"> Female </label>
+                class="error-message"
+              ></ErrorMessage>
+              <div class="user-infor-item">
+                <label class="field-label">
+                  <font-awesome-icon icon="venus-mars"></font-awesome-icon>
+                </label>
+                <div class="radio-group">
+                  <div class="radio-group-item">
+                    <Field
+                      label="Male"
+                      id="male"
+                      type="radio"
+                      class="custom-radio"
+                      name="gender"
+                      :value="`Male`"
+                      v-model="newUser.gender"
+                    />
+                    <label for="male"> Male </label>
+                  </div>
+                  <div class="radio-group-item">
+                    <Field
+                      label="Female"
+                      id="female"
+                      class="custom-radio"
+                      type="radio"
+                      name="gender"
+                      :value="`Female`"
+                      v-model="newUser.gender"
+                    />
+                    <label for="female"> Female </label>
+                  </div>
                 </div>
               </div>
+              <ErrorMessage name="gender" class="error-message"></ErrorMessage>
             </div>
-            <ErrorMessage name="gender" class="error-message"></ErrorMessage>
+            <footer class="footer">
+              <button @click.prevent="cancelChange">
+                <font-awesome-icon icon="circle-xmark"></font-awesome-icon>
+              </button>
+              <button :disabled="!isChanged" @submit="onSubmit">
+                <font-awesome-icon icon="floppy-disk"></font-awesome-icon>
+              </button>
+            </footer>
           </Form>
         </section>
       </main>
-      <footer class="footer">
-        <button @click="cancelChange">
-          <font-awesome-icon icon="circle-xmark"></font-awesome-icon>
-        </button>
-        <button :disabled="!isChanged" @click="updateProfile">
-          <font-awesome-icon icon="floppy-disk"></font-awesome-icon>
-        </button>
-      </footer>
     </article>
 
     <!-- Change route discard modal -->
@@ -165,7 +172,13 @@
 <script lang="ts">
 import useUserStore from "@/stores/UserStore";
 import { computed, defineComponent, ref } from "vue";
-import { Form, Field, ErrorMessage } from "vee-validate";
+import {
+  Form,
+  Field,
+  ErrorMessage,
+  useForm,
+  type FormContext,
+} from "vee-validate";
 import * as yup from "yup";
 import type { UpdateUserProfileRequest } from "@/stores/models/User";
 import { onBeforeRouteLeave } from "vue-router";
@@ -181,24 +194,24 @@ export default defineComponent({
     const newUser = ref({ ...user });
     const showDiscardChangeModal = ref(false);
     const schema = yup.object({
-      fullname: yup.string().required().max(50),
       phoneNumber: yup
         .string()
         .notRequired()
         .nullable(true)
-        .matches(/([0-9]{10})/, "Phone Number must have 10 number"),
+        .matches(/^(\d{0}|\d{10})$/, "Phone Number must have 10 number"),
       dateOfBirth: yup
         .date()
         .notRequired()
         .nullable(true)
         .max(moment().format("YYYY-MM-DD")),
     });
+    const userProfileForm = ref<FormContext>();
     const routeTo = ref("");
     //Computed
     const isChanged = computed({
       // getter
       get() {
-        console.log(newUser);
+        console.log(newUser.value, userStore.user);
 
         return JSON.stringify(newUser?.value) != JSON.stringify(userStore.user);
       },
@@ -228,8 +241,7 @@ export default defineComponent({
         newUser.value.photoUrl = src;
       }
     };
-    const updateProfile = async () => {
-      //
+    const onSubmit = async (values) => {
       if (userStore.user) {
         const request: UpdateUserProfileRequest = {
           id: userStore.user.id,
@@ -238,6 +250,7 @@ export default defineComponent({
         await userStore.updateUserProfile(request);
       }
     };
+    //
 
     // Subcribe
     userStore.$onAction(({ after, name }) => {
@@ -268,9 +281,10 @@ export default defineComponent({
       defaultAvatarURL,
       showDiscardChangeModal,
       routeTo,
+      userProfileForm,
       cancelChange,
       previewImage,
-      updateProfile,
+      onSubmit,
     };
   },
   components: {
@@ -303,7 +317,7 @@ export default defineComponent({
     height: auto;
     border-radius: 10px;
     overflow: hidden;
-    grid-template-rows: 1fr 4fr 50px;
+    grid-template-rows: 1fr 4fr;
     box-shadow: 5px 5px 20px 2px var(--vt-c-primary-shadow-box);
     header {
       background-color: var(--vt-c-header-bg-color);
@@ -359,68 +373,74 @@ export default defineComponent({
         form {
           display: flex;
           flex-direction: column;
-          padding: 10px;
           gap: 10px;
-          .user-infor-item {
+          .form-fields {
             display: flex;
-            input[type="text"],
-            input[type="date"] {
-              width: 100%;
-            }
-            label.field-label {
-              width: 50px;
-              aspect-ratio: 1 / 1;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            .user-infor-item {
               display: flex;
-              justify-content: center;
-              align-items: center;
-              color: aliceblue;
-              background-color: var(--vt-c-black-soft);
-              border-top-left-radius: 10px;
-              border-bottom-left-radius: 10px;
-            }
-            select {
-              width: 100%;
-            }
-            &.flex-horizontal {
-              flex-direction: row;
-              gap: 10px;
-            }
-            &.flex-verticle {
-              flex-direction: column;
-            }
-            .field-group {
-              width: 100%;
-            }
+              input[type="text"],
+              input[type="date"] {
+                width: 100%;
+              }
+              label.field-label {
+                width: 50px;
+                aspect-ratio: 1 / 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: aliceblue;
+                background-color: var(--vt-c-black-soft);
+                border-top-left-radius: 10px;
+                border-bottom-left-radius: 10px;
+              }
+              select {
+                width: 100%;
+              }
+              &.flex-horizontal {
+                flex-direction: row;
+                gap: 10px;
+              }
+              &.flex-verticle {
+                flex-direction: column;
+              }
+              .field-group {
+                width: 100%;
+              }
 
-            .radio-group {
-              width: 100%;
-              height: 100%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              gap: 10px;
-              .radio-group-item {
+              .radio-group {
+                width: 100%;
+                height: 100%;
                 display: flex;
                 align-items: center;
-                color: var(--color-text);
-                .custom-radio {
-                  width: 40px;
-                  height: 40px;
+                justify-content: center;
+                gap: 10px;
+                .radio-group-item {
+                  display: flex;
+                  align-items: center;
+                  color: var(--color-text);
+                  .custom-radio {
+                    width: 40px;
+                    height: 40px;
+                  }
                 }
               }
             }
           }
+          .footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 10px;
+            gap: 10px;
+            background-color: var(--vt-c-header-bg-color);
+            color: var(--vt-c-header-text-color);
+            border-radius: 10px;
+          }
         }
       }
-    }
-    .footer {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 10px;
-      gap: 10px;
-      background-color: var(--vt-c-header-bg-color);
-      color: var(--vt-c-header-text-color);
     }
   }
 }
