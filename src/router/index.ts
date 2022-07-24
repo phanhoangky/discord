@@ -98,52 +98,62 @@ const router = createRouter({
   routes,
 });
 router.beforeEach((to, from, next) => {
-  // console.log("Next >>>>", to, from);
-  const store = useUserStore();
-  // console.log(store.user);
-  const anonymous: string[] = [
-    "SignUp",
-    "SignIn",
-    "ForgotPassword",
-    "ResetPassword",
-    "ConfirmedEmail",
-    "ConfirmEmail",
-  ];
-  if (!store.user) {
-    const tokens = document.cookie.split(";");
-    const jwt = tokens.splice(0, tokens.length - 1);
-    if (tokens.length > 0) {
-      const token: any = JWT(tokens[0]);
+  try {
+    // console.log("Next >>>>", to, from);
+    const store = useUserStore();
+    // console.log(store.user);
+    const anonymous: string[] = [
+      "SignUp",
+      "SignIn",
+      "ForgotPassword",
+      "ResetPassword",
+      "ConfirmedEmail",
+      "ConfirmEmail",
+    ];
+    if (!store.user) {
+      const tokens = document.cookie.split(";");
+      const jwt = tokens.splice(0, tokens.length - 1);
+      if (!anonymous.includes(jwt[0]) && jwt[0].includes("_ga")) {
+        next();
+      }
+      console.log(tokens, jwt);
 
-      if (
-        token &&
-        token[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata"
-        ]
-      ) {
-        const actor = JSON.parse(
+      if (tokens.length > 0) {
+        const token: any = JWT(tokens[0]);
+
+        if (
+          token &&
           token[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata"
           ]
-        );
-        store.setUser(actor);
-        next();
+        ) {
+          const actor = JSON.parse(
+            token[
+              "http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata"
+            ]
+          );
+          store.setUser(actor);
+          next();
+        } else {
+          next({ name: "SignIn" });
+        }
       } else {
-        next({ name: "SignIn" });
+        if (
+          jwt.length == 0 &&
+          to.name &&
+          !anonymous.includes(to.name.toString())
+        ) {
+          next({ name: "SignIn" });
+        } else {
+          next();
+        }
       }
     } else {
-      if (
-        jwt.length == 0 &&
-        to.name &&
-        !anonymous.includes(to.name.toString())
-      ) {
-        next({ name: "SignIn" });
-      } else {
-        next();
-      }
+      next();
     }
-  } else {
-    next();
+  } catch (error) {
+    document.cookie = "";
+    next({ name: "SignIn" });
   }
 });
 export default router;

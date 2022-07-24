@@ -62,11 +62,17 @@
         </div>
         <textarea
           placeholder="Message ........."
+          class="message-input"
           type="text"
           name="messageContent"
           v-model="messageContent"
           @keypress.enter="onSubmit"
         ></textarea>
+        <div class="send-btn" @submit="onSubmit">
+          <button>
+            <font-awesome-icon icon="paper-plane"></font-awesome-icon>
+          </button>
+        </div>
       </div>
       <div class="other__func">
         <font-awesome-icon
@@ -235,8 +241,21 @@ export default defineComponent({
       width: 100%;
       height: 100%;
       overflow: visible;
-      display: grid;
+      display: flex;
+      flex-direction: row;
       position: relative;
+      .send-btn {
+        button {
+          aspect-ratio: 1 / 1;
+          height: 100%;
+          background-color: var(--vt-c-black-mute);
+          color: var(--vt-c-white-mute);
+          border-radius: 0;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
       .preview-file {
         width: fit-content;
         height: fit-content;
@@ -290,10 +309,11 @@ export default defineComponent({
       }
       input,
       textarea {
+        flex: 1;
         padding: 10px;
+        width: max-content;
         border-radius: 0;
         background-color: var(--vt-c-divider-dark-1);
-        width: 100%;
         color: var(--vt-c-white);
         word-break: break-word;
       }
