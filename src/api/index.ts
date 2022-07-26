@@ -2,6 +2,7 @@ import { MESSAGE_TYPE, useToastMessageStore } from "./../stores/ToastMessage";
 import axios from "axios";
 import { useLoadingScreenStore } from "@/stores/LoadingScreen";
 import { API_URL } from "@/stores/Constant";
+import { getCookieValue } from "@/components/common/common";
 const ApiHelper = axios.create({
   baseURL: `${API_URL.BASE_URL}/api`,
   // baseURL: "https://simple-discord.herokuapp.com/api",
@@ -12,18 +13,10 @@ const ApiHelper = axios.create({
   timeout: 60 * 1000,
 });
 ApiHelper.interceptors.request.use((config) => {
-  const jwtToken = document.cookie;
-  const jwt = jwtToken.split(";");
-  // console.log("[Token] >>>", jwt[jwt.length - 1]);
-
+  const jwtToken = getCookieValue("apiToken");
   if (config && config.headers && jwtToken) {
-    config.headers["Authorization"] = "Bearer " + jwt[jwt.length - 1];
+    config.headers["Authorization"] = "Bearer " + jwtToken;
   }
-
-  // if (config.method === "post") {
-  //   config.data = JSON.stringify(config.data);
-  // }
-  // console.log("[Data] >>>", config, config.data);
   const param = config.data || config.params;
   if (param.isLoading) {
     const loadingScreenStore = useLoadingScreenStore();
@@ -36,7 +29,7 @@ ApiHelper.interceptors.response.use(
   (response) => {
     const toastStore = useToastMessageStore();
     const loadingScreenStore = useLoadingScreenStore();
-    console.log(response.config.data, response.config.params);
+    // console.log(response.config.data, response.config.params);
     let parsedData = response.config.data;
     if (response.config.data && !(response.config.data instanceof Object)) {
       parsedData = JSON.parse(response.config.data);
@@ -51,7 +44,7 @@ ApiHelper.interceptors.response.use(
   (error) => {
     const toastStore = useToastMessageStore();
     const loadingScreenStore = useLoadingScreenStore();
-    console.log(error);
+    // console.log(error);
 
     if (error.code == "ERR_NETWORK") {
       toastStore.setToast(MESSAGE_TYPE.ERROR, error.code, error.message);
@@ -66,7 +59,7 @@ ApiHelper.interceptors.response.use(
         let message: string = data.Message || data || "UNCERTAIN ERROR";
         if (data.errors && data.errors.Name && data.errors.Name.length > 0) {
           data.errors.Name.forEach((e: string) => {
-            console.log(e);
+            // console.log(e);
             message = `${message} \n ${e}`;
           });
         }

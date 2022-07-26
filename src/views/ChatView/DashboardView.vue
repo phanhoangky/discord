@@ -247,7 +247,6 @@ export default defineComponent({
   },
 
   beforeRouteEnter(to, from, next) {
-    console.log("[Dashboard] >>>", to, from);
     if (from.name == "UserProfile") {
       if (from.meta.isReady == true) {
         next();

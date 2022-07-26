@@ -16,6 +16,7 @@ import {
 } from "./services/UserStoreServices";
 import { fetchFileURL, refFile, uploadFile } from "@/utilities/Firebase";
 import moment from "moment";
+import { deleteCookiee, setCookie } from "@/components/common/common";
 
 export type UserState = {
   user?: User;
@@ -57,7 +58,8 @@ const useUserStore = defineStore({
         password,
         isLoading: true,
       });
-      document.cookie = data.token;
+      // document.cookie = data.token;
+      setCookie("apiToken", data.token, 1);
       this.user = {
         ...data.user,
         dateOfBirth: data.user.dateOfBirth
@@ -79,7 +81,8 @@ const useUserStore = defineStore({
       // }
     },
     logout() {
-      document.cookie = "";
+      // document.cookie = "";
+      deleteCookiee("apiToken");
       this.$patch({
         user: undefined,
       });

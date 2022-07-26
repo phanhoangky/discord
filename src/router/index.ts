@@ -7,6 +7,7 @@ import {
 import useMessageStore from "@/stores/MessageStore";
 import JWT from "jwt-decode";
 import { useRoomStore } from "@/stores/RoomStore";
+import { getCookieValue } from "@/components/common/common";
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
@@ -110,25 +111,24 @@ router.beforeEach((to, from, next) => {
       "ConfirmedEmail",
       "ConfirmEmail",
     ];
+
     if (!store.user) {
-      const tokens = document.cookie.split(";");
-      const jwt = tokens.splice(0, tokens.length - 1);
-      if (!anonymous.includes(jwt[0]) && jwt[0].includes("_ga")) {
-        next();
-      }
-      console.log(tokens, jwt);
-
-      if (tokens.length > 0) {
-        const token: any = JWT(tokens[0]);
-
+      // const tokens = document.cookie.split(";");
+      // tokens.splice(0, tokens.length - 1);
+      const token = getCookieValue("apiToken");
+      // console.log("[Cookie] >>>", token);
+      if (!token && to.name && !anonymous.includes(to.name?.toString())) {
+        next({ name: "SignIn" });
+      } else if (token) {
+        const decodedToken: any = JWT(token);
         if (
-          token &&
-          token[
+          decodedToken &&
+          decodedToken[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata"
           ]
         ) {
           const actor = JSON.parse(
-            token[
+            decodedToken[
               "http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata"
             ]
           );
@@ -138,21 +138,18 @@ router.beforeEach((to, from, next) => {
           next({ name: "SignIn" });
         }
       } else {
-        if (
-          jwt.length == 0 &&
-          to.name &&
-          !anonymous.includes(to.name.toString())
-        ) {
+        if (token && to.name && !anonymous.includes(to.name.toString())) {
           next({ name: "SignIn" });
         } else {
           next();
         }
       }
+    } else if (store.user && to.name && to.name == "SignIn") {
+      next({ name: "home" });
     } else {
       next();
     }
   } catch (error) {
-    document.cookie = "";
     next({ name: "SignIn" });
   }
 });

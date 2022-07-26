@@ -211,8 +211,6 @@ export default defineComponent({
     const isChanged = computed({
       // getter
       get() {
-        console.log(newUser.value, userStore.user);
-
         return JSON.stringify(newUser?.value) != JSON.stringify(userStore.user);
       },
       // setter

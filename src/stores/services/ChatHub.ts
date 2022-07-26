@@ -1,3 +1,4 @@
+import { getCookieValue } from "@/components/common/common";
 import { HubConnectionBuilder, HubConnection } from "@microsoft/signalr";
 import { API_URL, CHAT_HUB_METHOD } from "../Constant";
 
@@ -10,11 +11,11 @@ export class ChatHub {
     this.client = new HubConnectionBuilder()
       .withUrl(`${API_URL.BASE_URL}/hubs`, {
         accessTokenFactory: () => {
-          const jwtToken = document.cookie;
-          const jwt = jwtToken.split(";");
+          const jwtToken = getCookieValue("apiToken");
+          // const jwt = jwtToken.split(";");
           // console.log("[ChatHub >>>>]", jwt[jwt.length - 1], jwt);
 
-          return `${jwt[jwt.length - 1].trim()}`;
+          return `${jwtToken}`;
         },
       })
       .withAutomaticReconnect()
